@@ -384,7 +384,6 @@
                 this.identity.file = event.target.files[0]??null;
 
             },
-            },
             processFileFoto:function(event){
                 this.foto_file = event.target.files[0]??null;
 
