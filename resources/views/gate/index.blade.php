@@ -61,8 +61,11 @@
                     <td class="text-center">
                         <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td>
-                    <td><p><b>{{ Carbon\Carbon::parse($v->log_created_at)->format('ymd').'-'.$v->id_log }}</b></p>
-                        {{ $v->nama }}</td>
+                    <td>
+                        <p>
+                        <b>{{ Carbon\Carbon::parse($v->log_created_at)->format('ymd').'-'.$v->id_log }}</b></p>
+                        {{ $v->nama }}
+                    </td>
                     <td>{{ $v->nomer_telpon }}
                         <br>
                         <div class="btn-group" style="margin-top: 10px;">
@@ -101,8 +104,7 @@
                                    <span class="text-red">MEMBATALKAN</span> KUJUNGAN
                                     @endif
                                 @break
-                            
-                                @default
+                                 @default
                                         TELAH MENEYELESAIKAN KUNJUNGAN
                             @endswitch
 
@@ -112,11 +114,9 @@
                     <td>
                         <div class="btn-group-vertical">
                             @can('is_gate')
-                                
                                 @if($gate_ls=='CHECKIN')
                                 <a href="" class="btn btn-success btn-sm">FOTO MASUK GATE</a>
                                 @endif
-
                             @endcan
                             @can('gate_check_out_provos')
                             @if($gate_ls=='PROVOS')
