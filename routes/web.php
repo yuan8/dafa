@@ -55,9 +55,16 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function(){
 
      Route::prefix('bagian')->group(function(){
         Route::get('/', [App\Http\Controllers\BagianCtrl::class, 'index'])->name('a.b.index');
-        Route::get('/tambah', [App\Http\Controllers\BagianCtrl::class, 'tambah'])->name('a.b.tambah');
-        Route::get('/ubah/{id}/{slug}', [App\Http\Controllers\BagianCtrl::class, 'tambah'])->name('a.b.ubah');
+
+        Route::get('/tambah', [App\Http\Controllers\BagianCtrl::class, 'create'])->name('a.b.tambah');
+
+
+        Route::post('/store', [App\Http\Controllers\BagianCtrl::class, 'store'])->name('a.b.store');
+
+        Route::get('/ubah/{id}/{slug}', [App\Http\Controllers\BagianCtrl::class, 'edit'])->name('a.b.ubah');
+
         Route::put('/ubah/{id}/{slug}', [App\Http\Controllers\BagianCtrl::class, 'update'])->name('a.b.update');
+
         Route::delete('/delete/{id}/{slug}', [App\Http\Controllers\BagianCtrl::class, 'delete'])->name('a.b.delete');
     });
 
