@@ -48,7 +48,10 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function(){
     Route::prefix('users')->group(function(){
         Route::get('/', [App\Http\Controllers\UserCtrl::class, 'index'])->name('a.u.index');
         Route::get('/tambah', [App\Http\Controllers\UserCtrl::class, 'tambah'])->name('a.u.tambah');
-        Route::get('/ubah/{id}/{slug}', [App\Http\Controllers\UserCtrl::class, 'tambah'])->name('a.u.ubah');
+
+        Route::put('/ubah-passowrd/{id}/{slug}', [App\Http\Controllers\UserCtrl::class, 'ubah_password'])->name('a.u.password');
+        Route::post('/tambah', [App\Http\Controllers\UserCtrl::class, 'store'])->name('a.u.store');
+        Route::get('/ubah/{id}/{slug}', [App\Http\Controllers\UserCtrl::class, 'edit'])->name('a.u.ubah');
         Route::put('/ubah/{id}/{slug}', [App\Http\Controllers\UserCtrl::class, 'update'])->name('a.u.update');
         Route::delete('/delete/{id}/{slug}', [App\Http\Controllers\UserCtrl::class, 'delete'])->name('a.u.delete');
     });
