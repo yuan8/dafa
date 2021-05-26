@@ -21,8 +21,8 @@ class LogTamu extends Migration
             $table->dateTime('provos_checkin');
             $table->bigInteger('provos_handle');
             $table->string('foto_checkin')->nullable();
-            $table->json('tujuan')->nullable();
-            $table->text('keperluan')->nullable();
+            $table->mediumText('tujuan')->default('[]');
+            $table->mediumText('keperluan')->nullable();
             $table->string('kategori_tamu')->nullable();
             $table->text('instansi')->nullable();
             $table->dateTime('gate_checkin')->nullable();
