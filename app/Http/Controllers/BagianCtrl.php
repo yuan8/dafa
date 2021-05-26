@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Validator;
 use Str;
 use Alert;
+use Storage;
+use Session;
+use Illuminate\Support\Facades\Artisan;
 class BagianCtrl extends Controller
 {
     //
@@ -23,7 +26,13 @@ class BagianCtrl extends Controller
    
 
     public function edit($tag,$slug,Request $request){
-    	$val=config('web_config.tujuan_tamu')??[];
+        Artisan::call('config:clear');
+    	$path_render=(app_path('../config/web_config.php'));
+
+    	sleep(2);
+	    $val = include($path_render);
+	    $val=$val['tujuan_tamu']??[];
+
     	$valid=Validator::make(['tag'=>$tag],[
     		'tag'=>'string|required'
     	]);
@@ -34,7 +43,9 @@ class BagianCtrl extends Controller
     		return back()->withInput();
     	}
 
+
     	$tag=strtoupper(Str::slug($tag));
+
     	$data=[];
     
     	foreach ($val as $key => $v) {
@@ -45,15 +56,35 @@ class BagianCtrl extends Controller
     	}
 
     	if(count($data)){
-    		return view('admin.bagian.update')->with(['data'=>$data]);
+    		if(Str::slug($data['name'])!=$slug){
+    			if(Session::has('alert.config')){
+	    			$json=json_decode(session('alert.config'));
+	    			if($json->title=='Berhasil'){
 
+	    				Alert::success($json->title,$json->text);
+	    				return redirect()->route('a.b.ubah',['id'=>$tag,'slug'=>Str::slug($slug)]);
+	    			}
+	    		}
+
+    		}
+    		return view('admin.bagian.update')->with(['data'=>$data]);
     	}else{
+    		if(Session::has('alert.config')){
+    			$json=json_decode(session('alert.config'));
+    			if($json->title=='Berhasil'){
+    				Alert::success($json->title,$json->text);
+    				return redirect()->route('a.b.ubah',['id'=>$tag,'slug'=>Str::slug($slug)]);
+    			}
+    		}
+    		// $json=
+
     		return abort(404);
     	}
     }
 
 
      public function update($tag,$slug,Request $request){
+        Artisan::call('config:clear');
 
      	$valid=Validator::make($request->all(),[
     		'tag'=>'string|required',
@@ -67,14 +98,14 @@ class BagianCtrl extends Controller
     	}
 
     	$del=false;
-    	$tag=strtoupper(Str::slug($tag));
+    	$tag_up=strtoupper(Str::slug($request->tag));
     	$val=config('web_config.tujuan_tamu')??[];
 
 
     	foreach ($val as $key => $v) {
     		if($v['tag']==$tag){
     			$val[$key]=[
-    				'tag'=>$tag,
+    				'tag'=>$tag_up,
     				'name'=>$request->name
     			];
     			$del=true;
@@ -83,15 +114,17 @@ class BagianCtrl extends Controller
     	}
 
     	config(['web_config.tujuan_tamu'=>$val]);
+
         $set=config('web_config');
         $set='<?php
         
 		return '.(var_export($set,true));
         $set=(trim($set)).';';
+
+        Storage::disk('config')->put('web_config.php',$set);
+        // $art=Artisan::call("myweb:update tujuan_tamu ".$tag." ".$tag_up." ".str_replace(' ', '0*0space', $request->name));
+
         
-        $myfile = fopen(app_path('../config/web_config.php'), "w") or die("Unable to open file!");
-        fwrite($myfile, $set);
-        fclose($myfile);
         if($del){
         	Alert::success('Berhasil','Berhasil Menghapus Tujuan Bagian Tamu');
         }else{
@@ -99,8 +132,7 @@ class BagianCtrl extends Controller
 
         }
 
-        return back();
-
+        return redirect()->route('a.b.ubah',['id'=>$tag_up,'slug'=>Str::slug($request->name)]);
 
     }
 

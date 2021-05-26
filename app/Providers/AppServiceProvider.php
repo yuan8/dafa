@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
          Schema::defaultStringLength(191);
-        
+
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             // Add some items to the menu...
             $event->menu->add('MAIN NAVIGATION');
@@ -57,13 +57,16 @@ class AppServiceProvider extends ServiceProvider
             //     'icon'=>"fas fa-circle"
 
             // ]);
-            // $event->menu->add([
-            //     'text' => 'Master Bagian',
-            //     'url' => route('a.b.index'),
-            //     'can'=>'is_admin',
-            //     'icon'=>"fas fa-clone"
+           
+            $event->menu->add('ADMIN MENU');
+             $event->menu->add([
+                'text' => 'Master Bagian',
+                'url' => route('a.b.index'),
+                'can'=>'is_admin',
+                'icon'=>"fas fa-clone"
 
-            // ]);
+            ]);
+
             $event->menu->add([
                 'text' => 'Pengguna',
                 'url' => route('a.u.index'),
