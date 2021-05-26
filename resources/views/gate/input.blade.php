@@ -73,7 +73,7 @@
                         <img src="" :src="foto" alt="" onerror="errFoto(this)" style="max-width:100%;">
                         <div class="input-group input-group-sm">
                             <input type="file" v-on:change="processFileFoto($event)" class="form-control " name="foto_file" accept="image/*">
-                            <span class="input-group-addon">
+                            <span  class="input-group-addon">
                                 <button type="button" class="btn btn-primary btn-sm">CAMERA</button>
                             </span>
                         </div>
@@ -298,6 +298,7 @@
                     });
 
             },
+            
             submit_form:function(){
                 window.vmodalsubmit.isActive=true;
             },
@@ -451,7 +452,7 @@
             display:false,
             pic_data:null,
             url_filled:false,
-                    },
+        },
         methods:{
             
             extractData:function(){
