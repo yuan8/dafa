@@ -298,7 +298,7 @@
                     });
 
             },
-            
+
             submit_form:function(){
                 window.vmodalsubmit.isActive=true;
             },
@@ -309,6 +309,8 @@
 
                 }
             },
+
+            
             numberIdentity:function(val='',oldvAL){
                 if(val!=oldvAL){
 
