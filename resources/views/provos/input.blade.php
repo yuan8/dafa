@@ -186,7 +186,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>FILE @{{jenis_identity}}</label>
-                                    <input v-on:change="processFile($event)"type="file" class="form-control" name="file" accept="image/*">
+                                    <input id="input-file-id" v-on:change="processFile($event)"type="file" class="form-control" name="file" accept="image/*">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -213,7 +213,7 @@
 @section('js')
 <script  type="application/javascript">
     var bc_provos = new BroadcastChannel('bcprovos-{{$fingerprint}}');
-
+    var api_get_id=null;
     var vactionInput=new Vue({
         el:'#action_input',
         data:{
@@ -271,7 +271,41 @@
 
             ]
         },
+
+
         methods:{
+
+            get_identity:function(){
+
+                if(window.api_get_id!=null){
+                    window.api_get_id.abort();
+                }
+
+                 window.api_get_id=$.post('{{route('api.get.identity')}}',{
+                    'no_identity':this.no_identity,
+                    'jenis_identity':this.jenis_identity,
+                    'nomer_telpon':this.nomer_telpon,
+
+                },function(res){
+                    if(res.code==200){
+                        // vinput.no_identity=res.data.identity_number;
+                        // vinput.jenis_identity=res.data.jenis_identity;
+                        // vinput.berlaku_hingga=res.data.berlaku_hingga;
+                        $('#input-file-id').val(null);
+                        $('#input-file-id').trigger('change');
+                        vinput.identity.rendered_def=null;
+                        vinput.identity.rendered=res.data.path_identity;
+
+                    }else{
+                        $('#input-file-id').val(null);
+                        $('#input-file-id').trigger('change');
+                        vinput.identity.rendered_def=null;
+                        vinput.identity.rendered=res.data.path_identity;
+
+                    }
+                    // console.log(res);
+                });
+            },
             display_identity:function(){
                 $.post('{{route('api.identity.match')}}',{'jenis_identity':this.jenis_identity!=null?this.jenis_identity:null,'no_identity':(this.no_identity.length>5?this.no_identity:null),'nomer_telpon':(this.nomer_telpon.length>12?this.nomer_telpon:null)},function(res){
                         
@@ -315,7 +349,9 @@
                         this.no_identity=char_no_identity;
                         this.bc();
                     }
+                    this.get_identity();
                 }
+
                 return true;
             },
             phoneNumber:function(){
@@ -354,6 +390,8 @@
                              this.bc();
 
                         }
+                        this.get_identity();
+
                 }
 
             },
@@ -379,9 +417,19 @@
             nomer_telpon:'phoneNumber',
             no_identity:'numberIdentity',
             nama:'namaTamu',
-            jenis_identity:  function(val){
-                window.vactionInput.env=val;
-                this.bc();
+            jenis_identity:  function(val,old){
+                if(val!=old){
+
+                    window.vactionInput.env=val;
+                    $('#input-file-id').val(null);
+                    this.identity.rendered_def=null;
+                    this.identity.rendered=null;
+                    $('#input-file-id').trigger('change');
+                    this.identity.rendered=this.identity.recoded_def??null;
+                    this.bc();
+                    this.get_identity();
+                }
+
             },
             foto: 'bc',
             tempat_lahir:'bc',

@@ -21,6 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('extact-data-indentity',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'extract'])->name('api.identity.extract');
 
 
+Route::post('get-identity',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'get_identity'])->name('api.get.identity');
+
 
 
 Route::post('match-data-indentity',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'extract'])->name('api.identity.match');

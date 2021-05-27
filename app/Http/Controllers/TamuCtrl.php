@@ -12,22 +12,49 @@ use Dompdf\Dompdf;
 class TamuCtrl extends Controller
 {
     //
+
+
+
+    public function toGateProvos($id,$slug,Request $request){
+
+        $data=DB::table('tamu as t')
+        ->selectRaw("t.id as id_tamu,t.*")->where('id',$id)->first();
+
+        $data=(array) $data;
+        $data['foto']=isset($data['foto'])?url($data['foto']):null;
+
+        return redirect()->route('p.input')->withInput((array) $data);
+    }
 	public function daftarTamuList(Request $req){
 		$where=[];
-		foreach ($req->q as $key => $value) {
-			# code...
-			$where[]=[$key,'like','%'.$value.'%'];
+        // dd(explode('|',$req->q));
+		foreach (explode('|',$req->q) as $key => $value) {
+            $value=(trim($value));
+            $where[]="replace(t.nomer_telpon,'-','') like '%".$value."%'";
+            $where[]="t.nama like '%".$value."%'";
+            $where[]="t.alamat like '%".$value."%'";
+            $where[]="t.pekerjaan like '%".$value."%'";
+            $where[]="t.tempat_lahir like '%".$value."%'";
+            $where[]="t.tanggal_lahir like '%".$value."%'";
 
 		}
-		$data=BD::table('tamu as t')
-		->leftJoin('indetity_tamu as idt','idt.tamu_id','=','t.id')
+
+		$data=DB::table('tamu as t')
+        ->selectRaw("t.id as id_tamu,t.*,group_concat(distinct(concat(idt.jenis_identity,' : ',idt.identity_number)) SEPARATOR ' || ') as idt_list")
+		->leftJoin('identity_tamu as idt','idt.tamu_id','=','t.id')
 		->leftJoin('log_tamu as lg','lg.tamu_id','=','t.id');
-		foreach ($where as $key => $value) {
-			$data=$data->where($value);
-			# code...
-		}
+        if(count($where)){
+            $data=$data->whereRaw('('.implode(') or (', $where).')');
+        }
 		
-		$data=$data->limit(15)->get();
+		$data=$data
+
+        ->orderBy(DB::raw("(".'('.implode(') + (', $where).')'.")"),'DESC')
+        ->limit(15)
+        ->groupBy('t.id')
+        ->get();
+
+        return view('tamu.archive')->with(['data'=>$data,'req'=>$req]);
 
 
 	}

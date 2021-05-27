@@ -18,7 +18,8 @@ Route::get('/', function () {
 });
 
 Route::prefix('tamu')->group(function(){
-    Route::get('/daftar-tamu',[App\Http\Controllers\HomeController::class, 'daftar_tamu'])->name('g.daftar_tamu');
+    Route::get('/daftar-tamu',[App\Http\Controllers\TamuCtrl::class, 'daftarTamuList'])->name('g.daftar_tamu');
+    Route::get('/daftar-tamu/gate-provos/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'toGateProvos'])->name('g.daftar_tamu.gate_provos');
 });
 
 Route::prefix('provos')->middleware(['auth:web'])->group(function(){

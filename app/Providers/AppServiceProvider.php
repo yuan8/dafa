@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             $event->menu->add([
                 'text' => 'Daftar Tamu',
                 'url' => route('g.daftar_tamu'),
-                'can'=>'provos_and_gate',
+                // 'can'=>'provos_and_gate',
             ]);
 
             $event->menu->add([

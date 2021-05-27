@@ -156,6 +156,8 @@ class UserCtrl extends Controller
 			'username'=>Str::slug($request->username),
 			'role'=>$request->role,
 			'nrp'=>$request->nrp,
+			'pangkat'=>$request->pangkat,
+			'jabatan'=>$request->jabatan,
 			'password'=>Hash::make($request->nrp),
 			'api_token'=>Hash::make($request->email),
 

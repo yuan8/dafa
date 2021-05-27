@@ -115,7 +115,7 @@
                         <div class="btn-group-vertical">
                             @can('is_gate')
                                 @if($gate_ls=='CHECKIN')
-                                <a href="" class="btn btn-success btn-sm">FOTO MASUK GATE</a>
+                                
                                 @endif
                             @endcan
                             @can('gate_check_out_provos')

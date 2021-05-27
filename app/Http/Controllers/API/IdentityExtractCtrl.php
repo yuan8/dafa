@@ -8,9 +8,43 @@ use thiagoalessio\TesseractOCR\TesseractOCR;
 use Storage;
 use Carbon\Carbon;
 use DB;
+use Validator;
 class IdentityExtractCtrl extends Controller
 {
     //
+
+    public function get_identity(Request $request){
+        $valid=Validator::make($request->all(),[
+            'nomer_telpon'=>'required|string|min:8',
+            'jenis_identity'=>'required|min:3|string',
+            'no_identity'=>'required|string|min:3'
+        ]);
+
+        if($valid->fails()){
+            return array('code'=>500,'data'=>[]);
+        }else{
+            $data=DB::table('tamu as t')
+            ->leftJoin('identity_tamu as idt','idt.tamu_id','=','t.id')
+            ->selectRaw('idt.*')
+            ->whereRaw("
+                (t.nomer_telpon like '%".$request->nomer_telpon."%') or ((idt.jenis_identity like '%".$request->jenis_identity."%') and (
+                idt.identity_number like '%".$request->no_identity."%')
+                )
+            ")->groupBy('idt.id')->first();
+
+            if($data){
+                $data->path_identity=isset($data->path_identity)?url($data->path_identity):null;
+                return array('code'=>200,'data'=>$data);
+            }else{
+                return array('code'=>500,'data'=>[]);
+
+            }
+
+
+            
+        }
+
+    }
 
     public function generate_qr_phone_cal(Request $request){
         return view('gate.phone_call')->with('request',$request);

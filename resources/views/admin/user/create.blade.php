@@ -35,7 +35,7 @@
 				</div>
 				<div class="form-group">
 					<label>JABATAN</label>
-					<input type="text" required="" class="form-control" name="pangkat" value="{{old('jabatan')}}">
+					<input type="text" required="" class="form-control" name="jabatan" value="{{old('jabatan')}}">
 				</div>
 				<div class="form-group">
 					<label>ROLE</label>
