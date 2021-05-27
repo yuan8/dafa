@@ -35,7 +35,7 @@
     					</td>
     					<td>
     						@foreach (explode( '||', $d->idt_list??'') as $element)
-    							<p style="font-size:8px; margin:0px; padding: 0px;"><b>{{$element}}</b></p>
+    							<p style="font-size:12px; margin:0px; padding: 0px;"><b>{{$element}}</b></p>
     						@endforeach
     					</td>
     					<td>
