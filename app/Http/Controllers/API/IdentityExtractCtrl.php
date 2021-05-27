@@ -14,28 +14,70 @@ class IdentityExtractCtrl extends Controller
     //
 
     public function get_identity(Request $request){
-        $valid=Validator::make($request->all(),[
-            'nomer_telpon'=>'required|string|min:8',
-            'jenis_identity'=>'required|min:3|string',
-            'no_identity'=>'required|string|min:3'
-        ]);
+        // $valid=Validator::make($request->all(),[
+        //     'nomer_telpon'=>'required|string|min:8',
+        //     'jenis_identity'=>'required|min:3|string',
+        //     'no_identity'=>'required|string|min:3'
+        // ]);
 
-        if($valid->fails()){
-            return array('code'=>500,'data'=>[]);
-        }else{
+        // if($valid->fails()){
+        //     return array('code'=>500,'data'=>[]);
+        // }else{
+        $where=[
+        
+        ];
+
+        $selectRaw=[''];
+
+        $def_tamu=[
+            "t.nama as nama",
+            "t.foto as tamu_foto",
+            "t.pekerjaan as tamu_pekerjaan",
+            "t.nomer_telpon as tamu_nomer_telpon",
+            "t.alamat as tamu_alamat",
+            "t.golongan_darah as tamu_golongan_darah",
+            "t.tempat_lahir as tamu_tempat_lahir",
+            "t.tanggal_lahir as tamu_tanggal_lahir",
+            "t.jenis_kelamin as tamu_jenis_kelamin",
+        ];
+
+
+
+        if(strlen($request->nomer_telpon)>8 and ($request->jenis_identity)){
+            $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%') and (idt.jenis_identity = '".$request->jenis_identity."')";
+            $selectRaw=implode(' , ',$def_tamu).",idt.*";
+        }else if(strlen($request->nomer_telpon)>8){
+            $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')";
+            $selectRaw=implode(' , ',$def_tamu)."";
+        }else if($request->identity_number){
+           $where[]="(idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number like '%".$request->no_identity."%')";
+            $selectRaw=implode(' , ',$def_tamu).",idt.*";
+
+
+        }
+
             $data=DB::table('tamu as t')
             ->leftJoin('identity_tamu as idt','idt.tamu_id','=','t.id')
-            ->selectRaw('idt.*,t.nama as tamu_nama,t.foto as tamu_foto')
-            ->whereRaw("
-                (t.nomer_telpon like '%".$request->nomer_telpon."%') or ((idt.jenis_identity like '%".$request->jenis_identity."%') and (
-                idt.identity_number like '%".$request->no_identity."%')
-                )
-            ")->groupBy('idt.id')->first();
+            ->selectRaw($selectRaw);
+            if(count($where)){
+                $data=$data->whereRaw('('.implode(') and (', $where).')');
+                $data=(array)$data->groupBy('idt.id')->first();
 
-            if($data){
-                $data->path_identity=isset($data->path_identity)?url($data->path_identity):null;
-                $data->tamu_foto=isset($data->tamu_foto)?url($data->tamu_foto):null;
+            }else{
+                $data=[];
+            }
+
+            if(count($data)){
+
+                if(isset($data['path_identity'])){
+                    $data['path_identity']=url($data['path_identity']);
+                }
+                if(isset($data['tamu_foto'])){
+                     $data['tamu_foto']=url($data['tamu_foto']);
+                }
                 
+
+
                 return array('code'=>200,'data'=>$data);
             }else{
                 return array('code'=>500,'data'=>[]);
@@ -44,7 +86,7 @@ class IdentityExtractCtrl extends Controller
 
 
             
-        }
+        // }
 
     }
 

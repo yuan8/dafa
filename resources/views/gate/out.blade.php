@@ -123,7 +123,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Jenis Identitas*</label>
-                                <select name="jenis_identity" required id="" v-model="jenis_identity"  class="form-control">
+                                <select disabled="" name="jenis_identity" required id="" v-model="jenis_identity"  class="form-control">
                                     @foreach (config('web_config.identity_list')??[] as $k)
                                         <option value="{{$k['tag']}}">{{$k['name']}}</option>
                                         {{-- expr --}}
@@ -132,7 +132,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="">Nomer Identitas*</label>
-                                <input name="no_identity" value="" required type="text" v-model="no_identity" class="form-control">
+                                <input disabled="" name="no_identity" value="" required type="text" v-model="no_identity" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="">Nama Tamu*</label>
@@ -166,7 +166,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
-                                <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
+                                <input disabled="" name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
                             
                             </div>
                             <div class="form-group">
@@ -286,33 +286,134 @@
             ]
         },
         methods:{
-            get_identity:function(){
+             get_identity:function(expt='dd'){
 
                 if(window.api_get_id!=null){
                     window.api_get_id.abort();
                 }
-
                  window.api_get_id=$.post('{{route('api.get.identity')}}',{
                     'no_identity':this.no_identity,
                     'jenis_identity':this.jenis_identity,
                     'nomer_telpon':this.nomer_telpon,
-
                 },function(res){
                     if(res.code==200){
-                        // vinput.no_identity=res.data.identity_number;
-                        // vinput.jenis_identity=res.data.jenis_identity;
-                        // vinput.berlaku_hingga=res.data.berlaku_hingga;
-                        if(vinput.foto_file_cam==false && vinput.foto_file==null){
-                            vinput.foto=res.data.tamu_foto;
-                        }
+                        window.res=res;
+                        console.log(expt);
+                        if(vinput.identity.file==null){
+                                if((res.data.tamu_foto!=undefined) && !isEmpty(res.data.tamu_foto)){
+                                    if(vinput.foto!=res.data.tamu_foto){
+                                            if(vinput.foto_file_cam==false && vinput.foto_file==null){
+                                                vinput.foto=res.data.tamu_foto;
+                                            }
+                                        }
+                                }
 
-                        $('#input-file-id').val(null);
-                        $('#input-file-id').trigger('change');
-                        vinput.identity.rendered_def=null;
-                        vinput.identity.rendered=res.data.path_identity;
+                            }
 
+                            if(expt!='nomer_telpon'){
+                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
+                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
+                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
+                                        
+                                    }
+                                }
+                            }
+
+                            if(expt!='nomer_telpon'){
+                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
+                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
+                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
+                                        
+                                    }
+                                }
+                            }
+
+                            if(expt!='nomer_identity'){
+
+                                if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
+                                    if(vinput.no_identity!=res.data.identity_number){
+                                        vinput.no_identity=res.data.identity_number;
+                                        
+                                    }
+                                }
+                            }
+
+
+                            if(expt!='jenis_identity'){
+                                if((res.data.jenis_identity!=undefined) && !isEmpty(res.data.jenis_identity)){
+                                    if(vinput.jenis_identity!=res.data.jenis_identity){
+                                        vinput.jenis_identity=res.data.jenis_identity;
+                                        
+                                    }
+                                }
+                            }
+
+                            if((res.data.tamu_tempat_lahir!=undefined) && !isEmpty(res.data.tamu_tempat_lahir)){
+                                if(vinput.tempat_lahir!=res.data.tamu_tempat_lahir){
+                                    vinput.tempat_lahir=res.data.tempat_lahir;
+                                    
+                                }
+                            }
+                            if((res.data.tamu_tanggal_lahir!=undefined) && !isEmpty(res.data.tamu_tanggal_lahir)){
+                                if(vinput.tanggal_lahir!=res.data.tamu_tanggal_lahir){
+                                    vinput.tanggal_lahir=res.data.tamu_tanggal_lahir;
+                                    
+                                }
+                            }
+
+                            if((res.data.tamu_pekerjaan!=undefined) && !isEmpty(res.data.tamu_pekerjaan)){
+                                if(vinput.pekerjaan!=res.data.tamu_pekerjaan){
+                                    vinput.pekerjaan=res.data.tamu_pekerjaan;
+                                    
+                                }
+                            }
+
+                            if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
+                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
+                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
+                                    
+                                }
+                            }
+
+                             if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
+                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
+                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
+                                    
+                                }
+                            }
+
+
+                             if((res.data.tamu_jenis_kelamin!=undefined) && !isEmpty(res.data.tamu_jenis_kelamin)){
+                                if(vinput.jenis_kelamin!=res.data.tamu_jenis_kelamin){
+                                    vinput.jenis_kelamin=res.data.tamu_jenis_kelamin;
+                                    
+                                }
+                            }
+
+                            vinput.identity.rendered_def=null;
+                            vinput.identity.rendered=null;
+                            vinput.identity.recorded=null;
+
+                            if((res.data.path_identity!=undefined) && !isEmpty(res.data.path_identity)){
+                                if(vinput.identity.rendered!=res.data.path_identity){
+                                    vinput.identity.rendered_def=res.data.path_identity;
+                                    vinput.identity.rendered=res.data.path_identity;
+                                    vinput.identity.recorded=res.data.path_identity;
+
+                                }
+                            }
+
+                             
+
+                            $('#input-file-id').val(null);
+                            $('#input-file-id').trigger('change');
+                            
+
+                            
+                            
+
+                        
                     }
-                    // console.log(res);
                 });
             },
             display_identity:function(){
@@ -320,11 +421,11 @@
                         
                        if(res.code==200){
                          if(vinput.identity.file==null){
-                            
-                        }
-                    }else{
+                                
+                            }
+                        }else{
 
-                    }
+                        }
                     });
 
             },
@@ -356,7 +457,7 @@
                         }
 
                         this.no_identity=char_no_identity;
-                        this.get_identity();
+                        this.get_identity('identity_number');
 
                         this.bc();
 
@@ -393,6 +494,8 @@
                         if(window.them_phone!=char_phone){
                             this.nomer_telpon=char_phone;
                             window.them_phone=char_phone;
+                            this.get_identity('nomer_telpon');
+
                             this.bc();
 
                         }else{
@@ -400,7 +503,6 @@
                              this.bc();
 
                         }
-                        this.get_identity();
 
                 }
 
@@ -446,7 +548,7 @@
 
                     this.identity.rendered=this.identity.recoded_def??null;
                     this.bc();
-                    this.get_identity();
+                    this.get_identity('jenis_identity');
 
                 }
             },

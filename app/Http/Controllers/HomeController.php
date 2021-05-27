@@ -340,10 +340,7 @@ class HomeController extends Controller
         
 
 
-        $check_id=DB::table('identity_tamu as ind')
-        ->where('identity_number',$request->no_identity)
-        ->where('jenis_identity',$request->jenis_identity)
-        ->first();
+      
 
 
 
@@ -398,9 +395,16 @@ class HomeController extends Controller
                 ->first();
         }
 
+        $check_id=DB::table('identity_tamu as ind')
+        ->where('tamu_id',$check_tamu->id)
+        ->where('jenis_identity',$request->jenis_identity)
+        ->first();
+
         $path_identity=null;
 
         if($check_id){
+            
+
             if($check_id->tamu_id!=$check_tamu->id){
                 $check_id=null;
                 Alert::error('Gagal','Data Identitas Tamu Yang Telah Terekam Sebelumya Tidak dapat Digunakan Kembali untuk Tamu Berbeda');
