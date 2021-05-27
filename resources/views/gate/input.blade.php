@@ -442,8 +442,6 @@
             no_identity:'numberIdentity',
             nama:'namaTamu',
             jenis_identity:  function(val,old){
-                window.vactionInput.env='CCCC';
-
                 if(val!=old){
                    window.vactionInput.env=val;
                     $('#input-file-id').val(null);

@@ -418,13 +418,18 @@
             no_identity:'numberIdentity',
             nama:'namaTamu',
             jenis_identity:  function(val,old){
+                console.log(val,old);
+
                 if(val!=old){
 
-                    window.vactionInput.env='CCCC';
+
                     $('#input-file-id').val(null);
+                    this.identity.recorded=null;
+                    this.identity.rendered_def=null;
                     this.identity.rendered_def=null;
                     this.identity.rendered=null;
                     $('#input-file-id').trigger('change');
+
                     this.identity.rendered=this.identity.recoded_def??null;
                     this.bc();
                     this.get_identity();
