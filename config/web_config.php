@@ -7,18 +7,118 @@
   array (
     0 => 
     array (
+      'tag' => 'KABAIS',
+      'name' => 'KABAIS',
+    ),
+    1 => 
+    array (
+      'tag' => 'WAKABAIS',
+      'name' => 'WAKABAIS',
+    ),
+    2 => 
+    array (
       'tag' => 'DIR-A',
       'name' => 'DIREKTORAT A',
     ),
-    1 => 
+    3 => 
     array (
       'tag' => 'DIR-B',
       'name' => 'DIREKTORAT B',
     ),
-    2 => 
+    4 => 
     array (
       'tag' => 'DIR-C',
       'name' => 'DIREKTORAT C',
+    ),
+    5 => 
+    array (
+      'tag' => 'DIR-D',
+      'name' => 'DIREKTORAT D',
+    ),
+    6 => 
+    array (
+      'tag' => 'DIR-E',
+      'name' => 'DIREKTORAT E',
+    ),
+    7 => 
+    array (
+      'tag' => 'DIR-F',
+      'name' => 'DIREKTORAT F',
+    ),
+    8 => 
+    array (
+      'tag' => 'DIR-G',
+      'name' => 'DIREKTORAT G',
+    ),
+    9 => 
+    array (
+      'tag' => 'DIR-H',
+      'name' => 'DIREKTORAT H',
+    ),
+    10 => 
+    array (
+      'tag' => 'SATINTELTEK',
+      'name' => 'SATINTELTEK',
+    ),
+    11 => 
+    array (
+      'tag' => 'SATINTEL',
+      'name' => 'SATINTEL',
+    ),
+    12 => 
+    array (
+      'tag' => 'SATINDUK',
+      'name' => 'SATINDUK',
+    ),
+    13 => 
+    array (
+      'tag' => 'GEOSPASIKA',
+      'name' => 'GEOSPASIKA',
+    ),
+    14 => 
+    array (
+      'tag' => 'INFODATA',
+      'name' => 'INFODATA',
+    ),
+    15 => 
+    array (
+      'tag' => 'DISSANDI',
+      'name' => 'DISSANDI',
+    ),
+    16 => 
+    array (
+      'tag' => 'PSIKOLOGI',
+      'name' => 'PSIKOLOGI',
+    ),
+    17 => 
+    array (
+      'tag' => 'DENKES',
+      'name' => 'DENKES',
+    ),
+    18 => 
+    array (
+      'tag' => 'DENMA',
+      'name' => 'DENMA',
+    ),
+    19 => 
+    array (
+      'tag' => 'SEKRETARIAT',
+      'name' => 'SEKRETARIAT',
+    ),
+    20 => 
+    array (
+      'tag' => 'SMIN-KAWAKA',
+      'name' => 'SMIN KA/WAKA',
+    ),
+    21 => 
+    array (
+      'tag' => 'BA',
+      'name' => 'BA',
+    ),
+    22 => 
+    array (
+      'tag' => 'MINKU',
+      'name' => 'MINKU',
     ),
   ),
   'kategori_tamu' => 
