@@ -217,7 +217,7 @@
     var vactionInput=new Vue({
         el:'#action_input',
         data:{
-            env:'KTP'
+            env:'ddddd'
         },
         methods:{
             ktp:function(){
@@ -406,7 +406,6 @@
 
             },
             processFile:function(event){
-                console.log(event.target.files[0]??null,'methods');
                 this.identity.file = event.target.files[0]??null;
 
             }
@@ -420,7 +419,7 @@
             jenis_identity:  function(val,old){
                 if(val!=old){
 
-                    window.vactionInput.env=val;
+                    window.vactionInput.env='CCCC';
                     $('#input-file-id').val(null);
                     this.identity.rendered_def=null;
                     this.identity.rendered=null;
