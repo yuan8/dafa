@@ -1,6 +1,13 @@
 @extends('adminlte::page')
 
+@section('css')
+<script type="text/javascript" src="{{asset('tparty/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('tparty/bower_components/datatables.net-bs4/js/dataTables.bootstrap4.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{asset('tparty/bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css')}}">
+@stop
 @section('content_header')
+
+
 <a href="{{route('a.b.tambah')}}" class="btn btn-primary">TAMBAH BAGIAN</a>
 @stop
 @section('content')
@@ -34,7 +41,7 @@
         
     </div>
     <div class="card-body">
-        <div class="table-responsive">
+        <div class="table-responsive col-md-12">
             <table class="table table-bordered" id="v-kategori">
                 <thead>
                     <tr>
@@ -59,6 +66,14 @@
         </div>
     </div>
 </div>
+<style type="text/css">
+    .dataTables_wrapper.form-inline{
+        display: block;
+    }
+    .col-xs-12{
+        width:100%;
+    }
+</style>
 
 
 <div class="modal fade modal-danger show" id="modal-delete" ><div class="modal-dialog">
@@ -109,13 +124,12 @@
     });
 
 
-    var vkategori=new Vue({
-        el:'#v-kategori',
-        data:{
-            items:<?=  json_encode($data) ?>,
+   $('#v-kategori').dataTable({
+        sort:false,
+        paginate:false
+   });
 
-        }
-    })
+
 </script>
 
 @stop

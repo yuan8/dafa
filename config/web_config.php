@@ -110,26 +110,6 @@
       'tag' => 'SMIN-KAWAKA',
       'name' => 'SMIN KA/WAKA',
     ),
-    21 => 
-    array (
-      'tag' => 'BA',
-      'name' => 'BA',
-    ),
-    22 => 
-    array (
-      'tag' => 'MINKU',
-      'name' => 'MINKU',
-    ),
-    23 => 
-    array (
-      'tag' => 'AAA',
-      'name' => 'a',
-    ),
-    24 => 
-    array (
-      'tag' => 'SDS',
-      'name' => 'dsds',
-    ),
   ),
   'kategori_tamu' => 
   array (
