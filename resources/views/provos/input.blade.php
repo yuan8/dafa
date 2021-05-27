@@ -212,6 +212,14 @@
 
 @section('js')
 <script  type="application/javascript">
+    function isEmpty(data){
+        if(data === null || data === '') {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     var bc_provos = new BroadcastChannel('bcprovos-{{$fingerprint}}');
     var api_get_id=null;
     var vactionInput=new Vue({
@@ -559,7 +567,16 @@
             }
         }
     });
-    vinput.bc();
+    
+      $(function(){
+     setTimeout(function(){
+        window.vinput.get_identity();
+        window.vinput.bc();
+
+        console.log('init');
+     },1000);
+ });
+
 </script>
 
 

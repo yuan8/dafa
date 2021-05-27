@@ -224,6 +224,14 @@
 <script  type="application/javascript">
     var bc_provos = new BroadcastChannel('bcgate-{{$fingerprint}}');
 
+    function isEmpty(data){
+        if(data === null || data === '') {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     var vactionInput=new Vue({
         el:'#action_input',
         data:{
@@ -588,7 +596,16 @@
             }
         }
     });
-    vinput.bc();
+    
+      $(function(){
+     setTimeout(function(){
+        window.vinput.get_identity();
+        window.vinput.bc();
+
+        console.log('init');
+     },1000);
+ });
+
 
 </script>
 
