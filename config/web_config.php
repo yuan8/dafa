@@ -120,6 +120,16 @@
       'tag' => 'MINKU',
       'name' => 'MINKU',
     ),
+    23 => 
+    array (
+      'tag' => 'AAA',
+      'name' => 'a',
+    ),
+    24 => 
+    array (
+      'tag' => 'SDS',
+      'name' => 'dsds',
+    ),
   ),
   'kategori_tamu' => 
   array (

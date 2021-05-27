@@ -170,7 +170,11 @@
             </tbody>
         </table>
        </div>
-       {{$data_visitor->links()}}
+       {{$data_visitor->links('')}}
+
+    </div>
+    <div class="box-footer">
+        
     </div>
 </div>
 

@@ -9,15 +9,17 @@ use Alert;
 use Storage;
 use Session;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Session\SessionManager;
 class BagianCtrl extends Controller
 {
     //
 
 
-    public function index(Request $request){
+    public static function index(Request $request){   
     	$data_seting=config('web_config.tujuan_tamu')??[];
-    	return view('admin.bagian.index')->with(['data'=>$data_seting]);
+    	return view('admin.bagian.index')->with(['data'=>$data_seting,'url'=>$request->url()]);
     }
+
 
      public function create(Request $request){
     	return view('admin.bagian.create');
@@ -126,9 +128,9 @@ class BagianCtrl extends Controller
 
         
         if($del){
-        	Alert::success('Berhasil','Berhasil Menghapus Tujuan Bagian Tamu');
+        	Alert::success('Berhasil','Berhasil Mengubah Tujuan Bagian Tamu');
         }else{
-       		 Alert::success('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
+       		Alert::error('Gagal','Gagal Mengubah Tujuan Bagian Tamu');
 
         }
 
@@ -137,7 +139,7 @@ class BagianCtrl extends Controller
     }
 
     public function delete($tag,$slug,Request $request){
-    	$valid=Validator::make($request->all(),[
+    	$valid=Validator::make(['tag'=>$tag],[
     		'tag'=>'string|required'
     	]);
 
@@ -169,13 +171,20 @@ class BagianCtrl extends Controller
         $myfile = fopen(app_path('../config/web_config.php'), "w") or die("Unable to open file!");
         fwrite($myfile, $set);
         fclose($myfile);
+        Artisan::call('config:clear');
+
         if($del){
         	Alert::success('Berhasil','Berhasil Menghapus Tujuan Bagian Tamu');
         }else{
-       		 Alert::success('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
-
+       		Alert::error('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
         }
 
+        config(['web_config.tujuan_tamu'=>$val]);
+
+
+        $r=$request;
+
+        
         return back();
 
 
