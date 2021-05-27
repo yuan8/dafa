@@ -1,11 +1,11 @@
 [
     {
-        "tag": "KABAIS",
-        "name": "KABAIS"
+        "tag": "DENKES",
+        "name": "DENKES"
     },
     {
-        "tag": "WAKABAIS",
-        "name": "WAKABAIS"
+        "tag": "DENMA",
+        "name": "DENMA"
     },
     {
         "tag": "DIR-A",
@@ -40,16 +40,8 @@
         "name": "DIREKTORAT H"
     },
     {
-        "tag": "SATINTELTEK",
-        "name": "SATINTELTEK"
-    },
-    {
-        "tag": "SATINTEL",
-        "name": "SATINTEL"
-    },
-    {
-        "tag": "SATINDUK",
-        "name": "SATINDUK"
+        "tag": "DISSANDI",
+        "name": "DISSANDI"
     },
     {
         "tag": "GEOSPASIKA",
@@ -60,20 +52,24 @@
         "name": "INFODATA"
     },
     {
-        "tag": "DISSANDI",
-        "name": "DISSANDI"
+        "tag": "KABAIS",
+        "name": "KABAIS"
     },
     {
         "tag": "PSIKOLOGI",
         "name": "PSIKOLOGI"
     },
     {
-        "tag": "DENKES",
-        "name": "DENKES"
+        "tag": "SATINDUK",
+        "name": "SATINDUK"
     },
     {
-        "tag": "DENMA",
-        "name": "DENMA"
+        "tag": "SATINTELTEK",
+        "name": "SATINTELTEK"
+    },
+    {
+        "tag": "SATINTEL",
+        "name": "SATINTEL"
     },
     {
         "tag": "SEKRETARIAT",
@@ -82,5 +78,13 @@
     {
         "tag": "SMIN-KAWAKA",
         "name": "SMIN KA\/WAKA"
+    },
+    {
+        "tag": "WAKABAIS",
+        "name": "WAKABAIS"
+    },
+    {
+        "tag": "DDD",
+        "name": "ddd"
     }
 ]

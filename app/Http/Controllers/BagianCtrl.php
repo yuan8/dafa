@@ -31,7 +31,8 @@ class BagianCtrl extends Controller
         foreach ($data_key as $key => $value) {
             $data_key[$key]=($value.'|________|'.$key);
         }
-        array_multisort($data_key);
+
+        // dd(array_multisort($data_key,t),($data_key));
         $data_sort=[];
         foreach ($data_key as $key => $value) {
             $id=explode('|________|',$value)[1];
