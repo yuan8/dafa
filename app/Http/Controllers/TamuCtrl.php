@@ -21,6 +21,10 @@ class TamuCtrl extends Controller
         ->selectRaw("t.id as id_tamu,t.*")->where('id',$id)->first();
 
         $data=(array) $data;
+
+        // dd($data);
+        // $data['no_identity']
+
         $data['foto']=isset($data['foto'])?url($data['foto']):null;
 
         return redirect()->route('p.input')->withInput((array) $data);

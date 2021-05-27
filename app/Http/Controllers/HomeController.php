@@ -76,7 +76,7 @@ class HomeController extends Controller
 
     public function gate_check_out($id_log,$slug,Request $request){
 
-        $U=Auth::User();
+            $U=Auth::User();
             $tamu=DB::table('log_tamu')
             ->whereRaw("(id=".$id_log." and  gate_checkout is null)")
             ->first();
@@ -117,7 +117,24 @@ class HomeController extends Controller
                  if($request->foto_file){
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
                     $path_foto=Storage::url($path_foto);
+                }else if($request->file_foto_cam){
+                        
+                    if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                        $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+
+                        $data_foto = base64_decode($data_foto);
+                        $path_foto=Storage::put('public/indentity/id-'.
+                            ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png',$data_foto);
+                        
+                        $path_foto='/storage/indentity/id-'.
+                            ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png';
+
+
+                    }
                 }
+
+
+
 
                 if($path_foto){
                     $data['foto']=$path_foto;
@@ -143,11 +160,7 @@ class HomeController extends Controller
                     }
                 }
 
-                if($request->file){
-                    $path_identity=Storage::put('public/indentity/id-'.($tamu?$tamu->id:'cache').'/'.$request->jenis_identity,$request->file);
-                    $path_identity=Storage::url($path_identity);
-                }
-
+               
                 if(!$check_id){
                     $check_id=DB::table('identity_tamu')->insertGetId([
                         'tamu_id'=>$tamu->id,
@@ -517,6 +530,7 @@ class HomeController extends Controller
                 ->where('log.provos_checkin','<=',$day_last)
                 ->where('log.gate_checkin','=',null)
                 ->where('log.gate_checkout','=',null)
+                ->groupBy('v.id','log.id')
 
                 ->orderBy('log.provos_checkin','desc')
                 ->get();
@@ -530,6 +544,9 @@ class HomeController extends Controller
                 ->where('log.provos_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
                 ->orderBy('log.provos_checkin','desc')
+                ->groupBy('v.id','log.id')
+
+
                 ->get();
             break;
             case 'GATE_CHECKOUT':
@@ -540,6 +557,8 @@ class HomeController extends Controller
                 ->where('log.provos_checkin','>=',$day)
                 ->where('log.provos_checkin','<=',$day_last)
                 ->orderBy('log.provos_checkin','desc')
+                ->groupBy('v.id','log.id')
+                
                 ->get();
             break;
         }
@@ -559,6 +578,7 @@ class HomeController extends Controller
             $tamu=DB::table('log_tamu')
             ->whereRaw("(id=".$id_log." and  gate_checkout is null and gate_checkin is null)")
             ->first();
+
             if($tamu){
                 $data=[
                 'nama'=>$request->nama,
@@ -596,6 +616,20 @@ class HomeController extends Controller
                  if($request->foto_file){
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
                     $path_foto=Storage::url($path_foto);
+                }else if($request->file_foto_cam){
+                        
+                    if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                        $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+
+                        $data_foto = base64_decode($data_foto);
+                        $path_foto=Storage::put('public/indentity/id-'.
+                            ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png',$data_foto);
+                        
+                        $path_foto='/storage/indentity/id-'.
+                            ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png';
+
+
+                    }
                 }
 
                 if($path_foto){

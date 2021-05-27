@@ -9,28 +9,26 @@
 <script type="application/javascript" src="{{asset('tparty/bower_components/webcamjs/webcam.js') }}"></script>
 <div  id="picIdInput">
     <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px; position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
-       <div class="box">
+      <div class="box">
            <div class="box-body">
-                <div class="row">
-            <div class="col-md-12">
-                 <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span> INPUT IDENTITY @{{ jenis }}</h5>
-            <input type="hidden" v-model="jenis">
-            </div>
-            <div class="col-md-12" style="margin-bottom: 10px;">
-                <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
+                <div class="col-md-12">
+                     <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
+                 </div>
+                
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
 
+                </div>
+               
             </div>
-           
-        </div>
        
-           </div>
-           <div class="box-footer">
+          <div class="box-footer">
                
                 <div class="btn-group">
                     <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
                     <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Resnap</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="extractData">Extrak Data</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Save Data</button>
+                   
+                    <button v-if="url_filled"  class="btn btn-primary" @click="save">Save Data</button>
 
                 </div>
           
@@ -67,9 +65,11 @@
                     <div class="text-center" style="width:100%; min-height:100px; border:1px solid #222">
                         <img src="" :src="foto" alt="" onerror="errFoto(this)" style="max-width:100%;">
                         <div class="input-group input-group-sm">
+                              <input type="hidden" name="file_foto_cam" v-model="foto_file_cam">
                             <input type="file" class="form-control " v-on:change="processFileFoto($event)" name="foto_file" accept="image/*">
+
                             <span class="input-group-addon">
-                                <button type="button" class="btn btn-primary btn-sm">CAMERA</button>
+                                <button  v-on:click="getFotoCam()"  type="button" class="btn btn-primary btn-sm">CAMERA</button>
                             </span>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
-                            <button type="button" @click="submit_form" class="btn btn-primary">CHEKIN GATE</button>
+                            <button type="button" @click="submit_form" class="btn btn-primary">KELUAR GATE</button>
                         </div>
                         <hr>
                     </div>
@@ -258,6 +258,8 @@
             nama: '{{$data->nama}}',
             foto:'{{($data->foto)?asset($data->foto):''}}',
             foto_file:null,
+            foto_file_cam:null,
+
             foto_def:'{{($data->foto)?asset($data->foto):''}}',
             tempat_lahir: '{{$data->tempat_lahir}}',
             golongan_darah:'{{$data->golongan_darah??'-'}}',
@@ -284,6 +286,35 @@
             ]
         },
         methods:{
+            get_identity:function(){
+
+                if(window.api_get_id!=null){
+                    window.api_get_id.abort();
+                }
+
+                 window.api_get_id=$.post('{{route('api.get.identity')}}',{
+                    'no_identity':this.no_identity,
+                    'jenis_identity':this.jenis_identity,
+                    'nomer_telpon':this.nomer_telpon,
+
+                },function(res){
+                    if(res.code==200){
+                        // vinput.no_identity=res.data.identity_number;
+                        // vinput.jenis_identity=res.data.jenis_identity;
+                        // vinput.berlaku_hingga=res.data.berlaku_hingga;
+                        if(vinput.foto_file_cam==false && vinput.foto_file==null){
+                            vinput.foto=res.data.tamu_foto;
+                        }
+
+                        $('#input-file-id').val(null);
+                        $('#input-file-id').trigger('change');
+                        vinput.identity.rendered_def=null;
+                        vinput.identity.rendered=res.data.path_identity;
+
+                    }
+                    // console.log(res);
+                });
+            },
             display_identity:function(){
                 $.post('{{route('api.identity.match')}}',{'jenis_identity':this.jenis_identity!=null?this.jenis_identity:null,'no_identity':(this.no_identity.length>5?this.no_identity:null),'nomer_telpon':(this.nomer_telpon.length>12?this.nomer_telpon:null)},function(res){
                         
@@ -325,7 +356,10 @@
                         }
 
                         this.no_identity=char_no_identity;
+                        this.get_identity();
+
                         this.bc();
+
                     }
                 }
                 return true;
@@ -366,6 +400,8 @@
                              this.bc();
 
                         }
+                        this.get_identity();
+
                 }
 
             },
@@ -387,6 +423,9 @@
              processFileFoto:function(event){
                 this.foto_file = event.target.files[0]??null;
 
+            },
+             getFotoCam:function(){
+                vpicItput.display=true;
             }
         },
 
@@ -395,9 +434,21 @@
             nomer_telpon:'phoneNumber',
             no_identity:'numberIdentity',
             nama:'namaTamu',
-            jenis_identity:  function(val){
-                window.vactionInput.env=val;
-                this.bc();
+            jenis_identity:  function(val,old){
+                window.vactionInput.env='CCCC';
+
+                if(val!=old){
+                   window.vactionInput.env=val;
+                    $('#input-file-id').val(null);
+                    this.identity.rendered_def=null;
+                    this.identity.rendered=null;
+                    $('#input-file-id').trigger('change');
+                    this.identity.rendered=this.identity.recoded_def??null;
+                    this.bc();
+                    this.get_identity();
+                    this.bc();
+
+                }
             },
             foto: 'bc',
             foto_file: function(file,old){
@@ -444,65 +495,19 @@
  var vpicItput=new Vue({
         el:'#picIdInput',
         data:{
-            jenis:'KTP',
             display:false,
             pic_data:null,
             url_filled:false,
-                    },
+            },
         methods:{
-            
-            extractData:function(){
-                if(this.pic_data){
-                    var data={
-                        jenis:this.jenis,
-                        pic_data:this.pic_data,
-                    };
+             save:function(){
+                $('#file-foto').val(null);
+                $('#file-foto').trigger('change');
 
-                    let timerInterval
-                    var interval_time=0;
-                        Swal.fire({
-                          title: 'Extrasi data!',
-                          html: '<b></b> milliseconds.',
-                          timer: 5000,
-                          timerProgressBar: true,
-                          didOpen: () => {
-                            Swal.showLoading()
-                            timerInterval = setInterval(() => {
-                              const content = Swal.getContent()
-                              if (content) {
-                                const b = content.querySelector('b')
-                                if (b) {
-                                interval_time+=100;
-                                  b.textContent = interval_time;
-                                }
-                              }
-                            }, 100)
-                          },
-                          willClose: () => {
-                            clearInterval(timerInterval)
-                          }
-                        }).then((result) => {
-                          /* Read more about handling dismissals below */
-                          if (result.dismiss === Swal.DismissReason.timer) {
-                            console.log('I was closed by the timer')
-                          }
-                    });
+                vinput.foto_file_cam=this.pic_data;
+                vinput.foto=this.foto=this.pic_data;
+                
 
-                    $.post('{{route('api.identity.extract')}}',data,function(res){
-                          Swal.fire("Berhasil", "Extrasi data selesai", "success");
-                                vinput.nama=res.data.nama;
-                                vinput.no_identity=res.data.nik;
-                                vinput.tanggal_lahir=res.data.tanggal_lahir;
-                                vinput.tempat_lahir=res.data.tempat_lahir;
-                                vinput.foto=res.data.foto;
-                                vinput.alamat=res.data.alamat;
-                                vinput.nomer_telpon=res.data.nomer_telpon;
-
-
-
-
-                    });
-                }
             },
             closePicInput:function(){
                 this.display=false;

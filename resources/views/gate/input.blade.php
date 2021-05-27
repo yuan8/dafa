@@ -16,19 +16,18 @@
     <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
        <div class="box">
            <div class="box-body">
-            <div class="col-md-12">
-                 <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
-             </div>
-            
-            <div class="col-md-12" style="margin-bottom: 10px;">
-                <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
+                <div class="col-md-12">
+                     <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
+                 </div>
+                
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
 
+                </div>
+               
             </div>
-           
-        </div>
        
-           </div>
-           <div class="box-footer">
+          <div class="box-footer">
                
                 <div class="btn-group">
                     <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
@@ -83,7 +82,7 @@
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
-                            <button type="button" @click="submit_form" class="btn btn-primary">CHEKIN GATE</button>
+                            <button type="button" @click="submit_form" class="btn btn-primary">MASUK GATE</button>
                         </div>
                         <hr>
                     </div>
@@ -306,6 +305,10 @@
                         // vinput.no_identity=res.data.identity_number;
                         // vinput.jenis_identity=res.data.jenis_identity;
                         // vinput.berlaku_hingga=res.data.berlaku_hingga;
+                        if(vinput.foto_file_cam==false && vinput.foto_file==null){
+                            vinput.foto=res.data.tamu_foto;
+                        }
+
                         $('#input-file-id').val(null);
                         $('#input-file-id').trigger('change');
                         vinput.identity.rendered_def=null;

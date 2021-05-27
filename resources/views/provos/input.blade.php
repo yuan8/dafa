@@ -72,7 +72,7 @@
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
-                            <button type="button" @click="submit_form" class="btn btn-primary">CHEKIN PROVOS</button>
+                            <button type="button" @click="submit_form" class="btn btn-primary">MASUK PROVOS</button>
                         </div>
                         <hr>
                     </div>
@@ -90,19 +90,19 @@
                     </div>
                      <div class="form-group">
                         <label>Instansi</label>
-                       <input type="text" class="form-control" name="instansi">
+                       <input type="text" class="form-control" name="instansi" value="{{old('instansi')}}">
                     </div>
                     <div class="form-group">
                         <label>Tujuan*</label>
                         <select class="form-control" v-model="tujuan" name="tujuan[]" multiple="">
                             @foreach (config('web_config.tujuan_tamu')??[] as $t)
-                                 <option value="{{$t['tag']}}">{{$t['name']}}</option>
+                                 <option value="{{$t['tag']}}" {{in_array($t['tag'],old('tujuan')??[])?'selected':''}}>{{$t['name']}}</option>
                             @endforeach
                         </select>
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
-                        <textarea name="keperluan" class="form-control"></textarea>
+                        <textarea name="keperluan" class="form-control">{!!old('keperluan')!!}</textarea>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -254,7 +254,7 @@
             alamat: '{{old('alamat')}}',
             nomer_telpon: "{{old('nomer_telpon')??'+62'}}",
             pekerjaan: "{{old('pekerjaan')}}",
-            kategori_tamu: null,
+            kategori_tamu: "{{old('kategori_tamu')}}",
             agama: "{{old('agama')}}",
             berlaku_hingga: "{{old('berlaku_hingga')}}",
             btn_check: false,
@@ -397,6 +397,7 @@
             },
             bc:function(){
                 window.bc_provos.postMessage(vinput.$data);
+                console.log((this.nomer_telpon.length>11) , (this.no_identity.length>3) , (this.nama.length>3), (this.jenis_kelamin!=null) , (this.kategori_tamu!=null));
                 if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.kategori_tamu!=null)){
                     this.btn_check=true;
 

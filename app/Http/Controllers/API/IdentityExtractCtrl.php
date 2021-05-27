@@ -25,7 +25,7 @@ class IdentityExtractCtrl extends Controller
         }else{
             $data=DB::table('tamu as t')
             ->leftJoin('identity_tamu as idt','idt.tamu_id','=','t.id')
-            ->selectRaw('idt.*')
+            ->selectRaw('idt.*,t.nama as tamu_nama,t.foto as tamu_foto')
             ->whereRaw("
                 (t.nomer_telpon like '%".$request->nomer_telpon."%') or ((idt.jenis_identity like '%".$request->jenis_identity."%') and (
                 idt.identity_number like '%".$request->no_identity."%')
@@ -34,6 +34,8 @@ class IdentityExtractCtrl extends Controller
 
             if($data){
                 $data->path_identity=isset($data->path_identity)?url($data->path_identity):null;
+                $data->tamu_foto=isset($data->tamu_foto)?url($data->tamu_foto):null;
+                
                 return array('code'=>200,'data'=>$data);
             }else{
                 return array('code'=>500,'data'=>[]);
