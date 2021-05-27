@@ -263,7 +263,8 @@ class TamuCtrl extends Controller
 
 
 	static function export_excel($data,$start_date,$end_date,$status){
-	
+	   ini_set('memory_limit',-1);
+        ini_set('max_execution_time', -1);
 		// dd(public_path('them/export-tamu.xlsx'));
 
 
@@ -356,8 +357,8 @@ class TamuCtrl extends Controller
 
 
 	static function export_pdf($data,$start_date,$end_date,$status){
-		
-
+		ini_set('memory_limit',-1);
+        ini_set('max_execution_time', -1);
 		$DOM=view('gate.export_pdf')->with(['data'=>$data,'start'=>$start_date,'end'=>$end_date,'status'=>$status])->render();
 
 		
