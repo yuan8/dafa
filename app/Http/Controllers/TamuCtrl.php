@@ -36,8 +36,8 @@ class TamuCtrl extends Controller
             $value=(trim($value));
             $where[]="replace(t.nomer_telpon,'-','') like '%".trim(str_replace('-', '', $value))."%'";
             $where[]="t.nama like '%".$value."%'";
-            $where[]="replace(t.nomer_telpon,'-','') like '%".trim(str_replace('-', '', $value))."%'";
-            $where[]="tdt.jenis_identity like '%".$value."%'";
+            $where[]="replace(idt.identity_number,'-','') like '%".trim(str_replace('-', '', $value))."%'";
+            $where[]="idt.jenis_identity like '%".$value."%'";
             $where[]="t.alamat like '%".$value."%'";
             $where[]="t.pekerjaan like '%".$value."%'";
             $where[]="t.tempat_lahir like '%".$value."%'";
