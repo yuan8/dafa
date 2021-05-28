@@ -90,8 +90,16 @@
                         <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td>
                     <td><p><b>{{ Carbon\Carbon::parse($v->log_created_at)->format('ymd').'-'.$v->id_log }}</b></p>
-                        {{ $v->nama }}</td>
-                    <td>{{ $v->nomer_telpon }}
+                        {{ $v->nama }}
+                        <p>{{
+                            config('web_config.kategori_tamu')[$v->kategori_tamu]??$v->kategori_tamu
+                        }}</p>
+                    </td>
+
+                    </td>
+
+                    <td>
+                        {{ $v->nomer_telpon }}
                         <br>
                         <div class="btn-group" style="margin-top: 10px;">
                           {{--   <a target="_blank" href="https://api.whatsapp.com/send?phone={{str_replace('-', '', str_replace('+', '', $v->nomer_telpon))}}"  class="btn btn-success btn-xs">Whatapps</a> --}}

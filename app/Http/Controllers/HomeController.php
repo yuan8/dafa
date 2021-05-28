@@ -584,7 +584,6 @@ class HomeController extends Controller
                 'no_identity'=>'required|string',
                 'nomer_telpon'=>'required|string',
                 'nama'=>'required|string',
-                'kepeluan'=>'required|string',
                 'kategori_tamu'=>'required|string'
             ]);
 

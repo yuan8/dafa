@@ -65,6 +65,9 @@
                         <p>
                         <b>{{ Carbon\Carbon::parse($v->log_created_at)->format('ymd').'-'.$v->id_log }}</b></p>
                         {{ $v->nama }}
+                        <p>{{
+                            config('web_config.kategori_tamu')[$v->kategori_tamu]??$v->kategori_tamu
+                        }}</p>
                     </td>
                     <td>{{ $v->nomer_telpon }}
                         <br>
