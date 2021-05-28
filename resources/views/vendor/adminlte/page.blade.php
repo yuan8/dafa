@@ -65,8 +65,8 @@
     </div>
 @stop
 
-<link rel="stylesheet" href="{{ asset('css/app.css?v'.date('ihsmy')) }}">
-<link rel="stylesheet" href="{{ asset('tparty/bower_components/custome/c.css?v'.date('ihsmy')) }}">
+<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+<link rel="stylesheet" href="{{ asset('tparty/bower_components/custome/c.css') }}">
 <link rel="stylesheet" href="{{asset('tparty/bower_components/animate-css/animate.min.css')   }}">
 
 @section('adminlte_js')

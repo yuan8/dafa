@@ -9,15 +9,50 @@ use Alert;
 use Storage;
 use Session;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Session\SessionManager;
 class BagianCtrl extends Controller
 {
     //
-
-
-    public function index(Request $request){
-    	$data_seting=config('web_config.tujuan_tamu')??[];
-    	return view('admin.bagian.index')->with(['data'=>$data_seting]);
+    static function getData(){
+        $load=json_decode(file_get_contents(app_path('SqlLite/tujuan_tamu.json')),true);
+        $data_seting=$load??[];
+        return $data_seting;
     }
+
+    static function storeData($data){
+        file_put_contents(app_path('SqlLite/tujuan_tamu.json'), json_encode($data??[],JSON_PRETTY_PRINT));
+        $load=json_decode(file_get_contents(app_path('SqlLite/tujuan_tamu.json')),true);
+        $data_seting=$load??[];
+        return $data_seting;
+    }
+
+    static function sortData($data){
+        $data_key=collect($data)->pluck('name')->toArray();
+        foreach ($data_key as $key => $value) {
+            $data_key[$key]=($value.'|________|'.$key);
+        }
+
+        // dd(array_multisort($data_key,t),($data_key));
+        $data_sort=[];
+        foreach ($data_key as $key => $value) {
+            $id=explode('|________|',$value)[1];
+            $data_sort[]=$data[$id];
+        }
+
+        return $data_sort;
+
+    }
+
+    public static function index(Request $request){ 
+    	$data_seting=static::getData();
+
+        $data_seting=static::sortData($data_seting);
+        
+
+
+    	return view('admin.bagian.index')->with(['data'=>$data_seting,'url'=>$request->url()]);
+    }
+
 
      public function create(Request $request){
     	return view('admin.bagian.create');
@@ -29,9 +64,9 @@ class BagianCtrl extends Controller
         Artisan::call('config:clear');
     	$path_render=(app_path('../config/web_config.php'));
 
-    	sleep(2);
 	    $val = include($path_render);
 	    $val=$val['tujuan_tamu']??[];
+        static::storeData($val);
 
     	$valid=Validator::make(['tag'=>$tag],[
     		'tag'=>'string|required'
@@ -113,6 +148,8 @@ class BagianCtrl extends Controller
     		}
     	}
 
+        $val=static::sortData($val);
+
     	config(['web_config.tujuan_tamu'=>$val]);
 
         $set=config('web_config');
@@ -124,11 +161,12 @@ class BagianCtrl extends Controller
         Storage::disk('config')->put('web_config.php',$set);
         // $art=Artisan::call("myweb:update tujuan_tamu ".$tag." ".$tag_up." ".str_replace(' ', '0*0space', $request->name));
 
-        
+        static::storeData($val);
+
         if($del){
-        	Alert::success('Berhasil','Berhasil Menghapus Tujuan Bagian Tamu');
+        	Alert::success('Berhasil','Berhasil Mengubah Tujuan Bagian Tamu');
         }else{
-       		 Alert::success('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
+       		Alert::error('Gagal','Gagal Mengubah Tujuan Bagian Tamu');
 
         }
 
@@ -137,7 +175,7 @@ class BagianCtrl extends Controller
     }
 
     public function delete($tag,$slug,Request $request){
-    	$valid=Validator::make($request->all(),[
+    	$valid=Validator::make(['tag'=>$tag],[
     		'tag'=>'string|required'
     	]);
 
@@ -159,6 +197,8 @@ class BagianCtrl extends Controller
     		}
     	}
 
+        $val=static::sortData($val);
+
     	config(['web_config.tujuan_tamu'=>$val]);
         $set=config('web_config');
         $set='<?php
@@ -169,12 +209,22 @@ class BagianCtrl extends Controller
         $myfile = fopen(app_path('../config/web_config.php'), "w") or die("Unable to open file!");
         fwrite($myfile, $set);
         fclose($myfile);
+        Artisan::call('config:clear');
+
+
         if($del){
+            static::storeData($val);
+
         	Alert::success('Berhasil','Berhasil Menghapus Tujuan Bagian Tamu');
         }else{
-       		 Alert::success('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
-
+       		Alert::error('Gagal','Gagal Menghapus Tujuan Bagian Tamu');
         }
+
+        config(['web_config.tujuan_tamu'=>$val]);
+
+
+        $r=$request;
+
 
         return back();
 
@@ -211,6 +261,8 @@ class BagianCtrl extends Controller
     		'name'=>$request->name
     	];
 
+        $val=static::sortData($val);
+
     	config(['web_config.tujuan_tamu'=>$val]);
         $set=config('web_config');
         $set='<?php
@@ -222,8 +274,10 @@ class BagianCtrl extends Controller
         fwrite($myfile, $set);
         fclose($myfile);
 
+        static::storeData($val);
+
         Alert::success('Berhasil','Berhasil Menambahkan Tujuan Bagian Tamu');
-        return back();
+        return redirect()->route('a.b.index');
 
     }
 }

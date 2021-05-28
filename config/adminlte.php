@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -190,9 +190,9 @@ return [
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => 'login',
-    'register_url' => 'register',
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
+    'register_url' => false,
+    'password_reset_url' => false,
+    'password_email_url' => false,
     'profile_url' => false,
 
     /*
@@ -212,7 +212,7 @@ return [
     'laravel_mix_js_path' => 'js/app.js',
 
     /*
-    |--------------------------------------------------------------------------
+    |-------------------------------------------------------------------------
     | Menu Items
     |--------------------------------------------------------------------------
     |

@@ -170,13 +170,24 @@
             </tbody>
         </table>
        </div>
-       {{$data_visitor->links()}}
+       {{$data_visitor->links('')}}
+
     </div>
+    <div class="box-footer">
+        
+    </div>
+
 </div>
 
 <div class="modal fade" id="modal-id-phone-call">
    
 </div>
+
+<form id="form-export">
+    <input type="hidden" name="q" v-model="q">
+    <input type="hidden" name="q" v-model="q">
+
+</form>
 @stop
 
 @section('js')

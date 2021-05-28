@@ -7,6 +7,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use Illuminate\Support\Facades\Schema;
 
+use Illuminate\Pagination\Paginator;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
          Schema::defaultStringLength(191);
+           Paginator::defaultView('pagination::bootstrap-4');
 
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             // Add some items to the menu...

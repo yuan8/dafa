@@ -7,13 +7,13 @@
   array (
     0 =>
     array (
-      'tag' => 'KABAIS',
-      'name' => 'KABAIS',
+      'tag' => 'DENKES',
+      'name' => 'DENKES',
     ),
     1 =>
     array (
-      'tag' => 'WAKABAIS',
-      'name' => 'WAKABAIS',
+      'tag' => 'DENMA',
+      'name' => 'DENMA',
     ),
     2 =>
     array (
@@ -57,46 +57,47 @@
     ),
     10 =>
     array (
-      'tag' => 'SATINTELTEK',
-      'name' => 'SATINTELTEK',
+      'tag' => 'DISSANDI',
+      'name' => 'DISSANDI',
     ),
     11 =>
-    array (
-      'tag' => 'SATINTEL',
-      'name' => 'SATINTEL',
-    ),
-    12 =>
-    array (
-      'tag' => 'SATINDUK',
-      'name' => 'SATINDUK',
-    ),
-    13 =>
     array (
       'tag' => 'GEOSPASIKA',
       'name' => 'GEOSPASIKA',
     ),
-    14 =>
+    12 =>
     array (
       'tag' => 'INFODATA',
       'name' => 'INFODATA',
     ),
-    15 =>
+    13 =>
     array (
-      'tag' => 'DISSANDI',
-      'name' => 'DISSANDI',
+      'tag' => 'KABAIS',
+      'name' => 'KABAIS',
     ),
-    16 =>
+    14 =>
     array (
       'tag' => 'PSIKOLOGI',
       'name' => 'PSIKOLOGI',
     ),
+    15 =>
+    array (
+      'tag' => 'SATINDUK',
+      'name' => 'SATINDUK',
+    ),
+    16 =>
+    array (
+      'tag' => 'SATINTELTEK',
+      'name' => 'SATINTELTEK',
+    ),
     17 =>
     array (
-      'tag' => 'DENKES',
-      'name' => 'DENKES',
+      'tag' => 'SATINTEL',
+      'name' => 'SATINTEL',
     ),
     18 =>
     array (
+<<<<<<< HEAD
       'tag' => 'DENMA',
       'name' => 'DENMA',
     ),
@@ -106,19 +107,33 @@
       'name' => 'SEKRETARIAT',
     ),
     20 =>
+=======
+      'tag' => 'SEKRETARIAT',
+      'name' => 'SEKRETARIAT',
+    ),
+    19 => 
+>>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
     array (
       'tag' => 'SMIN-KAWAKA',
       'name' => 'SMIN KA/WAKA',
     ),
+<<<<<<< HEAD
     21 =>
+=======
+    20 => 
+>>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
     array (
-      'tag' => 'BA',
-      'name' => 'BA',
+      'tag' => 'WAKABAIS',
+      'name' => 'WAKABAIS',
     ),
+<<<<<<< HEAD
     22 =>
+=======
+    21 => 
+>>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
     array (
-      'tag' => 'MINKU',
-      'name' => 'MINKU',
+      'tag' => 'DDD',
+      'name' => 'ddd',
     ),
   ),
   'kategori_tamu' =>

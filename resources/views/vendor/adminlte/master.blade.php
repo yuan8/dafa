@@ -4,7 +4,7 @@
 <head>
 
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('tparty/bower_components/custome/c.js') }}"></script>
+    <script src="{{ asset('tparty/bower_components/custome/c.js') }}"></script>
 
 
     {{-- Base Meta Tags --}}
@@ -92,7 +92,7 @@
 
         <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
 
-        <script src="{{ asset(config('adminlte.laravel_mix_js_path', 'js/app.js').'?v'.date('ihmy')) }}"></script>
+        <script src="{{ asset(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
 
     @else
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
