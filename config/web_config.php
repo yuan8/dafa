@@ -193,7 +193,7 @@
     9 => 
     array (
       'tag' => 'ID-PERUSAHAAN',
-      'name' => 'ID PERUSAHAAM',
+      'name' => 'ID PERUSAHAAN',
       'taxonomy' => 'LAINYA',
     ),
     10 => 
