@@ -4,7 +4,6 @@
 /storage/*.key
 /config/web_config.php
 /app/SqlLite/*.json
-
 /vendor
 .env
 .env.backup
