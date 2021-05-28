@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $event->menu->add([
-                'text' => 'Check In Provos',
+                'text' => 'Checkin',
                 'url' => route('p.input'),
                 'can'=>'is_provos',
                 'icon'=>'fas fa-user-check'
