@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
+use Validator;
+use Alert;
+use Illuminate\Http\Request;
+use Auth;
+use Hash;
+use App\Models\User;
 class LoginController extends Controller
 {
     /*
@@ -36,5 +41,51 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request){
+
+            $valid=Validator::make($request->all(),[
+                'email'=>'required|string',
+                'password'=>'required|string'
+            ]);
+
+            if($valid->fails()){
+                Alert::error('','Login Gagal');
+                return back()->withInput()->withError();
+            }
+
+      
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return $this->sendLockoutResponse($request);
+        }
+
+        $agent=User::where('email',$request->email)->orWhere('username',$request->email)->first();
+
+        if($agent){
+            if($agent->deleted_at==null){
+                 if(Hash::check($request->password,$agent->password)){
+                    Auth::login($agent);
+                   
+                    return $this->sendLoginResponse($request);
+
+                }else{
+                Alert::error('','Password Salah');
+
+                }
+
+            }else{
+                Alert::error('','User Tidak Aktif');
+            }
+           
+        }
+
+        $this->incrementLoginAttempts($request);
+        return $this->sendFailedLoginResponse($request);
+
+        
     }
 }
