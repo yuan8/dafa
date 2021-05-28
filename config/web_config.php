@@ -110,11 +110,6 @@
       'tag' => 'WAKABAIS',
       'name' => 'WAKABAIS',
     ),
-    21 => 
-    array (
-      'tag' => 'DDD',
-      'name' => 'ddd',
-    ),
   ),
   'kategori_tamu' => 
   array (

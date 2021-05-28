@@ -22,9 +22,7 @@ class TamuCtrl extends Controller
 
         $data=(array) $data;
 
-        // dd($data);
-        // $data['no_identity']
-
+     
         $data['foto']=isset($data['foto'])?url($data['foto']):null;
 
         return redirect()->route('p.input')->withInput((array) $data);
@@ -72,7 +70,6 @@ class TamuCtrl extends Controller
 		$start=$dateNow;
 		$end=$dateNow;
 
-
 		if($request->start){
 			$start=$request->start;
 		}
@@ -110,11 +107,27 @@ class TamuCtrl extends Controller
         	'1=1'
         ];
 
-        if(count($request->tujuan??[])){
-        	foreach ($request->tujuan??[] as $key => $value) {
-        		$where_raw[]="log.tujuan like '%".$value."%'";
-        	}
+        
+
+        if($request->tujuan_json){
+            $request->tujuan_json=json_decode($request->tujuan_json??'[]');
+        }else{
+            $request->tujuan_json=[];
+
         }
+
+        if($request->tujuan_json){
+            $request->tujuan=collect($request->tujuan_json)->pluck('code');
+
+        }
+
+        if(count($request->tujuan??[])){
+
+            foreach ($request->tujuan??[] as $key => $value) {
+                $where_raw[]="log.tujuan like '%".$value."%'";
+            }
+        }
+
 
 
 
@@ -232,6 +245,7 @@ class TamuCtrl extends Controller
 	            'status'=>$checkin,
 	            'start'=>$start,
 	            'end'=>$end,
+                'tujuan_json'=>$request->tujuan_json,
 	            'tujuan'=>$request->tujuan??[]
 	        ]);
 
@@ -360,8 +374,6 @@ class TamuCtrl extends Controller
 		ini_set('memory_limit',-1);
         ini_set('max_execution_time', -1);
 		$DOM=view('gate.export_pdf')->with(['data'=>$data,'start'=>$start_date,'end'=>$end_date,'status'=>$status])->render();
-
-		
 
 		$pdf = \App::make('dompdf.wrapper');
 		$pdf->loadHtml($DOM );

@@ -80,6 +80,7 @@ class HomeController extends Controller
             $tamu=DB::table('log_tamu')
             ->whereRaw("(id=".$id_log." and  gate_checkout is null)")
             ->first();
+
             if($tamu){
                 $data=[
                 'nama'=>$request->nama,
@@ -578,6 +579,20 @@ class HomeController extends Controller
     }
 
     public function gate_check_in($id_log,$slug,Request $request){
+            $valid=Validator::make($request->all(),[
+                'jenis_identity'=>'required|string',
+                'no_identity'=>'required|string',
+                'nomer_telpon'=>'required|string',
+                'nama'=>'required|string',
+                'kepeluan'=>'required|string',
+                'kategori_tamu'=>'required|string'
+            ]);
+
+            if($valid->fails()){
+                Alert::error('',$valid->errors()->first());
+                return back()->withInput();
+            }
+
             $U=Auth::User();
             $tamu=DB::table('log_tamu')
             ->whereRaw("(id=".$id_log." and  gate_checkout is null and gate_checkin is null)")

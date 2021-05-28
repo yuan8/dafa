@@ -20,6 +20,8 @@ class BagianCtrl extends Controller
     }
 
     static function storeData($data){
+        $data=array_values($data);
+        
         file_put_contents(app_path('SqlLite/tujuan_tamu.json'), json_encode($data??[],JSON_PRETTY_PRINT));
         $load=json_decode(file_get_contents(app_path('SqlLite/tujuan_tamu.json')),true);
         $data_seting=$load??[];
@@ -27,17 +29,20 @@ class BagianCtrl extends Controller
     }
 
     static function sortData($data){
-        $data_key=collect($data)->pluck('name')->toArray();
+        $data=array_values($data);
+
+        $data_key=(array)collect($data)->pluck('name')->toArray();
         foreach ($data_key as $key => $value) {
             $data_key[$key]=($value.'|________|'.$key);
         }
 
-        // dd(array_multisort($data_key,t),($data_key));
+        asort($data_key,SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL);
         $data_sort=[];
         foreach ($data_key as $key => $value) {
             $id=explode('|________|',$value)[1];
             $data_sort[]=$data[$id];
         }
+
 
         return $data_sort;
 
@@ -148,6 +153,7 @@ class BagianCtrl extends Controller
     		}
     	}
 
+        $val=array_values($val);
         $val=static::sortData($val);
 
     	config(['web_config.tujuan_tamu'=>$val]);
@@ -197,6 +203,7 @@ class BagianCtrl extends Controller
     		}
     	}
 
+        $val=array_values($val);
         $val=static::sortData($val);
 
     	config(['web_config.tujuan_tamu'=>$val]);
@@ -261,6 +268,7 @@ class BagianCtrl extends Controller
     		'name'=>$request->name
     	];
 
+        $val=array_values($val);
         $val=static::sortData($val);
 
     	config(['web_config.tujuan_tamu'=>$val]);

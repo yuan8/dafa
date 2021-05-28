@@ -31,6 +31,18 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
             
         });
+
+        DB::table('users')->insert([
+            'name'=>'admin',
+            'username'=>'admin',
+            'email'=>'admin@domain.com',
+            'password'=>Hash::make('12345678'),
+            'api_token'=>Hash::make('admin@domain.com'),
+            'role'=>1,
+            'jabatan'=>'Admin',
+            'pangkat'=>'-',
+            'nrp'=>'100000000',
+        ]);
     }
 
     /**

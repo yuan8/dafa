@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "socket.io-client": "^2.4.0",
-        "vue-select": "^3.11.2"
+        "vue-select": "^3.11.2",
+        "vue-select2": "^0.2.6"
     }
 }

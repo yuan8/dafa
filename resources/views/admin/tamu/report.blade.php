@@ -6,8 +6,6 @@
        
        <form id="form_env" method="get">
         @can('is_gate')
-
-         
         @endcan
            <div class="row ">
                <div class="col-md-6">
@@ -54,12 +52,14 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
+                <input type="hidden" name="tujuan_json" v-model="JSON.stringify(tujuan_json)">
                     <label>TUJUAN <button v-on:click="clear_tujuan()" class="btn-circle btn-xs btn-primary">Clear</button></label>
-                    <select class="form-control" multiple="" name="tujuan[]" v-model="tujuan">
-                        @foreach (config('web_config.tujuan_tamu') as $t)
-                            <option value="{{$t['tag']}}" {{in_array($t['tag'],$tujuan)?'selected':''}}>{{$t['name']}}</option>
-                        @endforeach
-                    </select>
+                    <v-select class="vue-select2" multiple="" 
+                        :options="options" v-model="tujuan_json"
+                        :searchable="true" language="en-US">
+                    </v-select>    
+
+                    
                 </div>
             </div>
         </div>
@@ -229,6 +229,17 @@
     function errFoto(d){
         d.src='{{asset('tamu-def.png') }}'
     }
+    @php
+    $option=[];
+        $option_def=config('web_config.tujuan_tamu')?(config('web_config.tujuan_tamu')):[];
+        foreach ($option_def as $key => $value) {
+            # code...
+            $option[]=[
+                'label'=>$value['name'],
+                'code'=>$value['tag']
+            ];
+        }
+    @endphp
 
     var venv=new Vue({
         el:'#venv',
@@ -237,7 +248,10 @@
             end:'{{$end}}',
             status:'{{$status}}',
             export_file:null,
-            tujuan:<?=json_encode($tujuan??[])?>,
+            tujuan:<?=count($tujuan)?json_encode($tujuan??[]):'[]'?>,
+            tujuan_json:<?=count($tujuan_json)?json_encode($tujuan_json??[]):'[]'?>,
+
+            options:<?=count($option)?json_encode($option):'[]'?>
 
         },
         methods:{
@@ -245,7 +259,10 @@
                 this.export_file=d;
             },
             clear_tujuan:function(){
-                this.tujuan=[];
+                this.tujuan_json=[];
+            },
+            toArray:function(){
+
             }
 
         },
@@ -263,7 +280,14 @@
                 $('#form_env').submit();
             },
             tujuan:function(v,old){
-                $('#form_env').submit();
+
+            },
+            tujuan_json:function(v,old){
+                setTimeout(function(){
+                 $('#form_env').submit();
+
+                },500);
+
 
             }
         }
