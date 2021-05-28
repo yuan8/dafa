@@ -94,11 +94,17 @@
                     </div>
                     <div class="form-group">
                         <label>Tujuan*</label>
-                        <select class="form-control" v-model="tujuan" name="tujuan[]" multiple="">
+                        <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
+                        <v-select class="vue-select2" multiple="" 
+                            :options="options_tujuan" v-model="tujuan_json"
+                            :searchable="true" language="en-US">
+                        </v-select>     
+
+                       {{--  <select class="form-control" v-model="tujuan"  multiple="">
                             @foreach (config('web_config.tujuan_tamu')??[] as $t)
                                  <option value="{{$t['tag']}}" {{in_array($t['tag'],old('tujuan')??[])?'selected':''}}>{{$t['name']}}</option>
                             @endforeach
-                        </select>
+                        </select> --}}
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
@@ -266,9 +272,9 @@
             agama: "{{old('agama')}}",
             berlaku_hingga: "{{old('berlaku_hingga')}}",
             btn_check: false,
-            tujuan:[
-            'DIR-A'
-            ],
+            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',old('tujuan')??[]))??[]?>,
+            options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
+            tujuan:<?=!empty(old('tujuan')?json_encode(old('tujuan')):'[]')?>,
             identity:{
                 "recorded":null,
                 "file":null,

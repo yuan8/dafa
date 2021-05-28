@@ -72,15 +72,11 @@
         "name": "SATINTEL"
     },
     {
+        "tag": "DENMA",
+        "name": "DENMA"
+    },
+    {
         "tag": "SEKRETARIAT",
         "name": "SEKRETARIAT"
-    },
-    {
-        "tag": "SMIN-KAWAKA",
-        "name": "SMIN KA\/WAKA"
-    },
-    {
-        "tag": "WAKABAIS",
-        "name": "WAKABAIS"
     }
 ]

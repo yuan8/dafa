@@ -32,6 +32,7 @@ class BagianCtrl extends Controller
         $data=array_values($data);
 
         $data_key=(array)collect($data)->pluck('name')->toArray();
+        $data_key=array_unique($data_key);
         foreach ($data_key as $key => $value) {
             $data_key[$key]=($value.'|________|'.$key);
         }

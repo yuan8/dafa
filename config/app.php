@@ -234,6 +234,8 @@ return [
         'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         'DNS2D' => 'Milon\Barcode\Facades\DNS2DFacade',
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'CV' => App\Providers\ConfigVueProvider::class,
+
 
     ],
 

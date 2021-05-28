@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use DB;
 use Alert;
 use Storage;
+use CV;
 class HomeController extends Controller
 {
     /**
@@ -39,7 +40,6 @@ class HomeController extends Controller
 
         if($data){
             $U=Auth::User();
-
             $data=DB::table('log_tamu as log')
             ->join('tamu as v','v.id','=','log.tamu_id')
             ->where('log.id',$tamu_id)
@@ -75,6 +75,26 @@ class HomeController extends Controller
 
 
     public function gate_check_out($id_log,$slug,Request $request){
+           $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
+            $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+
+             $valid=Validator::make($request->all(),[
+                'no_identity'=>'required',
+                'jenis_kelamin'=>'required|numeric',
+                'nama'=>'required',
+                'nomer_telpon'=>'required|min:10',
+                'kategori_tamu'=>'required|string',
+                'keperluan'=>'required|string',
+                'tujuan'=>'required|array',
+                'jenis_identity'=>'required|in:'.implode(',', $jenis_identity->toArray()),
+
+            ]);
+
+
+            if($valid->fails()){
+                Alert::error('',$valid->errors()->first());
+                return back()->withInput();
+            }
 
             $U=Auth::User();
             $tamu=DB::table('log_tamu')
@@ -311,6 +331,11 @@ class HomeController extends Controller
 
     public function provos_submit(Request $request){
         $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
+        
+        $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+
+        
+
         $valid=Validator::make($request->all(),[
             'no_identity'=>'required',
             'jenis_kelamin'=>'required|numeric',
@@ -324,10 +349,18 @@ class HomeController extends Controller
         ]);
 
 
+
+
         if($valid->fails()){
+
             Alert::error('Error',$valid->errors()->first());
             return back()->withInput();
         }
+
+
+
+
+     
 
 
         $U=Auth::User();
@@ -337,20 +370,6 @@ class HomeController extends Controller
         DB::table('tamu as ind')
         ->where('nomer_telpon','like',"%".$request->nomer_telpon.'%')
         ->first();
-
-        
-
-
-      
-
-
-
-
-
-
-
-
-
 
         if(!$check_tamu){
             $data=[
@@ -563,7 +582,6 @@ class HomeController extends Controller
                 ->where('log.provos_checkin','<=',$day_last)
                 ->orderBy('log.provos_checkin','desc')
                 ->groupBy('v.id','log.id')
-                
                 ->get();
             break;
         }
@@ -579,13 +597,21 @@ class HomeController extends Controller
     }
 
     public function gate_check_in($id_log,$slug,Request $request){
-            $valid=Validator::make($request->all(),[
-                'jenis_identity'=>'required|string',
-                'no_identity'=>'required|string',
-                'nomer_telpon'=>'required|string',
-                'nama'=>'required|string',
-                'kategori_tamu'=>'required|string'
+           $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
+            $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+
+             $valid=Validator::make($request->all(),[
+                'no_identity'=>'required',
+                'jenis_kelamin'=>'required|numeric',
+                'nama'=>'required',
+                'nomer_telpon'=>'required|min:10',
+                'kategori_tamu'=>'required|string',
+                'keperluan'=>'required|string',
+                'tujuan'=>'required|array',
+                'jenis_identity'=>'required|in:'.implode(',', $jenis_identity->toArray()),
+
             ]);
+
 
             if($valid->fails()){
                 Alert::error('',$valid->errors()->first());

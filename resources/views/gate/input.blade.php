@@ -103,12 +103,12 @@
                        <input type="text" class="form-control" v-model="instansi" name="instansi">
                     </div>
                     <div class="form-group">
-                        <label>Tujuan*</label>
-                        <select class="form-control" v-model="tujuan" name="tujuan[]" multiple="">
-                            @foreach (config('web_config.tujuan_tamu')??[] as $t)
-                                 <option value="{{$t['tag']}}">{{$t['name']}}</option>
-                            @endforeach
-                        </select>
+                         <label>Tujuan*</label>
+                        <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
+                        <v-select class="vue-select2" multiple="" 
+                            :options="options_tujuan" v-model="tujuan_json"
+                            :searchable="true" language="en-US">
+                        </v-select>  
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
@@ -283,6 +283,8 @@
             agama: "{{$data->agama}}",
             berlaku_hingga: "{{$data->berlaku_hingga}}",
             btn_check: false,
+            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode($data->tujuan??'[]')??[]))??[]?>,
+            options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
             tujuan:<?=($data->tujuan)??'[]'?>,
             identity:{
                 "recorded":'{{($data->path_identity)}}',
