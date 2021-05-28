@@ -123,16 +123,18 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Jenis Identitas*</label>
-                                <select disabled="" name="jenis_identity" required id="" v-model="jenis_identity"  class="form-control">
+                                <input type="hidden" name="jenis_identity" v-model="jenis_identity">
+
+                                <select disabled="" required id="" v-model="jenis_identity"  class="form-control">
                                     @foreach (config('web_config.identity_list')??[] as $k)
                                         <option value="{{$k['tag']}}">{{$k['name']}}</option>
-                                        {{-- expr --}}
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="">Nomer Identitas*</label>
-                                <input disabled="" name="no_identity" value="" required type="text" v-model="no_identity" class="form-control">
+                                <input type="hidden" name="no_identity" v-model="no_identity">
+                                <input disabled=""  value="" required type="text" v-model="no_identity" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="">Nama Tamu*</label>
@@ -166,7 +168,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
-                                <input disabled="" name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
+                                <input type="hidden" name="nomer_telpon" v-model="nomer_telpon">
+                                <input disabled=""  required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
                             
                             </div>
                             <div class="form-group">

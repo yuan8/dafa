@@ -81,6 +81,7 @@ class HomeController extends Controller
             ->whereRaw("(id=".$id_log." and  gate_checkout is null)")
             ->first();
 
+
             if($tamu){
                 $data=[
                 'nama'=>$request->nama,
@@ -176,7 +177,6 @@ class HomeController extends Controller
                         'identity_number'=>$request->no_identity,
                         'jenis_identity'=>$request->jenis_identity,
                         'path_identity'=>$path_identity,
-
                         'berlaku_hingga'=>isset($request->berlaku_hingga)?$request->berlaku_hingga:null,
                     ]);
 
