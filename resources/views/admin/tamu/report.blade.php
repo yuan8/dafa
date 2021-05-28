@@ -154,13 +154,22 @@
                             <div class="timeline">
                                 <div class="events-wrapper">
                                     <div class="events" style="width: 100%;">
-                                        <ol>
+                                      <ol>
                                        
-                                            <li><a href="#" data-date="{{ $v->provos_checkin }}" class="{{ $gate_ls=='PROVOS'?'selected':'older-event' }}" style="left: 5%;">PROVOS {{(in_array($gate_ls, ['PROVOS','CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->provos_checkin)->format('d/m/Y h:i a'):'-')}}</a></li>
+                                            <li><a href="#" data-date="{{ $v->provos_checkin }}" class="{{ $gate_ls=='PROVOS'?'selected':'older-event' }}" style="left: 5%;">PROVOS {{(in_array($gate_ls, ['PROVOS','CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->provos_checkin)->format('d/m/Y h:i a'):'-')}}
+                                                <b class="text-center">{{$v->nama_provos_handle}}</b>
+                                            </a>
+                                                
+                                            </li>
 
-                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 40%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}</a></li>
+                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 40%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
+                                                <b class="text-center">{{$v->nama_gate_handle}}</b>
+                                            </a>
+                                            </li>
 
-                                            <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}</a></li>
+                                            <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}
+                                                <b class="text-center">{{$v->nama_gate_out_handle}}</b>
+                                            </a></li>
                                           
                                         </ol>
                                         <span class="filling-line" aria-hidden="true" ></span>

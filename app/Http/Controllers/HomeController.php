@@ -549,7 +549,11 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','=','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at")
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
                 ->where('log.provos_checkin','>=',$day)
                 ->where('log.provos_checkin','<=',$day_last)
                 ->where('log.gate_checkin','=',null)
@@ -563,7 +567,11 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at")
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
                 ->where('log.provos_checkin','>=',$day)
                 ->where('log.provos_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
@@ -577,7 +585,11 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at")
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
                 ->where('log.provos_checkin','>=',$day)
                 ->where('log.provos_checkin','<=',$day_last)
                 ->orderBy('log.provos_checkin','desc')
