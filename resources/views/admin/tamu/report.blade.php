@@ -94,7 +94,7 @@
                     <td>{{ $v->nomer_telpon }}
                         <br>
                         <div class="btn-group" style="margin-top: 10px;">
-                            <a target="_blank" href="https://api.whatsapp.com/send?phone={{str_replace('-', '', str_replace('+', '', $v->nomer_telpon))}}"  class="btn btn-success btn-xs">Whatapps</a>
+                          {{--   <a target="_blank" href="https://api.whatsapp.com/send?phone={{str_replace('-', '', str_replace('+', '', $v->nomer_telpon))}}"  class="btn btn-success btn-xs">Whatapps</a> --}}
                             <button  onclick="phone_call('{{$v->nama}}','{{$v->nomer_telpon}}')" class="btn btn-primary btn-xs">Phone Call</button>
 
                         </div>
