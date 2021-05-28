@@ -97,7 +97,7 @@
     ),
     18 =>
     array (
-<<<<<<< HEAD
+
       'tag' => 'DENMA',
       'name' => 'DENMA',
     ),
@@ -106,38 +106,7 @@
       'tag' => 'SEKRETARIAT',
       'name' => 'SEKRETARIAT',
     ),
-    20 =>
-=======
-      'tag' => 'SEKRETARIAT',
-      'name' => 'SEKRETARIAT',
-    ),
-    19 => 
->>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
-    array (
-      'tag' => 'SMIN-KAWAKA',
-      'name' => 'SMIN KA/WAKA',
-    ),
-<<<<<<< HEAD
-    21 =>
-=======
-    20 => 
->>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
-    array (
-      'tag' => 'WAKABAIS',
-      'name' => 'WAKABAIS',
-    ),
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    22 =>
-=======
-    21 => 
->>>>>>> 93c4197df96c2717c1e27793cde6acaea7ae010a
-    array (
-      'tag' => 'DDD',
-      'name' => 'ddd',
-    ),
->>>>>>> 8ac256545f618c478bc791e71976ffbd95e620be
+
   ),
   'kategori_tamu' =>
   array (
