@@ -242,6 +242,7 @@
                    <div class="row">
                        <div class="col-md-12">
                         <label>JENIS IDENTITAS TAMU*</label>
+                        <p><button type="button" v-on:click="add_identity" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> IDENTITAS</button></p>
                            <div class="table-responsive">
                                <table class="table-bordered table">
                                    <thead>
@@ -256,23 +257,31 @@
                                        </tr>
                                    </thead>
                                    <tbody>
-                                       <tr v-for="item in data_id ">
+                                       <tr v-for="(item,key) in data_id ">
                                         <td>
-                                            
+                                            <input type="hidden" v-bind:name="'identity['+item.id+'][id]'" v-model="item.id">
+                                            <div class="btn-group">
+                                                <button type="button" v-on:click="remove_identity(key)" class="btn  btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                                            </div>
                                         </td>
-                                        <td>
+                                        <td style="width:200px;">
                                             <img v-bind:src="item.path_rendered" style="width:100px;">
+                                            <div>
+                                                <div v-on:change="id_file_change(key,$event)" class="input-group">
+                                                    <input type="file" v-bind:name="'identity['+item.id+'][path_file_src]'" class="form-control" accept="image/*">
+                                                </div>
+                                            </div>
                                         </td>
                                             <td>
-                                                <select class="form-control" v-model="item.jenis_identity">
+                                                <select required="" v-bind:name="'identity['+item.id+'][jenis_identity]'" class="form-control" v-model="data_id[key].jenis_identity">
                                                     <option v-for="ji in list_jenis_identity" v-bind:value="ji.tag">@{{ji.name}}</option>
                                                 </select>
                                                 
                                             <td>
-                                                <input type="text" v-on:keyup="numberIdentity(item,this.value)" class="form-control" v-model="item.identity_number" >
+                                                <input required="" type="text" v-bind:name="'identity['+item.id+'][identity_number]'"  v-on:keyup="numberIdentity(key,$event)" class="form-control" v-model="data_id[key].identity_number_k" >
                                             </td>
                                             <td>
-                                                <input type="date" class="form-control" v-model="item.berlaku_hingga" >
+                                                <input v-bind:name="'identity['+item.id+'][berlaku_hingga]'"  type="date" class="form-control" v-model="data_id[key].berlaku_hingga" >
 
                                            </td>
                                        </tr>
@@ -345,6 +354,7 @@
             tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode($data->def_tujuan??'[]')??[]))??[]?>,
             options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
             tujuan:<?=($data->def_tujuan)??'[]'?>,
+            uuid_id:1,
             identity:{
                 "recorded":'',
                 "file":null,
@@ -356,7 +366,38 @@
             // ]
         },
         methods:{
+            id_file_change:function(key,event){
+                var file=event.target.files[0]??null;
+                 if(file){
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function(e) {
+                      vinput.data_id[key].path_rendered=this.result;
+                    }
+                }else{
+                    vinput.data_id[key].path_rendered=vinput.data_id[key].path_def;
+                }
+            },
+            remove_identity:function(key){
+                this.data_id.splice(key,1);
+                // console.log(this.data_id.splice(key,1));
+            },
+            add_identity:function(){
+                this.uuid_id++;
+                this.data_id.push({
+                    'id':'new-'+this.uuid_id,
+                    'tamu_id':{{$data->id}},
+                    'jenis_identity':null,
+                    'path_identity':null,
+                    'path_rendered':null,
+                    'path_def':null,
+                    'path_file':null,
+                    'identity_number':null,
+                    'identity_number_k':null,
+                    'berlaku_hingga':null
 
+                });
+            },
             get_identity:function(expt='dd'){
 
                
@@ -417,11 +458,10 @@
                 }
 
             },
-            numberIdentity:function(item,val){
-                console.log(item);
-                if(item.nomer_identity!=val){
-                    if(item.no_identity){
-                        var val=item.no_identity;
+            numberIdentity:function(key,event){
+                var val=event.target.value;
+                if(this.data_id[key].identity_number!=val){
+                    if(val){
                         val=val.replace(/[-]/g,'');
                         let arr_val=val.split('');
                         var char_no_identity='';
@@ -432,13 +472,11 @@
                             char_no_identity+=arr_val[i];
                         }
 
-                        item.no_identity=char_no_identity;
-
-                        
+                        this.data_id[key].identity_number=char_no_identity;
+                        this.data_id[key].identity_number_k=char_no_identity;
 
                     }
                 }
-                console.log(item);
                 return true;
             },
 
@@ -484,7 +522,6 @@
         watch:{
            
             nomer_telpon:'phoneNumber',
-            no_identity:'numberIdentity',
             tamu_khusus:function(val,old){
                 
                     

@@ -165,6 +165,81 @@ class TamuCtrl extends Controller
                 $data['updated_at']=Carbon::now();
                $up= DB::table('tamu')->where('id',$tamu->id)->update($data);
                if($up){
+                $now=Carbon::now();
+                $new_id=[];
+
+                $col=collect($request->identity??[]);
+                $col=$col->pluck('id')->toArray();
+
+                DB::table('identity_tamu')
+                ->where('tamu_id',$tamu->id)
+                ->whereNotIn('id',$col)
+                ->delete();
+
+                foreach ($request->identity??[] as $key => $n) {
+                    if(strpos($n['id'], 'new-')!==false){
+                        if($n['jenis_identity'] and $n['identity_number']){
+                            $new_id[]=$n;
+                        }
+                    }else{
+
+                        $check=DB::table('identity_tamu')->where([
+                        ['id','=',$n['id']],
+                        ['jenis_identity','=',$n['jenis_identity']],
+                        ['identity_number','=',$n['identity_number']],
+                        ['tamu_id','=',$tamu->id],
+                        ])->first();
+
+                        if(!$check){
+                            DB::table('identity_tamu')->where('id',$n['id'])
+                            ->where('tamu_id',$tamu->id)->update([
+                                'jenis_identity'=>$n['jenis_identity'],
+                                'identity_number'=>$n['identity_number'],
+                                'berlaku_hingga'=>$n['berlaku_hingga'],
+                                'updated_at'=>$now,
+                                'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):DB::raw('path_identity')
+                            ]);
+
+                        }else{
+                                DB::table('identity_tamu')->where('id',$n['id'])
+                                ->where('tamu_id',$tamu->id)->update([
+                                    'updated_at'=>$now,
+                                    'berlaku_hingga'=>$n['berlaku_hingga'],
+                                    'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):DB::raw('path_identity')
+                                ]);
+
+                        }
+
+
+                    }
+                }
+
+                foreach ($new_id as $key => $n) {
+                    $check=DB::table('identity_tamu')->where([
+                        ['jenis_identity','=',$n['jenis_identity']],
+                        ['tamu_id','=',$tamu->id],
+
+                    ])->first();
+
+                    if(!$check){
+                        DB::table('identity_tamu')->insertOrIgnore([
+                            'tamu_id'=>$tamu->id,
+                            'jenis_identity'=>$n['jenis_identity'],
+                            'identity_number'=>$n['identity_number'],
+                            'berlaku_hingga'=>$n['berlaku_hingga'],
+                            'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):null,
+                            'created_at'=>$now,
+                            'updated_at'=>$now,
+                        ]);
+                    }
+
+                }
+
+                if(!$request->identity){
+                    DB::table('identity_tamu')->where('tamu_id',$tamu->id)->delete();
+                }
+
+
                 Alert::success('Berhasil','DATA BERHASIL DI PERBARUI');
                }
 
@@ -261,6 +336,9 @@ class TamuCtrl extends Controller
             foreach ($identity as $key => $value) {
                 $identity[$key]->path_rendered=url($value->path_identity);
                 $identity[$key]->path_def=url($value->path_identity);
+                $identity[$key]->path_file=null;
+                $identity[$key]->identity_number_k=$value->identity_number;
+
                 $identity[$key]->berlaku_hingga=$value->berlaku_hingga?Carbon::parse($value->berlaku_hingga)->format('Y-m-d'):null;
 
                 # code...
@@ -270,6 +348,7 @@ class TamuCtrl extends Controller
             }else{
 
             }
+
 
             return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
         }
