@@ -2,7 +2,11 @@
 
 
 @section('content')
-
+ <script type="text/javascript">
+                function errFoto(d){
+                    d.src='{{asset('tamu-def.png') }}'
+                }
+            </script>
 <div class="card">
     <div class="card-header with-border">
         <h4><b>CHEKIN</b></h4>
@@ -15,11 +19,7 @@
                 </div>
             
             </div>
-            <script>
-                function errFoto(d){
-                    d.src='{{asset('tamu-def.png') }}'
-                }
-            </script>
+           
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-6">
@@ -76,7 +76,9 @@
                         </div>
                         <div class="form-group">
                             <label for="">Keperluan</label>
-                            <p>@{{ alamat }}</p>
+                            <p><b>@{{ _.pluck(tujuan_json,'label').join(', ') }}</b></p>
+
+                            <p>@{{ keperluan }}</p>
                            <hr>
                         </div>
                     </div>
@@ -105,6 +107,8 @@ var bc_provos = new BroadcastChannel('bcprovos-{{$fingerprint}}');
             jenis_kelamin: '',
             tanggal_lahir: '',
             alamat: "",
+            keperluan: "",
+            tujuan_json: [],
             nomer_telpon: "",
 
 
@@ -122,6 +126,7 @@ var bc_provos = new BroadcastChannel('bcprovos-{{$fingerprint}}');
 });
 
 bc_provos.onmessage = function (ev) { 
+    window.res=ev.data;
     vinput.changedata(ev.data);
 
  }

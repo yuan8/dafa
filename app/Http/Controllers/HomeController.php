@@ -520,8 +520,8 @@ class HomeController extends Controller
             'tamu_id'=>$check_tamu->id,
            ])
            ->whereNull('gate_checkout')
-           ->where('gate_checkin','>',$day)->first();
-
+           ->where('gate_checkin','<=',$day)
+           ->first();
 
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([

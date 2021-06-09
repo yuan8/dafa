@@ -8,7 +8,7 @@
 </script>
 <div class="card">
     <div class="card-header with-border">
-        <h4><b>GATE</b></h4>
+        <h4><b>GATE KELUAR</b></h4>
     </div>
     <div class="card-body">
         <div class="row" id="vinput">
@@ -75,7 +75,9 @@
                         </div>
                         <div class="form-group">
                             <label for="">Keperluan</label>
-                            <p>@{{ alamat }}</p>
+                            <p><b>@{{ _.pluck(tujuan_json,'label').join(', ') }}</b></p>
+
+                            <p>@{{ keperluan }}</p>
                            <hr>
                         </div>
                     </div>
@@ -104,6 +106,8 @@ var bc_provos = new BroadcastChannel('bcgate-{{$fingerprint}}');
             jenis_kelamin: '',
             tanggal_lahir: '',
             alamat: "",
+            keperluan: "",
+            tujuan_json: [],
             nomer_telpon: "",
 
 

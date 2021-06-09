@@ -568,6 +568,9 @@
 
             },
             foto: 'bc',
+            tujuan_json: 'bc',
+            instansi: 'bc',
+            keperluan: 'bc',
             foto_file: function(file,old){
                   if(file!=null){
                     var reader = new FileReader();

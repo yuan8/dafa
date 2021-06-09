@@ -5,6 +5,8 @@
      <link rel="stylesheet" href="{{ asset('tparty/bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
      <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
      <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+     <script type="text/javascript" src="{{url('tparty/bower_components/underscore/underscore-min.js')}}"></script>
+
         
     </head>
     <body>
