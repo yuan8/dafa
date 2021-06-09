@@ -53,17 +53,22 @@ class IdentityExtractCtrl extends Controller
         ];
 
         if($request->id_uu){
-             $where[]="(t.string_id = '".$request->id_uu."')");   
-        }
-        else if($request->match=='perfect'){
+             $where[]="(t.string_id = '".$request->id_uu."') and idt.jenis_identity in ('".implode("','", ['KTP','KTA-TNI','KTA-POLRI'])."')"; 
+                $selectRaw=implode(' , ',$def_tamu).",idt.*";
 
-            $where[]="(t.nomer_telpon = '".$request->nomer_telpon."') and (idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number = '".$request->no_identity."')";
+        }
+        elseif($request->match=='perfect'){
+
+            $where[]="(t.nomer_telpon = '".$request->nomer_telpon."') and (idt.jenis_identity = '".$request->jenis_identity."') ";
+            // and (idt.identity_number = '".$request->no_identity."')"
                 $selectRaw=implode(' , ',$def_tamu).",idt.*";
 
         }else{
              if(strlen($request->nomer_telpon)>15 and ($request->jenis_identity)){
                 $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%') and (idt.jenis_identity = '".$request->jenis_identity."')";
+
                 $selectRaw=implode(' , ',$def_tamu).",idt.*";
+
             }else if(strlen($request->nomer_telpon)>15){
                 $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')";
                 $selectRaw=implode(' , ',$def_tamu)."";

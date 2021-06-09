@@ -375,6 +375,35 @@
                                 }
                             }
 
+                             if((res.data.berlaku_hingga!=undefined) && !isEmpty(res.data.berlaku_hingga)){
+                                if(vinput.identity.berlaku_hingga!=res.data.berlaku_hingga){
+                                    vinput.identity.berlaku_hingga=res.data.berlaku_hingga;
+                                   
+                                }
+                            }
+
+                             if((res.data.berlaku_hingga!=undefined) && !isEmpty(res.data.berlaku_hingga)){
+                                if(vinput.berlaku_hingga!=res.data.berlaku_hingga){
+                                    vinput.berlaku_hingga=res.data.berlaku_hingga;
+                                   
+                                }
+                            }
+                            if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
+                                if(vinput.no_identity!=res.data.identity_number){
+                                    vinput.no_identity=res.data.identity_number;
+                                   
+                                }
+                            }
+
+                            //  if((res.data.path_identity!=undefined) && !isEmpty(res.data.path_identity)){
+                            //     if(vinput.identity.rendered!=res.data.path_identity){
+                            //         vinput.identity.rendered_def=res.data.path_identity;
+                            //         vinput.identity.rendered=res.data.path_identity;
+                            //         vinput.identity.recorded=res.data.path_identity;
+
+                            //     }
+                            // }
+
                              
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
