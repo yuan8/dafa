@@ -50,6 +50,7 @@ class TamuCtrl extends Controller
                     'nomer_telpon'=>'required|min:10',
                     'kategori_tamu'=>'required|string',
                     'keperluan'=>'required|string',
+                    'instansi'=>'required|string',
                     'tujuan'=>'required|array',
                     'req_id_def'=>'required|string'
                   
@@ -73,6 +74,7 @@ class TamuCtrl extends Controller
                 $data['def_kategori_tamu']=$request->kategori_tamu;
                 $data['def_keperluan']=$request->keperluan;
                 $data['def_tujuan']=$request->tujuan;
+                $data['def_instansi']=$request->instansi;
                 $data['tamu_khusus']=$request->tamu_khusus;
                 $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
 
