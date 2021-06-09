@@ -248,7 +248,6 @@
                                        <tr>
                                            <th>AKSI</th>
                                            <th></th>
-
                                            <th>JENIS IDENTITAS</th>
                                            <th>NOMER IDENTITAS</th>
                                            <th>BERKALU HINGGA</th>
@@ -258,12 +257,24 @@
                                    </thead>
                                    <tbody>
                                        <tr v-for="item in data_id ">
-                                        <td></td>
+                                        <td>
+                                            
+                                        </td>
                                         <td>
                                             <img v-bind:src="item.path_rendered" style="width:100px;">
                                         </td>
-                                           <td>@{{item.jenis_identity}}</td>
-                                            <td>@{{item.identity_number}}</td>
+                                            <td>
+                                                <select class="form-control" v-model="item.jenis_identity">
+                                                    <option v-for="ji in list_jenis_identity" v-bind:value="ji.tag">@{{ji.name}}</option>
+                                                </select>
+                                                
+                                            <td>
+                                                <input type="text" v-on:keyup="numberIdentity(item,this.value)" class="form-control" v-model="item.identity_number" >
+                                            </td>
+                                            <td>
+                                                <input type="date" class="form-control" v-model="item.berlaku_hingga" >
+
+                                           </td>
                                        </tr>
                                    </tbody>
                                </table>
@@ -294,27 +305,7 @@
         }
     }
 
-    var vactionInput=new Vue({
-        el:'#action_input',
-        data:{
-            env:'CCCC'
-        },
-        methods:{
-            ktp:function(){
-                vpicItput.jenis='KTP';
-                vpicItput.display=true;
 
-            },
-            sim:function(){
-                vpicItput.jenis='SIM';
-                vpicItput.display=true;
-            },
-            lainya:function(){
-                vpicItput.jenis='LAINYA';
-                vpicItput.display=true;
-            }
-        }
-    });
 
 
     var them_phone='+62';
@@ -328,6 +319,7 @@
             jenis_tamu_khusus:'{{$data->jenis_tamu_khusus??'REKANAN'}}',
             list_jenis_tamu_khusus:<?=json_encode(config('web_config.jenis_tamu_khusus'))?>,
             jenis_identity: '',
+            list_jenis_identity:<?=json_encode(config('web_config.identity_list')??[]) ?>,
             no_identity: '',
 
             nama: '{{$data->nama}}',
@@ -381,32 +373,7 @@
 
                 }
             },
-
-            
-            numberIdentity:function(val='',oldvAL){
-                if(val!=oldvAL){
-
-                    if(this.no_identity){
-                        var val=this.no_identity;
-                        val=val.replace(/[-]/g,'');
-                        let arr_val=val.split('');
-                        var char_no_identity='';
-                        for(var i=0;i<arr_val.length;i++){
-
-                            if(i%4==0 && i!=0){
-                                char_no_identity+='-';
-                            }
-                            char_no_identity+=arr_val[i];
-                        }
-
-                        this.no_identity=char_no_identity;
-                        this.bc();
-                        this.get_identity('nomer_identity');
-
-                    }
-                }
-                return true;
-            },
+           
             phoneNumber:function(){
                 if(this.nomer_telpon){
                     var val=this.nomer_telpon;
@@ -450,6 +417,31 @@
                 }
 
             },
+            numberIdentity:function(item,val){
+                console.log(item);
+                if(item.nomer_identity!=val){
+                    if(item.no_identity){
+                        var val=item.no_identity;
+                        val=val.replace(/[-]/g,'');
+                        let arr_val=val.split('');
+                        var char_no_identity='';
+                        for(var i=0;i<arr_val.length;i++){
+                            if(i%4==0 && i!=0){
+                                char_no_identity+='-';
+                            }
+                            char_no_identity+=arr_val[i];
+                        }
+
+                        item.no_identity=char_no_identity;
+
+                        
+
+                    }
+                }
+                console.log(item);
+                return true;
+            },
+
             bc:function(){
                 window.bc_provos.postMessage(vinput.$data);
                if(this.tamu_khusus==true){

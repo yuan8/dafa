@@ -16,9 +16,7 @@ use Storage;
 use Alert;
 class TamuCtrl extends Controller
 {
-    //
-
-
+    
     public function simpan_data_tamu($id,Request $request){
 
         $tamu=DB::table('tamu')->where('id',$id)->first();
@@ -260,6 +258,9 @@ class TamuCtrl extends Controller
 
             foreach ($identity as $key => $value) {
                 $identity[$key]->path_rendered=url($value->path_identity);
+                $identity[$key]->path_def=url($value->path_identity);
+                $identity[$key]->berlaku_hingga=$value->berlaku_hingga?Carbon::parse($value->berlaku_hingga)->format('Y-m-d'):null;
+
                 # code...
             }
             if($tamu->tamu_khusus){
