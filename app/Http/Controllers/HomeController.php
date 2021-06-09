@@ -584,6 +584,19 @@ class HomeController extends Controller
              }
 
         }
+        $where=[];
+
+        if($request->q){
+                $where[]="(v.nama like '%".$request->q."%')";
+                $where[]="(log.tujuan like '%".$request->q."%')";
+                $where[]="(log.instansi like '%".$request->q."%')";
+                $where[]="(log.keperluan like '%".$request->q."%')";
+
+
+                $where[]="(v.alamat like '%".$request->q."%')";
+                $where[]="(replace(ind.identity_number,'-','') like '%".str_replace('-', '', $request->q)."%')";
+                $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
+        }
 
 
 
@@ -625,10 +638,9 @@ class HomeController extends Controller
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
                 ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id')
+                ->groupBy('v.id','log.id');
 
 
-                ->get();
             break;
             case 'GATE_CHECKOUT':
                 $log_tamu=DB::table('log_tamu as log')
@@ -643,19 +655,28 @@ class HomeController extends Controller
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','!=',null)
                 ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id')
-                ->get();
+                ->groupBy('v.id','log.id');
             break;
         }
+
+        if($log_tamu){
+            if(count($where)){
+                $log_tamu=$log_tamu->whereRaw('('.implode(" OR ",$where).")");
+            }
+
+            $log_tamu=$log_tamu->get();
+
+            $fingerprint=$request->fingerprint();
+            return view('gate.index')->with([
+                'data_visitor'=>$log_tamu,
+                'fingerprint'=>$fingerprint,
+                'req'=>$request,
+                'active_h'=>$day_last,
+                'status'=>$checkin
+            ]);
+        }
         
-        $fingerprint=$request->fingerprint();
-        return view('gate.index')->with([
-            'data_visitor'=>$log_tamu,
-            'fingerprint'=>$fingerprint,
-            'req'=>$request,
-            'active_h'=>$day_last,
-            'status'=>$checkin
-        ]);
+        
     }
 
     public function gate_check_in($id_log,$slug,Request $request){

@@ -36,7 +36,9 @@
         <div class="row">
             <div class="col-md-5">
                 
-
+                <div class="form-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search" value="{{$req->q}}">
+                </div>
             </div>
         </div>
        </form> 
@@ -74,6 +76,8 @@
                         <p>{{
                             config('web_config.kategori_tamu')[$v->kategori_tamu]??$v->kategori_tamu
                         }}</p>
+                        <p>  <span class="badge badge-primary">{{$v->instansi}}</span>
+                        </p>
                     </td>
                     <td>{{ $v->nomer_telpon }}
                         <br>
@@ -84,8 +88,7 @@
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">{{$v->instansi}}</span>
-                        <br>
+                      
                         <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
 
                         <p >{{ $v->keperluan }}</p>
