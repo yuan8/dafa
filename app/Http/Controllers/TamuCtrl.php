@@ -345,7 +345,7 @@ class TamuCtrl extends Controller
 			$end=$request->end;
 		}
 
-		  $day=Carbon::now()->startOfDay();
+		$day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
 
         if($request->date){
@@ -394,27 +394,29 @@ class TamuCtrl extends Controller
             }
         }
 
-
+        if($checkin==null){
+            $checkin='GATE_CHECKIN';
+        }
 
 
         $log_tamu=[];
         switch($checkin){
-            case 'PROVOS':
-            	$status='PROVOS';
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','=','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,(select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                          ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
-                ->where('log.gate_checkin','=',null)
-                ->whereRaw(implode(' and ', $where_raw))
+            // case 'PROVOS':
+            // 	$status='PROVOS';
+            //     $log_tamu=DB::table('log_tamu as log')
+            //     ->join('tamu as v','v.id','=','log.tamu_id')
+            //     ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            //     ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,(select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+            //         (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+            //         (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
+            //               ->where('log.provos_checkin','>=',Carbon::parse($start))
+            //     ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+            //     ->where('log.gate_checkin','=',null)
+            //     ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+            //     ->orderBy('log.provos_checkin','desc');
                 
-            break;
+            // break;
             case 'GATE_CHECKIN':
             	$status='CHECKIN';
 
@@ -422,15 +424,14 @@ class TamuCtrl extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                          ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+                ->where('log.gate_checkin','>=',Carbon::parse($start))
+                ->where('log.gate_checkin','<=',Carbon::parse($end)->endOfDay())
                 ->where('log.gate_checkout','=',null)
                 ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+                ->orderBy('log.gate_checkin','desc');
                
             break;
             case 'GATE_CHECKOUT':
@@ -440,32 +441,32 @@ class TamuCtrl extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+                ->where('log.gate_checkin','>=',Carbon::parse($start))
+                ->where('log.gate_checkin','<=',Carbon::parse($end)->endOfDay())
                 ->where('log.gate_checkout','!=',null)
                 ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+                ->orderBy('log.gate_checkin','desc');
                 
             break;
 
             default:
 
-             $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
-                ->whereRaw(implode(' and ', $where_raw))
+             // $log_tamu=DB::table('log_tamu as log')
+             //    ->join('tamu as v','v.id','log.tamu_id')
+             //    ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+             //    ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+             //        (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+             //        (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+             //        (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
+             //    ->where('log.provos_checkin','>=',Carbon::parse($start))
+             //    ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+             //    ->whereRaw(implode(' and ', $where_raw))
                 
-                ->orderBy('log.provos_checkin','desc');
+             //    ->orderBy('log.provos_checkin','desc');
                 
 
             break;
@@ -627,16 +628,16 @@ class TamuCtrl extends Controller
 			$sheet->setCellValue(static::nta(12).($start+$key), implode(', ',json_decode($v->tujuan??[]) ) );
 			$sheet->setCellValue(static::nta(13).($start+$key), $v->keperluan);
 
-			$sheet->setCellValue(static::nta(14).($start+$key), $v->provos_checkin);
-			$sheet->setCellValue(static::nta(15).($start+$key), $v->gate_checkin);
-			$sheet->setCellValue(static::nta(16).($start+$key), $v->gate_checkout);
-			$sheet->setCellValue(static::nta(17).($start+$key), $v->status);
-			$sheet->getStyle(static::nta(1).($start+$key).':'.static::nta(17).($start+$key))->applyFromArray($DATASTYLE);
+			
+			$sheet->setCellValue(static::nta(14).($start+$key), $v->gate_checkin);
+			$sheet->setCellValue(static::nta(15).($start+$key), $v->gate_checkout);
+			$sheet->setCellValue(static::nta(16).($start+$key), $v->status);
+			$sheet->getStyle(static::nta(1).($start+$key).':'.static::nta(16).($start+$key))->applyFromArray($DATASTYLE);
 
 
 		}
 
-		$sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(17).(($start+$key)));
+		$sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(16).(($start+$key)));
 
 		$writer = new Xlsx($spreadsheet);
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -656,8 +657,7 @@ class TamuCtrl extends Controller
 		$pdf->loadHtml($DOM );
 		$pdf->setPaper('legal', 'landscape');
 		header('Content-Type: application/pdf');
-       
-		return $pdf->stream(urlencode('export-tamu-('.$start_date.')-('.$end_date.')'.".pdf") );
+		return $pdf->stream(urlencode('export-tamu-('.$start_date.')-('.$end_date.')'.".pdf"),array("Attachment" => false) );
 
 	}
 
