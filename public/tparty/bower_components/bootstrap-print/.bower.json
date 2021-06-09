@@ -1,0 +1,15 @@
+{
+  "name": "bootstrap-print",
+  "homepage": "https://github.com/Natshah/bootstrap-print",
+  "version": "3.1.2",
+  "_release": "3.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.1.2",
+    "commit": "2957d5f2701af09a5c52b2b93c2e7e01ed486a32"
+  },
+  "_source": "https://github.com/Natshah/bootstrap-print.git",
+  "_target": "^3.1.2",
+  "_originalSource": "Natshah/bootstrap-print",
+  "_direct": true
+}

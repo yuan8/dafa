@@ -1,12 +1,7 @@
 @extends('adminlte::page')
 
 @section('content')
-@php
-dd('ss');
-@endphp
-    
-@php
-@endphp
+
 <script type="application/javascript" src="{{asset('tparty/bower_components/webcamjs/webcam.js') }}"></script>
    <script type="application/javascript">
         function errFoto(d){
@@ -14,55 +9,48 @@ dd('ss');
         }
     </script>
 <div  id="picIdInput">
-    <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
+    <div  v-if="display" class="col-md-12" style="padding:10px; background:#222; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
        <div class="box">
            <div class="box-body">
                 <div class="col-md-12">
                      <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
+                     <hr style="background: #fff">
                  </div>
                 
-                <div class="col-md-12" style="margin-bottom: 10px;">
-                    <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
+                <div class="col-md-12 text-center" style="margin-bottom: 10px;">
+                    <div id="cam-record" v-bind:height="height+'px'" v-bind:width="width+'px'"
+                     style=" overflow: hidden; border-radius: 10px;">
+                         
+                     </div>
 
                 </div>
                
             </div>
        
           <div class="box-footer">
-               
                 <div class="btn-group">
-                    <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Resnap</button>
+                    <button v-if="!url_filled" class="btn btn-primary" @click="takePic">AMBIL</button>
+                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">AMBIL UANG</button>
                    
-                    <button v-if="url_filled"  class="btn btn-primary" @click="save">Save Data</button>
+                    <button v-if="url_filled"  class="btn btn-primary" @click="save">GUNAKAN</button>
 
                 </div>
-          
            </div>
        </div>
     </div>
 </div>
 
-<H4><b>TAMU MASUK GATE</b></H4>
-<div class="btn-group" id="action_input">
-    <a href="{{ route('g.receiver',['fingerprint'=>$fingerprint ])}}" onclick="setTimeout(function(){vinput.bc; console.log('bc_run')},3000)" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
-    <button v-if="env=='KTP'" @click="ktp" class="btn btn-primary bg-info">EXTRASI DATA KTP</button>
-    <button v-if="env=='SIM'" @click="sim" class="btn btn-danger">EXTRASI DATA SIM</button>
-    <button v-if="env=='LAINYA'" @click="lainya" class="btn btn-success">EXTRASI DATA LAINYA</button>
-</div>
+<H4><b>DATA TAMU </b></H4>
 
 
-<form action="{{ route('g.input.proccess',['id'=>$data->id,'slug'=>Str::slug($data->nama),'fingerprint'=>$fingerprint]) }}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
+
+<form action="{{route('g.tamu.update',['id'=>$data->id])}}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
     @csrf
+    @method('PUT')
     <div class="card" id="vinput">
-        <div v-for="item in identity_record" class="card-header with-border">
-            <div style="max-width: 30%;">
-                <img :src="item.path" style="width:100%;" >
-                <p>@{{item.jenis}}</p>
-                <input type="hidden" v-bind:name="'identity_record['+item.jenis+']'" v-model="item.path">
-            </div>
+        <div class="card-header bg-danger" v-if="izin_akses_masuk==false">
+            TAMU TIDAK DI IZINKAN MASUK 
         </div>
-
         <div class="card-body">
 
             <div class="row" >
@@ -70,24 +58,47 @@ dd('ss');
                 <div class="col-md-3">
                     <div class="text-center" style="width:100%; min-height:100px; border:1px solid #222">
                         <img src="" :src="foto" alt="" onerror="errFoto(this)" style="max-width:100%;">
-                        <div class="input-group input-group-sm">
+                         <input type="hidden" name="file_foto_cam" v-model="foto_file_cam">
+                        <div class="input-group input-group-sm " style="margin-top: 10px; border-top:1px solid #222" >
                             <input type="file" v-on:change="processFileFoto($event)" class="form-control" id="file-foto" name="foto_file" accept="image/*">
-                            <input type="hidden" name="file_foto_cam" v-model="foto_file_cam">
+                           
                             <span  class="input-group-addon">
-                                <button v-on:click="getFotoCam()" type="button" class="btn btn-primary btn-sm">CAMERA</button>
+                                <button v-on:click="getFotoCam()" type="button" class="btn btn-primary btn-sm"><i class="fa fa-camera"></i> .</button>
                             </span>
                         </div>
                     </div>
                   
                  
                     <input type="hidden" name="foto" v-model="foto">
-                    <div  v-if="btn_check">
-                        <div class="btn-group" style="margin-top:10px; ">
-                            <button type="button" @click="submit_form" class="btn btn-primary">MASUK GATE</button>
-                        </div>
-                        <hr>
+                   
+                    <div class="form-group" >
+                        <label>JENIS TAMU</label>
+                        <select class="form-control" name="tamu_khusus" v-model="tamu_khusus">
+                            <option value="0">BIASA</option>
+                            <option value="1">TAMU KHUSUS</option>
+                        </select>
                     </div>
-                    <p style="margin-top: 10px;"><b>DATA KUNJUNGAN</b></p>
+                    <div  v-if="btn_check && tamu_khusus==false">
+                                <div class="btn-group" style="margin-top:10px; ">
+                                    <button type="button" @click="submit_form" class="btn btn-primary">UPDATE</button>
+                                </div>
+                                <hr>
+                            </div>
+                           
+
+                    <div v-if="tamu_khusus==true">
+                        <label>ID TAMU KHUSUS</label>
+                        <p><span class="badge bg-warning">{{$data->string_id}}</span></p>
+                        <div class="form-group" >
+                        <label>JENIS TAMU KHUSUS</label>
+                        <select class="form-control" name="jenis_tamu_khusus" v-model="jenis_tamu_khusus">
+                           @foreach (config('web_config.jenis_tamu_khusus') as $keyj=> $j)
+                                <option value="{{$keyj}}">{{$keyj}}</option>
+                               {{-- expr --}}
+                           @endforeach
+                        </select>
+                    </div>
+                        <p style="margin-top: 10px;"><b>DATA KUNJUNGAN ISI OTOMATIS</b></p>
                      <hr>
 
                      <div class="form-group" >
@@ -100,8 +111,8 @@ dd('ss');
                         </select>
                     </div>
                      <div class="form-group">
-                        <label>Instansi</label>
-                       <input type="text" class="form-control" v-model="instansi" name="instansi">
+                        <label>Instansi*</label>
+                       <input type="text" class="form-control" required="" v-model="instansi" name="instansi">
                     </div>
                     <div class="form-group">
                          <label>Tujuan*</label>
@@ -115,26 +126,16 @@ dd('ss');
                         <label>Keterangan Keperluan*</label>
                         <textarea name="keperluan" class="form-control" v-model="keperluan"></textarea>
                     </div>
+                    </div>
                 </div>
                 <div class="col-md-9">
-                     <p><b>IDENTITAS TAMU</b></p>
+                     <p><b>IDENTITAS TAMU </b></p>
                      <hr>
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Jenis Identitas*</label>
-                                <select name="jenis_identity" required id="" v-model="jenis_identity"  class="form-control">
-                                    @foreach (config('web_config.identity_list')??[] as $k)
-                                        <option value="{{$k['tag']}}">{{$k['name']}}</option>
-                                        {{-- expr --}}
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Nomer Identitas*</label>
-                                <input name="no_identity" value="" required type="text" v-model="no_identity" class="form-control">
-                            </div>
+                          
+                           
                             <div class="form-group">
                                 <label for="">Nama Tamu*</label>
                                 <input name="nama" required type="text" v-model="nama"   class="form-control">
@@ -157,29 +158,59 @@ dd('ss');
 
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="">@{{jenis_identity}} Berlaku Hingga</label>
-                                <input  name="berlaku_hingga" type="date" v-model="berlaku_hingga" class="form-control">
-                            
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
+                           
+                             <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
                             
                             </div>
-                            <div class="form-group">
+                               <div class="form-group">
                                 <label for="">Tempat Lahir</label>
                                 <input name="tempat_lahir" type="text" v-model="tempat_lahir" class="form-control">
                             
+                            </div>
+                            <div v-if="tamu_khusus==true">
+                                <p class="text-danger">Jenis Tamu Khusus <b>@{{jenis_tamu_khusus}}</b>  Mewajibkan Memasukan Data ID <b>@{{list_jenis_tamu_khusus[jenis_tamu_khusus]}}</b> Terlebih Dahulu</p>
+                            </div>
+                             <div  v-if="btn_check && tamu_khusus==true">
+                                <div class="btn-group" style="margin-top:10px; ">
+                                    <button type="button" @click="submit_form" class="btn btn-primary">UPDATE</button>
+                                </div>
+                                <hr>
+                            </div>
+                           
+                           
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="" v-if="tamu_khusus==true">
+
+                                <label>IDENTITY TAMU KHUSUS</label>
+                                <div class="row">
+                                    @php
+                                    $hs=(Hash::make('TAM'.$data->id.'SUS'));
+                                        $exp_list=['M|nor','Zz*&','Linq<>','uTes)','YarJ^U','hALLLall'];
+                                        $exp=$exp_list[array_rand($exp_list,1)];
+                                        $id_route=route('g.tamu.id_khusus',['id'=>$data->id,'hash_log'=>$hs.$exp.base64_decode(date('Ymd'))]);
+                                    @endphp
+                                     <iframe class="col-md-12" src="{{$id_route}}">
+                                        
+                                    </iframe>
+                                    <div class="col-md-12">
+                                       
+                                    <div class="btn-group text-left">
+                                        <a href="{{$id_route}}" download="" class="btn btn-xs btn-primary">DOWNLOAD ID</a>
+                                    </div> 
+                                    </div>
+                                </div>
+                                <hr>
                             </div>
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">
                             
                             </div>
+
                             <div class="form-group">
                                 <label for="">Pekerjaan</label>
                                 <input  name="pekerjaan" type="text" v-model="pekerjaan" class="form-control">
@@ -193,21 +224,52 @@ dd('ss');
                        
                     </div>
 
-                     <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>FILE @{{jenis_identity}}</label>
-                                    <input id="input-file-id" v-on:change="processFile($event)"type="file" class="form-control" name="file" accept="image/*">
-                                </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>IZIN MASUK*</label>
+                                <select class="form-control" name="izin_akses_masuk" v-model="izin_akses_masuk">
+                                    <option value="0">TIDAK DIZINKAN</option>
+                                    <option value="1">DIIZINKAN</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <label>CAPTURE @{{jenis_identity}}</label>
-                                <div >
-                                <img src="" :src="identity.rendered" id="file-identity" class="img-thumbnail">
-                                    
-                                </div>
+                            <div class="form-group" name="keterangan_tolak_izin_akses" v-if="izin_akses_masuk==0">
+                                <label>KETERANGAN PENCEKALAN IZIN MASUK</label>
+                                <textarea name="keterangan_tolak_izin_akses" v-model="keterangan_tolak_izin_akses" class="form-control"></textarea>
                             </div>
                         </div>
+                    </div>
+                   <div class="row">
+                       <div class="col-md-12">
+                        <label>JENIS IDENTITAS TAMU*</label>
+                           <div class="table-responsive">
+                               <table class="table-bordered table">
+                                   <thead>
+                                       <tr>
+                                           <th>AKSI</th>
+                                           <th></th>
+
+                                           <th>JENIS IDENTITAS</th>
+                                           <th>NOMER IDENTITAS</th>
+                                           <th>BERKALU HINGGA</th>
+
+
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       <tr v-for="item in data_id ">
+                                        <td></td>
+                                        <td>
+                                            <img v-bind:src="item.path_rendered" style="width:100px;">
+                                        </td>
+                                           <td>@{{item.jenis_identity}}</td>
+                                            <td>@{{item.identity_number}}</td>
+                                       </tr>
+                                   </tbody>
+                               </table>
+                           </div>
+                       </div>
+                   </div>
                    
                 
                 </div>
@@ -223,9 +285,9 @@ dd('ss');
 
 @section('js')
 <script  type="application/javascript">
-    var bc_provos = new BroadcastChannel('bcgate-{{$fingerprint}}');
+    var bc_provos = new BroadcastChannel('bcgate-edit');
     function isEmpty(data){
-        if(data === null || data === '') {
+        if(data == null || data == '') {
             return true;
         }else{
             return false;
@@ -257,41 +319,45 @@ dd('ss');
 
     var them_phone='+62';
     var api_get_id=null;
-
-
-
     var vinput = new Vue({
         el: '#vinput',
          data: {
-            jenis_identity: '{{$data->jenis_identity}}',
-            no_identity: '{{$data->no_identity}}',
+            // 
+            izin_akses_masuk:{{$data->izin_akses_masuk?1:0}},
+            keterangan_tolak_izin_akses:'{{preg_replace( "/\r|\n/", " ",$data->keterangan_tolak_izin_akses)}}',
+            jenis_tamu_khusus:'{{$data->jenis_tamu_khusus??'REKANAN'}}',
+            list_jenis_tamu_khusus:<?=json_encode(config('web_config.jenis_tamu_khusus'))?>,
+            jenis_identity: '',
+            no_identity: '',
+
             nama: '{{$data->nama}}',
             foto:'{{($data->foto)?asset($data->foto):''}}',
             foto_file:null,
             foto_file_cam:null,
-
+            tamu_khusus: {{$data->tamu_khusus?1:0}},
             foto_def:'{{($data->foto)?asset($data->foto):''}}',
             tempat_lahir: '{{$data->tempat_lahir}}',
             golongan_darah:'{{$data->golongan_darah??'-'}}',
             jenis_kelamin:{{$data->jenis_kelamin??1}},
             tanggal_lahir: '{{$data->tanggal_lahir?Carbon\Carbon::parse($data->tanggal_lahir)->format('Y-m-d'):null}}',
-            alamat: '{{$data->alamat}}',
+            alamat: "{{preg_replace( "/\r|\n/", " ",$data->alamat)}}",
             nomer_telpon: "{{$data->nomer_telpon??'+62'}}",
             pekerjaan: "{{$data->pekerjaan}}",
-            keperluan: "{{$data->keperluan}}",
-            instansi: "{{$data->instansi}}",
-            kategori_tamu: '{{$data->kategori_tamu}}',
+            keperluan: "{{preg_replace( "/\r|\n/", " ",$data->def_keperluan)}}",
+            instansi: "{{$data->def_instansi}}",
+            kategori_tamu: "{{$data->def_kategori_tamu}}",
             agama: "{{$data->agama}}",
-            berlaku_hingga: "{{$data->berlaku_hingga}}",
+            berlaku_hingga: "",
             btn_check: false,
-            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode($data->tujuan??'[]')??[]))??[]?>,
+            data_id:<?= json_encode($data_id??[])?>,
+            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode($data->def_tujuan??'[]')??[]))??[]?>,
             options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
-            tujuan:<?=($data->tujuan)??'[]'?>,
+            tujuan:<?=($data->def_tujuan)??'[]'?>,
             identity:{
-                "recorded":'{{($data->path_identity)}}',
+                "recorded":'',
                 "file":null,
-                "rendered_def":'{{$data->path_identity?url($data->path_identity):''}}',
-                "rendered":'{{$data->path_identity?url($data->path_identity):''}}'
+                "rendered_def":'',
+                "rendered":''
             },
             // identity_record:[
 
@@ -301,146 +367,9 @@ dd('ss');
 
             get_identity:function(expt='dd'){
 
-                if(window.api_get_id!=null){
-                    window.api_get_id.abort();
-                }
-                 window.api_get_id=$.post('{{route('api.get.identity')}}',{
-                    'no_identity':this.no_identity,
-                    'jenis_identity':this.jenis_identity,
-                    'nomer_telpon':this.nomer_telpon,
-                },function(res){
-                    if(res.code==200){
-                        window.res=res;
-                        console.log(expt);
-                        if(vinput.identity.file==null){
-                                if((res.data.tamu_foto!=undefined) && !isEmpty(res.data.tamu_foto)){
-                                    if(vinput.foto!=res.data.tamu_foto){
-                                            if(vinput.foto_file_cam==false && vinput.foto_file==null){
-                                                vinput.foto=res.data.tamu_foto;
-                                            }
-                                        }
-                                }
-
-                            }
-
-                            if(expt!='nomer_telpon'){
-                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
-                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
-                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
-                                    }
-                                }
-                            }
-
-                            if(expt!='nomer_telpon'){
-                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
-                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
-                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
-                                    }
-                                }
-                            }
-
-                            if(expt!='nomer_identity'){
-
-                                if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
-                                    if(vinput.no_identity!=res.data.identity_number){
-                                        vinput.no_identity=res.data.identity_number;
-                                        
-                                    }
-                                }
-                            }
-
-
-                            if(expt!='jenis_identity'){
-                                if((res.data.jenis_identity!=undefined) && !isEmpty(res.data.jenis_identity)){
-                                    if(vinput.jenis_identity!=res.data.jenis_identity){
-                                        vinput.jenis_identity=res.data.jenis_identity;
-                                        
-                                    }
-                                }
-                            }
-
-                            if((res.data.tamu_tempat_lahir!=undefined) && !isEmpty(res.data.tamu_tempat_lahir)){
-                                if(vinput.tempat_lahir!=res.data.tamu_tempat_lahir){
-                                    vinput.tempat_lahir=res.data.tempat_lahir;
-                                    
-                                }
-                            }
-                            if((res.data.tamu_tanggal_lahir!=undefined) && !isEmpty(res.data.tamu_tanggal_lahir)){
-                                if(vinput.tanggal_lahir!=res.data.tamu_tanggal_lahir){
-                                    vinput.tanggal_lahir=res.data.tamu_tanggal_lahir;
-                                    
-                                }
-                            }
-
-                            if((res.data.tamu_pekerjaan!=undefined) && !isEmpty(res.data.tamu_pekerjaan)){
-                                if(vinput.pekerjaan!=res.data.tamu_pekerjaan){
-                                    vinput.pekerjaan=res.data.tamu_pekerjaan;
-                                    
-                                }
-                            }
-
-                            if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
-                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
-                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
-                                }
-                            }
-
-                             if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
-                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
-                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
-                                }
-                            }
-
-
-                             if((res.data.tamu_jenis_kelamin!=undefined) && !isEmpty(res.data.tamu_jenis_kelamin)){
-                                if(vinput.jenis_kelamin!=res.data.tamu_jenis_kelamin){
-                                    vinput.jenis_kelamin=res.data.tamu_jenis_kelamin;
-                                    
-                                }
-                            }
-
-                            vinput.identity.rendered_def=null;
-                            vinput.identity.rendered=null;
-                            vinput.identity.recorded=null;
-
-                            if((res.data.path_identity!=undefined) && !isEmpty(res.data.path_identity)){
-                                if(vinput.identity.rendered!=res.data.path_identity){
-                                    vinput.identity.rendered_def=res.data.path_identity;
-                                    vinput.identity.rendered=res.data.path_identity;
-                                    vinput.identity.recorded=res.data.path_identity;
-
-                                }
-                            }
-
-                             
-
-                            $('#input-file-id').val(null);
-                            $('#input-file-id').trigger('change');
-                            
-
-                            
-                            
-
-                        
-                    }
-                });
+               
             },
-            display_identity:function(expt='x'){
-                $.post('{{route('api.identity.match')}}',{'jenis_identity':this.jenis_identity!=null?this.jenis_identity:null,'no_identity':(this.no_identity.length>5?this.no_identity:null),'nomer_telpon':(this.nomer_telpon.length>12?this.nomer_telpon:null)},function(res){
-                        console.log(expt);
-                        console.log(res);
-                       if(res.code==200){
-                           
-                        }else{
-
-                        }
-                    });
-
-            },
+          
 
             submit_form:function(){
                 window.vmodalsubmit.isActive=true;
@@ -523,12 +452,24 @@ dd('ss');
             },
             bc:function(){
                 window.bc_provos.postMessage(vinput.$data);
-                if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.kategori_tamu!=null)){
-                    this.btn_check=true;
+               if(this.tamu_khusus==true){
+
+                    if((this.nomer_telpon.length>11)  && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.tujuan_json.length!=0) && (this.keperluan!="") && (this.kategori_tamu!="") && (this.instansi!="")  ){
+                        this.btn_check=true;
+
+                    }else{
+                        this.btn_check=false;
+                    }
+
+               }else{
+                console.log('NO KGUSUS');
+                 if((this.nomer_telpon.length>11)  && (this.nama.length>3) && (this.jenis_kelamin!=null) ){
+                        this.btn_check=true;
 
                 }else{
                     this.btn_check=false;
                 }
+               }
 
             },
             processFile:function(event){
@@ -552,6 +493,21 @@ dd('ss');
            
             nomer_telpon:'phoneNumber',
             no_identity:'numberIdentity',
+            tamu_khusus:function(val,old){
+                
+                    
+                    this.bc();
+
+                
+
+            },
+            tujuan_json:"bc",
+            instansi:"bc",
+            kategori_tamu:"bc",
+            keperluan:"bc",
+
+
+
             nama:'namaTamu',
             jenis_identity:  function(val,old){
                 if(val!=old){
@@ -630,6 +586,8 @@ dd('ss');
             display:false,
             pic_data:null,
             url_filled:false,
+            width:320,
+            height:240
         },
         methods:{
             
@@ -665,25 +623,25 @@ dd('ss');
                 this.pic_data=null;
                 setTimeout(function(){
                     window.Webcam.set({
-                      width: 320,
+                    width: 320,
                     height: 240,
+                    dest_width: 640,
+                    dest_height: 480,
                     
-                    dest_width: 320,
-                    dest_height: 240,
-                    
-                    crop_width: 320,
-                    crop_height: 240,
+                    crop_width: 480,
+                    crop_height: 490,
                     
                     image_format: 'png',
-                    jpeg_quality: 100,
-                    enable_flash: true,
-                    flip_horiz: false,
-                    fps: 15,
-                    facingMode: "environment"
+                    jpeg_quality: 90,
+                    
+                    // flip horizontal (mirror mode)
+                    flip_horiz: true,
+                        fps: 15,
+                    // facingMode: "environment"
                     });
                     
                     window.Webcam.attach('#cam-record')
-                },300);
+                },1000);
 
             },
             takePic:function(){
@@ -733,19 +691,19 @@ dd('ss');
 
 </script>
 
-<div class="modal fade"   tabindex="-1" id="modal-submit" role="dialog">
+<div class="modal fade"  tabindex="-1" id="modal-submit" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">KONFIRMASI PENGINPUTAN</h5>
+          <h5 class="modal-title">KONFIRMASI UPDATE</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <p>Apakah anda yakin mengirim form ini?</p>
-          <p><b>Nama</b>: @{{ nama }}, <b>Jenis ID</b>: @{{ jenis_identity }} </p>
-          <p><b>@{{ no_identity }}</b></p>
+          <p><b>Nama</b>: @{{ nama }}, <b>NO TELP</b>: @{{ nomer_telpon }} </p>
+         
         </div>
         <div class="modal-footer">
           <button type="button" @click="submit" class="btn btn-primary">KIRIM</button>
@@ -761,6 +719,8 @@ dd('ss');
               nama:'',
               jenis_identity:'',
               no_identity:'',
+              nomer_telpon:'',
+
               isActive:false
           },
           methods:{
@@ -775,6 +735,8 @@ dd('ss');
                         this.nama=window.vinput.nama;
                         this.jenis_identity=window.vinput.jenis_identity;
                         this.no_identity=window.vinput.no_identity;
+                        this.nomer_telpon=window.vinput.nomer_telpon;
+
                           $('#modal-submit').show();
                           $('#modal-submit').modal({ keyboard: false })   // initialized with no keyboard
                             $('#modal-submit').modal('show')                // initializes and invokes show immediately

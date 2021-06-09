@@ -11,6 +11,11 @@
 @section('adminlte_css')
     @stack('css')
     @yield('css')
+    <style type="text/css">
+    tr th, tr td{
+        font-size: 10px!important;
+    }
+</style>
 @stop
 
 @section('classes_body', $layoutHelper->makeBodyClasses())
@@ -70,6 +75,7 @@
 <link rel="stylesheet" href="{{asset('tparty/bower_components/animate-css/animate.min.css')   }}">
 
 @section('adminlte_js')
+
     @stack('js')
     @yield('js')
 @stop

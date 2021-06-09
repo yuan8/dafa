@@ -17,6 +17,7 @@ class Tamu extends Migration
             $table->id();
             $table->string('foto')->nullable();
             $table->string('nama');
+            $table->string('string_id')->unique();
             $table->boolean('jenis_kelamin')->default(false);
             $table->text('golongan_darah')->nullable();
             $table->string('nomer_telpon')->nullable();
@@ -26,6 +27,15 @@ class Tamu extends Migration
             $table->text('alamat')->nullable();
             $table->text('provinsi')->nullable();
             $table->string('pekerjaan')->nullable();
+            $table->boolean('tamu_khusus')->default(false);
+            $table->string('jenis_tamu_khusus')->nullable();
+            $table->boolean('izin_akses_masuk')->default(true);
+            $table->text('keterangan_tolak_izin_akses')->nullable();
+            $table->string('def_jenis_identity')->nullable();
+            $table->string('def_kategori_tamu')->nullable();
+            $table->string('def_instansi')->nullable();
+            $table->mediumText('def_tujuan')->nullable();
+            $table->mediumText('def_keperluan')->nullable();
             $table->timestamps();
         });
     }

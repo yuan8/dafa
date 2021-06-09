@@ -2,30 +2,33 @@
 
 @section('content')
 <script type="application/javascript" src="{{asset('tparty/bower_components/webcamjs/webcam.js') }}"></script>
+   <script type="application/javascript">
+        function errFoto(d){
+            d.src='{{asset('tamu-def.png') }}'
+        }
+    </script>
 <div  id="picIdInput">
-    <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px; position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
+    <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
        <div class="box">
            <div class="box-body">
-                <div class="row">
-            <div class="col-md-12">
-                 <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span> INPUT IDENTITY @{{ jenis }}</h5>
-            <input type="hidden" v-model="jenis">
-            </div>
-            <div class="col-md-12" style="margin-bottom: 10px;">
-                <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
+                <div class="col-md-12">
+                     <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
+                 </div>
+                
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
 
+                </div>
+               
             </div>
-           
-        </div>
        
-           </div>
-           <div class="box-footer">
+          <div class="box-footer">
                
                 <div class="btn-group">
                     <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
                     <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Resnap</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="extractData">Extrak Data</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Save Data</button>
+                   
+                    <button v-if="url_filled"  class="btn btn-primary" @click="save">Save Data</button>
 
                 </div>
           
@@ -33,27 +36,70 @@
        </div>
     </div>
 </div>
-
-<H4><b>TAMBAH DATA TAMU</b></H4>
+<H4><b>TAMBAH DATA TAMU MASUK</b></H4>
 <div class="btn-group" id="action_input">
     <a href="{{ route('p.receiver',['fingerprint'=>$fingerprint ])}}" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
-    <button  class="btn btn-primary">HALAMAN INPUT</button>
-    <button v-if="env=='KTP'" @click="ktp" class="btn btn-primary bg-info">EXTRASI DATA KTP</button>
-    <button v-if="env=='SIM'" @click="sim" class="btn btn-danger">EXTRASI DATA SIM</button>
-    <button v-if="env=='LAINYA'" @click="lainya" class="btn btn-success">EXTRASI DATA LAINYA</button>
+   
+</div>
+<div id="data-pencarian">
+    <div class="card" v-if="item!=null">
+    <div class="card-header">
+        DITEMUKAN DATA <span><button v-if="item.izin_akses_masuk==true" v-on:click="implemented" class="btn btn-xs btn-primary"><i class="fa fa-download"></i> TERAPKAN</button></span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>FOTO</th>
+                <th>JENIS TAMU</th>
+
+                <th>NAMA</th>
+                <th>NOMER TELPON</th>
+                <th>JENIS ID</th>
+                <th>NOMER ID</th>
+                <th>ALAMAT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-danger" v-if="item.izin_akses_masuk==false">
+                <td  colspan="7">TAMU DILARANG BERKUNGJUNG</td>
+            </tr>
+            <tr class="bg-warning" v-if="item.izin_akses_masuk==false">
+                <td class="text-left" colspan="7">@{{item.keterangan_tolak_izin_akses}}</td>
+            </tr>
+            <tr>
+                <td><img style="max-width: 50px;" v-bind:src="item.tamu_foto"  onerror="errFoto(this)"></td>
+                <td>@{{item.tamu_khusus?'TAMU KHUSUS - '+item.jenis_tamu_khusus:'-'}}</td>
+                <td>@{{item.tamu_nama}}</td>
+                <td>@{{item.tamu_nomer_telpon}}</td>
+                <td>@{{item.jenis_identity}}</td>
+                <td>@{{item.identity_number}}</td>
+                <td>@{{item.tamu_alamat}}</td>
+            </tr>
+        </tbody>
+    </table>
+        </div>
+    </div>
+
 </div>
 
+</div>
 
+<style type="text/css">
+        #data-pencarian table tr td{
+            padding: 5px!important;
+            text-align: center;
+            font-weight: bold;
+        }
+        #data-pencarian table tr td.text-left{
+            text-align: left;
+        }
+    </style>
 <form action="{{ route('p.submit',['fingerprint'=>$fingerprint]) }}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
     @csrf
     <div class="card" id="vinput">
-        <div v-for="item in identity_record" class="card-header with-border">
-            <div style="max-width: 30%;">
-                <img :src="item.path" style="width:100%;" >
-                <p>@{{item.jenis}}</p>
-                <input type="hidden" v-bind:name="'identity_record['+item.jenis+']'" v-model="item.path">
-            </div>
-        </div>
+        
 
         <div class="card-body">
 
@@ -62,17 +108,20 @@
                 <div class="col-md-3">
                     <div class="text-center" style="width:100%; min-height:100px; border:1px solid #222">
                         <img src="" :src="foto" alt="" onerror="errFoto(this)" style="max-width:100%;">
+                        <div class="input-group input-group-sm">
+                            <input type="file" v-on:change="processFileFoto($event)" class="form-control" id="file-foto" name="foto_file" accept="image/*">
+                            <input type="hidden" name="file_foto_cam" v-model="foto_file_cam">
+                            <span  class="input-group-addon">
+                                <button v-on:click="getFotoCam()" type="button" class="btn btn-primary btn-sm">CAMERA</button>
+                            </span>
+                        </div>
                     </div>
                   
-                    <script type="application/javascript">
-                        function errFoto(d){
-                            d.src='{{asset('tamu-def.png') }}'
-                        }
-                    </script>
+                 
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
-                            <button type="button" @click="submit_form" class="btn btn-primary">MASUK PROVOS</button>
+                            <button type="button" @click="submit_form" class="btn btn-primary">MASUK GATE</button>
                         </div>
                         <hr>
                     </div>
@@ -90,7 +139,7 @@
                     </div>
                      <div class="form-group">
                         <label>Instansi</label>
-                       <input type="text" class="form-control" name="instansi" value="{{old('instansi')}}">
+                        <input type="text" class="form-control" name="instansi" v-model="instansi">
                     </div>
                     <div class="form-group">
                         <label>Tujuan*</label>
@@ -108,7 +157,7 @@
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
-                        <textarea name="keperluan" class="form-control">{!!old('keperluan')!!}</textarea>
+                        <textarea name="keperluan"  class="form-control" v-model="keperluan"></textarea>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -228,6 +277,8 @@
 
     var bc_provos = new BroadcastChannel('bcprovos-{{$fingerprint}}');
     var api_get_id=null;
+    var api_get_id_v=null;
+    var BUILD_IN_FORM={{old('BUILD_IN_FORM')?1:0}};
     var vactionInput=new Vue({
         el:'#action_input',
         data:{
@@ -257,21 +308,28 @@
     var vinput = new Vue({
         el: '#vinput',
         data: {
+            tamu_khusus: {{old('tamu_khusus')?1:0}},
+            jenis_tamu_khusus: "{{old('jenis_tamu_khusus')}}",
             jenis_identity: '{{old('jenis_identity')??'KTP'}}',
             no_identity: '{{old('no_identity')}}',
             nama: '{{old('nama')}}',
-            foto:'{{old('foto')}}',
+            foto:'{{url('tamu-def.png')}}',
+            foto_file:null,
+            foto_file_cam:false,
+            foto_def:null,
             tempat_lahir: '{{old('tempat_lahir')}}',
             golongan_darah:'{{old('golongan_darah')??'-'}}',
             jenis_kelamin:{{old('jenis_kelamin')??1}},
             tanggal_lahir: '{{old('tanggal_lahir')}}',
             alamat: '{{old('alamat')}}',
+            instansi: '{{old('instansi')}}',
             nomer_telpon: "{{old('nomer_telpon')??'+62'}}",
             pekerjaan: "{{old('pekerjaan')}}",
             kategori_tamu: "{{old('kategori_tamu')}}",
             agama: "{{old('agama')}}",
             berlaku_hingga: "{{old('berlaku_hingga')}}",
             btn_check: false,
+            keperluan:"{{old('keperluan')}}",
             tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',old('tujuan')??[]))??[]?>,
             options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
             tujuan:<?=!empty(old('tujuan')?json_encode(old('tujuan')):'[]')?>,
@@ -288,114 +346,25 @@
 
 
         methods:{
+            get_identity:function(expt='dd'){
 
-           get_identity:function(expt='dd'){
-
-                if(window.api_get_id!=null){
-                    window.api_get_id.abort();
+                if(window.api_get_id_v!=null){
+                    window.api_get_id_v.abort();
                 }
-                 window.api_get_id=$.post('{{route('api.get.identity')}}',{
-                    'no_identity':this.no_identity,
-                    'jenis_identity':this.jenis_identity,
-                    'nomer_telpon':this.nomer_telpon,
+
+                 window.api_get_id_v=$.post('{{route('api.get.identity')}}',{
+                    'no_identity':vinput.no_identity.length>5?vinput.no_identity:null,
+                    'jenis_identity':vinput.jenis_identity,
+                    'match':'perfect',
+                    'nomer_telpon':vinput.nomer_telpon.length>11?vinput.nomer_telpon:null,
                 },function(res){
+
+                    window.res_2=res;
                     if(res.code==200){
-                        window.res=res;
-                        console.log(expt);
-                        if(vinput.identity.file==null){
-                                if((res.data.tamu_foto!=undefined) && !isEmpty(res.data.tamu_foto)){
-                                    if(vinput.foto!=res.data.tamu_foto){
-                                            if(vinput.foto_file_cam==false && vinput.foto_file==null){
-                                                vinput.foto=res.data.tamu_foto;
-                                            }
-                                        }
-                                }
 
-                            }
-
-                            if(expt!='nomer_telpon'){
-                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
-                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
-                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
-                                    }
-                                }
-                            }
-
-                            if(expt!='nomer_telpon'){
-                                if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
-                                    if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
-                                        vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
-                                    }
-                                }
-                            }
-
-                            if(expt!='nomer_identity'){
-
-                                if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
-                                    if(vinput.no_identity!=res.data.identity_number){
-                                        vinput.no_identity=res.data.identity_number;
-                                        
-                                    }
-                                }
-                            }
-
-
-                            if(expt!='jenis_identity'){
-                                if((res.data.jenis_identity!=undefined) && !isEmpty(res.data.jenis_identity)){
-                                    if(vinput.jenis_identity!=res.data.jenis_identity){
-                                        vinput.jenis_identity=res.data.jenis_identity;
-                                        
-                                    }
-                                }
-                            }
-
-                            if((res.data.tamu_tempat_lahir!=undefined) && !isEmpty(res.data.tamu_tempat_lahir)){
-                                if(vinput.tempat_lahir!=res.data.tamu_tempat_lahir){
-                                    vinput.tempat_lahir=res.data.tempat_lahir;
-                                    
-                                }
-                            }
-                            if((res.data.tamu_tanggal_lahir!=undefined) && !isEmpty(res.data.tamu_tanggal_lahir)){
-                                if(vinput.tanggal_lahir!=res.data.tamu_tanggal_lahir){
-                                    vinput.tanggal_lahir=res.data.tamu_tanggal_lahir;
-                                    
-                                }
-                            }
-
-                            if((res.data.tamu_pekerjaan!=undefined) && !isEmpty(res.data.tamu_pekerjaan)){
-                                if(vinput.pekerjaan!=res.data.tamu_pekerjaan){
-                                    vinput.pekerjaan=res.data.tamu_pekerjaan;
-                                    
-                                }
-                            }
-
-                            if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
-                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
-                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
-                                }
-                            }
-
-                             if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
-                                if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
-                                    vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
-                                }
-                            }
-
-
-                             if((res.data.tamu_jenis_kelamin!=undefined) && !isEmpty(res.data.tamu_jenis_kelamin)){
-                                if(vinput.jenis_kelamin!=res.data.tamu_jenis_kelamin){
-                                    vinput.jenis_kelamin=res.data.tamu_jenis_kelamin;
-                                    
-                                }
-                            }
-
-                            vinput.identity.rendered_def=null;
-                            vinput.identity.rendered=null;
-                            vinput.identity.recorded=null;
+                        vinput.identity.rendered_def=null;
+                        vinput.identity.rendered=null;
+                        vinput.identity.recorded=null;
 
                             if((res.data.path_identity!=undefined) && !isEmpty(res.data.path_identity)){
                                 if(vinput.identity.rendered!=res.data.path_identity){
@@ -407,18 +376,22 @@
                             }
 
                              
-
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
-                            
 
-                            
-                            
+                    }else{
+                        vinput.identity.rendered_def=null;
+                        vinput.identity.rendered=null;
+                        vinput.identity.recorded=null;
 
-                        
+                           
+                            $('#input-file-id').val(null);
+                            $('#input-file-id').trigger('change');
                     }
                 });
             },
+
+         
             display_identity:function(){
                 $.post('{{route('api.identity.match')}}',{'jenis_identity':this.jenis_identity!=null?this.jenis_identity:null,'no_identity':(this.no_identity.length>5?this.no_identity:null),'nomer_telpon':(this.nomer_telpon.length>12?this.nomer_telpon:null)},function(res){
                         
@@ -462,7 +435,9 @@
                         this.no_identity=char_no_identity;
                         this.bc();
                     }
+                    vdatacari.get_identity('identity_number');
                     this.get_identity('identity_number');
+
                 }
 
                 return true;
@@ -496,7 +471,9 @@
                         if(window.them_phone!=char_phone){
                             this.nomer_telpon=char_phone;
                             window.them_phone=char_phone;
+                            vdatacari.get_identity('nomer_telpon');
                             this.get_identity('nomer_telpon');
+
 
                             this.bc();
 
@@ -511,7 +488,8 @@
             },
             bc:function(){
                 window.bc_provos.postMessage(vinput.$data);
-                console.log((this.nomer_telpon.length>11) , (this.no_identity.length>3) , (this.nama.length>3), (this.jenis_kelamin!=null) , (this.kategori_tamu!=null));
+               
+
                 if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.kategori_tamu!=null)){
                     this.btn_check=true;
 
@@ -523,6 +501,15 @@
             processFile:function(event){
                 this.identity.file = event.target.files[0]??null;
 
+            },
+             processFileFoto:function(event){
+                this.foto_file = event.target.files[0]??null;
+                if(this.foto_file){
+                    this.foto_file_cam=false;
+                }
+            },
+            getFotoCam:function(){
+                vpicItput.display=true;
             }
         },
 
@@ -532,7 +519,6 @@
             no_identity:'numberIdentity',
             nama:'namaTamu',
             jenis_identity:  function(val,old){
-                console.log(val,old);
 
                 if(val!=old){
 
@@ -546,11 +532,26 @@
 
                     this.identity.rendered=this.identity.recoded_def??null;
                     this.bc();
+                    vdatacari.get_identity('jenis_identity');
                     this.get_identity('jenis_identity');
+
                 }
 
             },
             foto: 'bc',
+            foto_file: function(file,old){
+                  if(file!=null){
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function(e) {
+                      vinput.foto=this.result;
+                    }
+                }else{
+
+                    this.foto=this.foto_def??null;
+                }
+
+            },
             tempat_lahir:'bc',
             golongan_darah:'bc',
             jenis_kelamin: 'bc',
@@ -574,12 +575,11 @@
         }
     });
     
-      $(function(){
-     setTimeout(function(){
-        window.vinput.get_identity();
+    $(function(){
+        setTimeout(function(){
         window.vinput.bc();
-
-        console.log('init');
+        window.vinput.get_identity('jenis_identity');
+        window.vdatacari.get_identity('nomer_telpon');
      },1000);
  });
 
@@ -587,68 +587,22 @@
 
 
 <script  type="application/javascript">
- var vpicItput=new Vue({
+var vpicItput=new Vue({
         el:'#picIdInput',
         data:{
-            jenis:'KTP',
             display:false,
             pic_data:null,
             url_filled:false,
-                    },
+        },
         methods:{
-            
-            extractData:function(){
-                if(this.pic_data){
-                    var data={
-                        jenis:this.jenis,
-                        pic_data:this.pic_data,
-                    };
+            save:function(){
+                $('#file-foto').val(null);
+                $('#file-foto').trigger('change');
 
-                    let timerInterval
-                    var interval_time=0;
-                        Swal.fire({
-                          title: 'Extrasi data!',
-                          html: '<b></b> milliseconds.',
-                          timer: 5000,
-                          timerProgressBar: true,
-                          didOpen: () => {
-                            Swal.showLoading()
-                            timerInterval = setInterval(() => {
-                              const content = Swal.getContent()
-                              if (content) {
-                                const b = content.querySelector('b')
-                                if (b) {
-                                interval_time+=100;
-                                  b.textContent = interval_time;
-                                }
-                              }
-                            }, 100)
-                          },
-                          willClose: () => {
-                            clearInterval(timerInterval)
-                          }
-                        }).then((result) => {
-                          /* Read more about handling dismissals below */
-                          if (result.dismiss === Swal.DismissReason.timer) {
-                            console.log('I was closed by the timer')
-                          }
-                    });
+                vinput.foto_file_cam=this.pic_data;
+                vinput.foto=this.foto=this.pic_data;
+                
 
-                    $.post('{{route('api.identity.extract')}}',data,function(res){
-                          Swal.fire("Berhasil", "Extrasi data selesai", "success");
-                                vinput.nama=res.data.nama;
-                                vinput.no_identity=res.data.nik;
-                                vinput.tanggal_lahir=res.data.tanggal_lahir;
-                                vinput.tempat_lahir=res.data.tempat_lahir;
-                                vinput.foto=res.data.foto;
-                                vinput.alamat=res.data.alamat;
-                                vinput.nomer_telpon=res.data.nomer_telpon;
-
-
-
-
-                    });
-                }
             },
             closePicInput:function(){
                 this.display=false;
@@ -673,21 +627,21 @@
                 this.pic_data=null;
                 setTimeout(function(){
                     window.Webcam.set({
-                      width: 320,
+                    width: 320,
                     height: 240,
+                    dest_width: 640,
+                    dest_height: 480,
                     
-                    dest_width: 320,
-                    dest_height: 240,
-                    
-                    crop_width: 320,
-                    crop_height: 240,
+                    crop_width: 480,
+                    crop_height: 490,
                     
                     image_format: 'png',
-                    jpeg_quality: 100,
-                    enable_flash: true,
-                    flip_horiz: false,
-                    fps: 15,
-                    facingMode: "environment"
+                    jpeg_quality: 90,
+                    
+                    // flip horizontal (mirror mode)
+                    flip_horiz: true,
+                        fps: 15,
+                    // facingMode: "environment"
                     });
                     
                     window.Webcam.attach('#cam-record')
@@ -698,12 +652,11 @@
 
                 window.Webcam.snap( function(data_uri) {
                 window.vpicItput.pic_data=data_uri;
-                console.log(data_uri);
                 // window.vpicItput.pic_data=window.testid;
                 window.Webcam.reset();
-				    $('#cam-record').html( '<img clss="img-responsive" style="max-width:100%;" src="'+window.vpicItput.pic_data+'">');
+                    $('#cam-record').html( '<img clss="img-responsive" style="max-width:100%;" src="'+window.vpicItput.pic_data+'">');
 
-			    } );
+                } );
 
             }
         },
@@ -711,7 +664,6 @@
             display:function(val){
                 if(val){
                     if(this.pic_data){
-                        console.log(this.pic_data);
                         setTimeout(function(){
                              $('#cam-record').html( '<img clss="img-responsive" style="max-width:100%;" src="'+window.vpicItput.pic_data+'">');
                          },300);
@@ -736,7 +688,6 @@
     });
 
 
-    vinput.bc();
 
 
 
@@ -791,7 +742,283 @@
                      }
               }
           }
-      })
+      });
+
+      var vdatacari=new Vue({
+        el:'#data-pencarian',
+        data:{
+            item:null
+        },
+        methods:{
+              get_identity:function(expt='dd',IDUU=null){
+
+                if(window.api_get_id!=null){
+                    window.api_get_id.abort();
+                }
+
+                 window.api_get_id=$.post('{{route('api.get.identity')}}',{
+                    'no_identity':vinput.no_identity.length>5?vinput.no_identity:null,
+                    'id_uu':IDUU,
+                    'jenis_identity':vinput.jenis_identity,
+                    'nomer_telpon':vinput.nomer_telpon.length>11?vinput.nomer_telpon:null,
+                },function(res){
+
+                    if(res.code==200){
+                        window.res=res;
+                        vdatacari.item=res.data;
+                        if(window.BUILD_IN_FORM){
+                           setTimeout(function(){
+                             vdatacari.implemented();
+                            window.BUILD_IN_FORM=0;
+                           },500);
+
+                        }
+                        
+                    }else{
+                        vdatacari.item=null;
+                        window.BUILD_IN_FORM=0;
+                    }
+                });
+            },
+            implemented:function(){
+                if(vinput.identity.file==null){
+                        if((this.item.tamu_foto!=undefined) && !isEmpty(this.item.tamu_foto)){
+                                    if(vinput.foto!=this.item.tamu_foto){
+                                            if(vinput.foto_file_cam==false && vinput.foto_file==null){
+                                                vinput.foto=this.item.tamu_foto;
+                                            }
+                                        }
+                                }
+
+                            }
+
+                            if((this.item.tamu_nomer_telpon!=undefined) && !isEmpty(this.item.tamu_nomer_telpon)){
+                                if(vinput.nomer_telpon!=this.item.tamu_nomer_telpon){
+                                    vinput.nomer_telpon=this.item.tamu_nomer_telpon;
+                                    
+                                }
+                            }
+
+                           
+
+
+                                if((this.item.identity_number!=undefined) && !isEmpty(this.item.identity_number)){
+                                    if(vinput.no_identity!=this.item.identity_number){
+                                        vinput.no_identity=this.item.identity_number;
+                                        
+                                    }
+                                }
+
+
+                            if((this.item.jenis_identity!=undefined) && !isEmpty(this.item.jenis_identity)){
+                                if(vinput.jenis_identity!=this.item.jenis_identity){
+                                    vinput.jenis_identity=this.item.jenis_identity;
+                                    
+                                }
+                            }
+
+                            if((this.item.tamu_tempat_lahir!=undefined) && !isEmpty(this.item.tamu_tempat_lahir)){
+                                if(vinput.tempat_lahir!=this.item.tamu_tempat_lahir){
+                                    vinput.tempat_lahir=this.item.tempat_lahir;
+                                    
+                                }
+                            }
+                            if((this.item.tamu_tanggal_lahir!=undefined) && !isEmpty(this.item.tamu_tanggal_lahir)){
+                                if(vinput.tanggal_lahir!=this.item.tamu_tanggal_lahir){
+                                    vinput.tanggal_lahir=this.item.tamu_tanggal_lahir;
+                                    
+                                }
+                            }
+
+                            
+
+                            if((this.item.tamu_pekerjaan!=undefined) && !isEmpty(this.item.tamu_pekerjaan)){
+                                if(vinput.pekerjaan!=this.item.tamu_pekerjaan){
+                                    vinput.pekerjaan=this.item.tamu_pekerjaan;
+                                    
+                                }
+                            }
+
+                            if((this.item.tamu_golongan_darah!=undefined) && !isEmpty(this.item.tamu_golongan_darah)){
+                                if(vinput.golongan_darah!=this.item.tamu_golongan_darah){
+                                    vinput.golongan_darah=this.item.tamu_golongan_darah;
+                                    
+                                }
+                            }
+
+                             if((this.item.tamu_alamat!=undefined) && !isEmpty(this.item.tamu_alamat)){
+                                if(vinput.alamat!=this.item.tamu_alamat){
+                                    vinput.alamat=this.item.tamu_alamat;
+                                    
+                                }
+                            }
+
+                             if((this.item.tamu_tempat_lahir!=undefined) && !isEmpty(this.item.tamu_tempat_lahir)){
+                                if(vinput.tempat_lahir!=this.item.tamu_tempat_lahir){
+                                    vinput.tempat_lahir=this.item.tamu_tempat_lahir;
+                                    
+                                }
+                            }
+
+                             if((this.item.tamu_nama!=undefined) && !isEmpty(this.item.tamu_nama)){
+                                if(vinput.nama!=this.item.tamu_nama){
+                                    vinput.nama=this.item.tamu_nama;
+                                    
+                                }
+                            }
+
+
+                             if((this.item.tamu_jenis_kelamin!=undefined) && !isEmpty(this.item.tamu_jenis_kelamin)){
+                                if(vinput.jenis_kelamin!=this.item.tamu_jenis_kelamin){
+                                    vinput.jenis_kelamin=this.item.tamu_jenis_kelamin;
+                                    
+                                }
+                            }
+
+                            if((this.item.alamat!=undefined) && !isEmpty(this.item.alamat)){
+                                if(vinput.alamat!=this.item.alamat){
+                                    vinput.jenis_kelamin=this.item.tamu_jenis_kelamin;
+                                    
+                                }
+                            }
+
+                            if((this.item.def_instansi!=undefined) && !isEmpty(this.item.def_instansi)){
+                                if(vinput.instansi!=this.item.def_instansi){
+                                    vinput.instansi=this.item.def_instansi;
+                                    
+                                }
+                            }
+
+                            if((this.item.def_keperluan!=undefined) && !isEmpty(this.item.def_keperluan)){
+                                if(vinput.keperluan!=this.item.def_keperluan){
+                                    vinput.keperluan=this.item.def_keperluan;
+                                    
+                                }
+                            }
+
+                             if((this.item.def_tujuan!=undefined) && !isEmpty(this.item.def_tujuan)){
+                                if(vinput.tujuan_json!=this.item.def_tujuan){
+                                    vinput.tujuan_json=this.item.def_tujuan;
+                                }
+                            }
+
+                             if((this.item.def_kategori_tamu!=undefined) && !isEmpty(this.item.def_kategori_tamu)){
+                                if(vinput.kategori_tamu!=this.item.def_kategori_tamu){
+                                    vinput.kategori_tamu=this.item.def_kategori_tamu;
+                                    
+                                }
+                            }
+
+
+                            vinput.identity.rendered_def=null;
+                            vinput.identity.rendered=null;
+                            vinput.identity.recorded=null;
+
+                            if((this.item.path_identity!=undefined) && !isEmpty(this.item.path_identity)){
+                                if(vinput.identity.rendered!=this.item.path_identity){
+                                    vinput.identity.rendered_def=this.item.path_identity;
+                                    vinput.identity.rendered=this.item.path_identity;
+                                    vinput.identity.recorded=this.item.path_identity;
+
+                                }
+                            }
+
+                             
+                            $('#input-file-id').val(null);
+                            $('#input-file-id').trigger('change');
+            }
+        }
+      });
+
+
+    var this_page_active=true;
+    // active pages
+
+    (function() {
+          var hidden = "hidden";
+
+          // Standards:
+          if (hidden in document)
+            document.addEventListener("visibilitychange", onchange);
+          else if ((hidden = "mozHidden") in document)
+            document.addEventListener("mozvisibilitychange", onchange);
+          else if ((hidden = "webkitHidden") in document)
+            document.addEventListener("webkitvisibilitychange", onchange);
+          else if ((hidden = "msHidden") in document)
+            document.addEventListener("msvisibilitychange", onchange);
+          // IE 9 and lower:
+          else if ("onfocusin" in document)
+            document.onfocusin = document.onfocusout = onchange;
+          // All others:
+          else
+            window.onpageshow = window.onpagehide
+            = window.onfocus = window.onblur = onchange;
+
+          function onchange (evt) {
+            var v = "visible", h = "hidden",
+                evtMap = {
+                  focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h
+                };
+
+                evt = evt || window.event;
+                if (evt.type in evtMap){
+                    if( evtMap[evt.type]=='hidden'){
+                        this_page_active=false;
+                        console.log('down');
+                    }else{
+
+                       this_page_active=true;
+                        console.log('up');
+
+                    }
+                }
+                else{
+                    if(this[hidden]){
+                        this_page_active=false;
+                        console.log('down');
+
+
+                    }else{
+                        this_page_active=true;
+                        console.log('up');
+
+
+
+                    }
+                  // document.body.className = this[hidden] ? "hidden" : "visible";
+                }
+              // console.log('page active : '+this_page_active);
+                
+        }
+        if( document[hidden] !== undefined )
+            onchange({type: document[hidden] ? "blur" : "focus"});
+        })();
+
+
+
+    // SCANE  
+    onScan.attachTo(document, {
+        singleScanQty:1,
+        onScan: function(sScanned, iQty) { 
+            if(this_page_active){
+                window.BUILD_IN_FORM=true;
+                 window.vdatacari.get_identity('string_id',$sScanned);
+            }
+         },
+        onScanError: function(oDebug) {  },
+        onScanButtonLongPress: function() {  },
+        onKeyDetect: function(iKeyCode, oEvent){ 
+            
+        },
+        onKeyProcess: function(sChar, oEvent){  },
+        onPaste: function(sPasted){
+            console(sPasted);
+         },
+        reactToPaste:true,
+        minLength:5,
+    });
+
+
   </script>
 @stop
 

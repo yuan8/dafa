@@ -656,21 +656,21 @@
                 this.pic_data=null;
                 setTimeout(function(){
                     window.Webcam.set({
-                      width: 320,
+                    width: 320,
                     height: 240,
+                    dest_width: 640,
+                    dest_height: 480,
                     
-                    dest_width: 320,
-                    dest_height: 240,
-                    
-                    crop_width: 320,
-                    crop_height: 240,
+                    crop_width: 480,
+                    crop_height: 490,
                     
                     image_format: 'png',
-                    jpeg_quality: 100,
-                    enable_flash: true,
-                    flip_horiz: false,
-                    fps: 15,
-                    facingMode: "environment"
+                    jpeg_quality: 90,
+                    
+                    // flip horizontal (mirror mode)
+                    flip_horiz: true,
+                        fps: 15,
+                    // facingMode: "environment"
                     });
                     
                     window.Webcam.attach('#cam-record')

@@ -17,12 +17,19 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::prefix('tamu')->group(function(){
+Route::prefix('tamu')->middleware('auth:web')->group(function(){
     Route::get('/daftar-tamu',[App\Http\Controllers\TamuCtrl::class, 'daftarTamuList'])->name('g.daftar_tamu');
+
+    Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit');
+
+    Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update');
+
+    Route::get('/identity-tamu-khusus/{id}/id-generate.pdf',[App\Http\Controllers\TamuCtrl::class, 'identity_tamu_khusus'])->name('g.tamu.id_khusus');
+
     Route::get('/daftar-tamu/gate-provos/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'toGateProvos'])->name('g.daftar_tamu.gate_provos');
 });
 
-Route::prefix('provos')->middleware(['auth:web'])->group(function(){
+Route::prefix('gate')->middleware(['auth:web'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'provos_index'])->name('p.index');
 
     Route::get('/input', [App\Http\Controllers\HomeController::class, 'provos_input'])->name('p.input');
@@ -91,14 +98,14 @@ Route::prefix('gate')->middleware(['auth:web'])->group(function(){
      Route::delete('/batalkan-kunjungan/{id}', [App\Http\Controllers\HomeController::class, 'batalkan'])->name('k.batalkan');
 
 
-    Route::get('/input/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_input'])->middleware('can:is_gate')->name('g.input');
+    // Route::get('/input/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_input'])->middleware('can:is_gate')->name('g.input');
     
-    Route::post('/input/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_check_in'])->middleware('can:is_gate')->name('g.input.proccess');
+    // Route::post('/input/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_check_in'])->middleware('can:is_gate')->name('g.input.proccess');
 
     Route::get('/checkout/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_out'])->middleware('can:gate_check_out_provos')->name('g.checkout');
 
     Route::post('/checkout/{id}/{slug}', [App\Http\Controllers\HomeController::class, 'gate_check_out'])->middleware('can:gate_check_out_provos')->name('g.checkout.proccess');
-    Route::get('/receiver/{fingerprint}', [App\Http\Controllers\HomeController::class, 'gate_receiver'])->name('g.receiver');
+    Route::get('/2-receiver/{fingerprint}', [App\Http\Controllers\HomeController::class, 'gate_receiver'])->name('g.receiver');
 
 });
 

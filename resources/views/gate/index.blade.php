@@ -12,26 +12,31 @@
        <form id="form_env" method="get">
         @can('is_gate')
 
-         <a href="{{ route('g.receiver',['fingerprint'=>$fingerprint])}}" style="margin-right: 20px;" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
+        
         @endcan
            <b>DATA TAMU : <span><div class="btn-group">
-           <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
-           <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
-            <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
-             <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
-             <input type="hidden" name="date" v-model="active_h">
-        </div></span></b> 
+               <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
+               <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
+                <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
+                 <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
+                 <input type="hidden" name="date" v-model="active_h">
+            </div>
+        </span></b> 
+        <b style="margin-left: 10px;">STATUS : 
+            <span>
+                <div class="btn-group">
+                   <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">MASUK</button>
+                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >KELUAR</button>
+                    <input type="hidden" name="status" v-model=status>
+
+                </div>
+            </span>
+        </b> 
         <hr>
         <div class="row">
             <div class="col-md-5">
-                <div class="form-group">
-                    <label for="">STATUS</label>
-                    <select class="form-control"  name="status" v-model="status" id="">
-                        <option value="PROVOS">PROVOS</option>
-                        <option value="GATE_CHECKIN">MASUK</option>
-                        <option value="GATE_CHECKOUT">KELUAR</option>
-                    </select>
-                </div>
+                
+
             </div>
         </div>
        </form> 
@@ -54,7 +59,7 @@
             <tbody>
                 @foreach($data_visitor as $v)
                  @php
-                    $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':($v->provos_checkin?'PROVOS':'')));
+                    $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':''));
                 @endphp
                
                 <tr class="vis_">
@@ -150,14 +155,7 @@
                                 <div class="events-wrapper">
                                     <div class="events" style="width: 100%;">
                                         <ol>
-                                       
-                                            <li><a href="#" data-date="{{ $v->provos_checkin }}" class="{{ $gate_ls=='PROVOS'?'selected':'older-event' }}" style="left: 5%;">PROVOS {{(in_array($gate_ls, ['PROVOS','CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->provos_checkin)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_provos_handle}}</b>
-                                            </a>
-                                                
-                                            </li>
-
-                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 40%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
+                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 20%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
                                                 <b class="text-center">{{$v->nama_gate_handle}}</b>
                                             </a>
                                             </li>
@@ -258,7 +256,10 @@
         },
         watch:{
             status:function(v,old){
+                setTimeout(function(){
                 $('#form_env').submit();
+
+                },500);
             }
         }
        

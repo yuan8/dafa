@@ -3,6 +3,12 @@
 		return array (
   'name' => 'Aplikasi Buku Tamu',
   'broadcast_network' => false,
+  'jenis_tamu_khusus'=>[
+    'REKANAN'=>"KTP",
+    'ANGGOTA-TNI'=>"KTA-TNI",
+    'ANGGOTA-POLRI'=>"KTA-POLRI",
+    'PNS'=>"KTP",
+  ],
   'tujuan_tamu' => 
   array (
     0 => 
@@ -133,6 +139,11 @@
       'tag' => 'WNA',
       'name' => 'WNA',
     ),
+     6 => 
+    array (
+      'tag' => 'TAMU-KHUSUS',
+      'name' => 'TAMU KHUSUS',
+    ),
   ),
   'identity_list' => 
   array (
@@ -202,24 +213,24 @@
       'name' => 'ID MAHASISWA',
       'taxonomy' => 'LAINYA',
     ),
-    11 => 
+     11 => 
+    array (
+      'tag' => 'KTA-TNI',
+      'name' => 'KTA UNTUK TNI',
+      'taxonomy' => 'LAINYA',
+    ),
+     12 => 
+    array (
+      'tag' => 'KTA-POLRI',
+      'name' => 'KTA UNTUK POLRI',
+      'taxonomy' => 'LAINYA',
+    ),
+    13 => 
     array (
       'tag' => 'LAINYA',
       'name' => 'LAINYA',
       'taxonomy' => 'LAINYA',
     ),
   ),
-  1 => 
-  array (
-    0 => 
-    array (
-      'tag' => 'BAGIAN-A-AASSA',
-      'name' => 'yuan',
-    ),
-    1 => 
-    array (
-      'tag' => 'DIR-B',
-      'name' => 'DIREKTORAT B',
-    ),
-  ),
+ 
 );

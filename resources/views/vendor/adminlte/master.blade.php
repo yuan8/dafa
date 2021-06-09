@@ -5,6 +5,7 @@
 
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('tparty/bower_components/custome/c.js') }}"></script>
+    <script type="text/javascript" src="{{asset('tparty/bower_components/onscan-js/onscan.min.js')}}"></script>
 
 
     {{-- Base Meta Tags --}}

@@ -9,23 +9,286 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Dompdf\Dompdf;
+use Hash;
+use Validator;
+use CV;
+use Storage;
+use Alert;
 class TamuCtrl extends Controller
 {
     //
 
+
+    public function simpan_data_tamu($id,Request $request){
+
+        $tamu=DB::table('tamu')->where('id',$id)->first();
+
+        if($tamu){
+
+
+            $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
+             $data=[
+                    'nama'=>$request->nama,
+            ];
+
+
+            $identity=DB::table('identity_tamu')->where([
+                ['tamu_id','=',$id],
+                ['jenis_identity','=',config('web_config.jenis_tamu_khusus.'.$request->jenis_tamu_khusus)],
+
+            ])->first();
+           
+
+            if($request->tamu_khusus){
+                $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+
+
+                 $request['req_id_def']=config('web_config.jenis_tamu_khusus.'.$request->jenis_tamu_khusus)??'ya';
+
+
+                $valid=Validator::make($request->all(),[
+                    'jenis_kelamin'=>'required|numeric|in:0,1',
+                    'nama'=>'required|string|min:3',
+                    'nomer_telpon'=>'required|min:10',
+                    'kategori_tamu'=>'required|string',
+                    'keperluan'=>'required|string',
+                    'tujuan'=>'required|array',
+                    'req_id_def'=>'required|string'
+                  
+                ]);
+
+                if($valid->fails()){
+                    Alert::error('Gagal',$valid->errors()->first());
+                    return back();
+                }
+
+                $no=DB::table('tamu')->where([
+                    ['id','!=',$tamu->id],
+                    ['nomer_telpon','=',$request->nomer_telpon],
+                ])->first();
+
+                if($no){
+                    Alert::error('Gagal','Nomer telpon Telah Digunakan sebelumnya');
+                    return back();
+                }
+
+                $data['def_kategori_tamu']=$request->kategori_tamu;
+                $data['def_keperluan']=$request->keperluan;
+                $data['def_tujuan']=$request->tujuan;
+                $data['tamu_khusus']=$request->tamu_khusus;
+                $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
+
+
+
+
+            }else{
+                $valid=Validator::make($request->all(),[
+                    'jenis_kelamin'=>'required|numeric|in:0,1',
+                    'nama'=>'required|string|min:3',
+                    'nomer_telpon'=>'required|min:10',
+                ]);
+
+                 if($valid->fails()){
+                    Alert::error('Gagal',$valid->errors()->first());
+                    return back();
+                }
+
+
+            }
+        }else{
+            Alert::error('Gagal','DATA TAMU TIDAK TERSEDIA');
+            return redirect()->route('g.daftar_tamu');
+        }
+
+            
+                if($request->alamat){
+                    $data['alamat']=$request->alamat;
+                }
+
+                $data['izin_akses_masuk']=$request->izin_akses_masuk??false;
+
+                $data['keterangan_tolak_izin_akses']=$request->keterangan_tolak_izin_akses??null;
+                if($request->alamat){
+                    $data['alamat']=$request->alamat;
+                }
+            
+                if($request->nomer_telpon){
+                    $data['nomer_telpon']=$request->nomer_telpon;
+                }
+                if($request->jenis_kelamin){
+                    $data['jenis_kelamin']=$request->jenis_kelamin;
+                }
+                if($request->tempat_lahir){
+                    $data['tempat_lahir']=$request->tempat_lahir;
+                }
+                 if($request->tanggal_lahir){
+                    $data['tanggal_lahir']=$request->tanggal_lahir;
+                }
+                
+                if($request->agama){
+                    $data['agama']=$request->agama;
+                }
+                
+                if($request->pekerjaan){
+                    $data['pekerjaan']=$request->pekerjaan;
+                }
+
+                if($request->golongan_darah){
+                    $data['golongan_darah']=$request->golongan_darah;
+                }
+
+                $path_foto=null;
+                 if($request->foto_file){
+                    $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
+                    $path_foto=Storage::url($path_foto);
+                }else if($request->file_foto_cam){
+                        
+                    if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                        $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+
+                        $data_foto = base64_decode($data_foto);
+                        $path_foto=Storage::put('public/indentity/id-'.
+                            ($tamu?$tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
+                        
+                        $path_foto='/storage/indentity/id-'.
+                            ($tamu?$tamu->id:'cache').'/foto/def-cam-profile.png';
+
+
+                    }
+                }
+
+                if($path_foto){
+                    $data['foto']=$path_foto;
+                }
+
+
+                $data['updated_at']=Carbon::now();
+               $up= DB::table('tamu')->where('id',$tamu->id)->update($data);
+               if($up){
+                Alert::success('Berhasil','DATA BERHASIL DI PERBARUI');
+               }
+
+        return back();
+
+    }
+
+    public function identity_tamu_khusus($id,Request $request){
+
+        $tamu=DB::table('tamu')->where('id',$id)->first();
+        $hash_log=$request->hash_log??'';
+        $re=[];
+        $LIST_=['M|nor','Zz*&','Linq<>','uTes)','YarJ^U','hALLLall'];
+
+        $chek=0;
+        do {
+
+            if(isset($LIST_[$chek])){
+                $re=explode($LIST_[$chek],$hash_log);
+
+            }else{
+                $re=['1','2'];
+            }
+
+            $chek++;
+        } while (count($re)<=1 OR count($LIST_)<$chek);
+
+        if($tamu){
+            if($tamu->tamu_khusus and $tamu->def_instansi ){
+
+            }else{
+                $tamu=false;
+            }
+        }
+
+
+        $size=array(0,0,153.01417,242.6457);
+        if($tamu and ((base64_encode($re[1])==date('Ymd')) and Hash::check('TAM'.$id.'SUS',$re[0])) ){
+            if($tamu->foto){
+
+                $path = public_path($tamu->foto);
+                $type = pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+                $foto = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                $dompdf = new Dompdf();
+                $dompdf->setBasePath(public_path('/'));
+                $view=view('tamu.id_khusus.print')->with(['code_id'=>$tamu->string_id,'tamu'=>$tamu,'foto'=>$foto])->render();
+              
+
+                // return $view;
+                $dompdf->loadHtml($view);
+
+
+                // if($hash_log=='render'){
+                //     return view('tamu.id_khusus.print')->with(['code_id'=>$tamu->string_id,'tamu'=>$tamu,'foto'=>$foto])->render();
+                // }
+
+                // (Optional) Setup the paper size and orientation
+                $dompdf->setPaper($size, 'potrait');
+
+                // Render the HTML as PDF
+                $dompdf->render();
+
+                // Output the generated PDF to Browser
+                return $dompdf->stream('id-'.$tamu->string_id.'.pdf' ,array("Attachment" => false));
+            }
+        }else{
+                $dompdf = new Dompdf();
+                $dompdf->set_base_path(public_path('tparty'));
+                $dompdf->loadHtml(view('tamu.id_khusus.error')->render()   );
+
+
+                // if($hash_log=='render'){
+                //     return view('tamu.id_khusus.print')->with(['code_id'=>$tamu->string_id,'tamu'=>$tamu,'foto'=>$foto])->render();
+                // }
+
+                // (Optional) Setup the paper size and orientation
+                $dompdf->setPaper($size, 'potrait');
+
+                // Render the HTML as PDF
+                $dompdf->render();
+
+                // Output the generated PDF to Browser
+                return $dompdf->stream('id-'.'ERROR'.'.pdf' ,array("Attachment" => false));        }   
+        
+    }
+
+    public function edit($id,$slug){
+        $tamu=DB::table('tamu as t')->where('id',$id)->first();
+
+        if($tamu){
+            $identity=DB::table('identity_tamu as idt')->where('tamu_id',$id)->get();
+
+            foreach ($identity as $key => $value) {
+                $identity[$key]->path_rendered=url($value->path_identity);
+                # code...
+            }
+            if($tamu->tamu_khusus){
+
+            }else{
+
+            }
+
+            return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
+        }
+        
+    }
 
 
     public function toGateProvos($id,$slug,Request $request){
 
         $data=DB::table('tamu as t')
         ->selectRaw("t.id as id_tamu,t.*")->where('id',$id)->first();
+        if(!$data){
+            Alert::error('Gagal','');
+            return back();
+        }else{
 
+
+        }
         $data=(array) $data;
-
-     
         $data['foto']=isset($data['foto'])?url($data['foto']):null;
 
-        return redirect()->route('p.input')->withInput((array) $data);
+        return redirect()->route('p.input')->withInput(['nomer_telpon'=>$data['nomer_telpon'],'BUILD_IN_FORM'=>1]);
     }
 	public function daftarTamuList(Request $req){
 		$where=[];

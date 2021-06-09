@@ -9,6 +9,7 @@ use Storage;
 use Carbon\Carbon;
 use DB;
 use Validator;
+use CV;
 class IdentityExtractCtrl extends Controller
 {
     //
@@ -30,44 +31,84 @@ class IdentityExtractCtrl extends Controller
         $selectRaw=[''];
 
         $def_tamu=[
-            "t.nama as nama",
+            "t.nama as tamu_nama",
             "t.foto as tamu_foto",
             "t.pekerjaan as tamu_pekerjaan",
             "t.nomer_telpon as tamu_nomer_telpon",
             "t.alamat as tamu_alamat",
+            "t.alamat as tamu_alamat",
+            "t.tamu_khusus as tamu_khusus",
+            "t.jenis_tamu_khusus as jenis_tamu_khusus",
+            "t.izin_akses_masuk as izin_akses_masuk",
+            "t.keterangan_tolak_izin_akses as keterangan_tolak_izin_akses",
             "t.golongan_darah as tamu_golongan_darah",
             "t.tempat_lahir as tamu_tempat_lahir",
             "t.tanggal_lahir as tamu_tanggal_lahir",
             "t.jenis_kelamin as tamu_jenis_kelamin",
+            "t.def_jenis_identity as def_jenis_identity",
+            "t.def_instansi as def_instansi",
+            "t.def_tujuan as def_tujuan",
+            "t.def_kategori_tamu as def_kategori_tamu",
+            "t.def_keperluan as def_keperluan",
         ];
 
+        if($request->id_uu){
+             $where[]="(t.string_id = '".$request->id_uu."')");   
+        }
+        else if($request->match=='perfect'){
 
+            $where[]="(t.nomer_telpon = '".$request->nomer_telpon."') and (idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number = '".$request->no_identity."')";
+                $selectRaw=implode(' , ',$def_tamu).",idt.*";
 
-        if(strlen($request->nomer_telpon)>8 and ($request->jenis_identity)){
-            $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%') and (idt.jenis_identity = '".$request->jenis_identity."')";
-            $selectRaw=implode(' , ',$def_tamu).",idt.*";
-        }else if(strlen($request->nomer_telpon)>8){
-            $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')";
-            $selectRaw=implode(' , ',$def_tamu)."";
-        }else if($request->identity_number){
-           $where[]="(idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number like '%".$request->no_identity."%')";
-            $selectRaw=implode(' , ',$def_tamu).",idt.*";
+        }else{
+             if(strlen($request->nomer_telpon)>15 and ($request->jenis_identity)){
+                $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%') and (idt.jenis_identity = '".$request->jenis_identity."')";
+                $selectRaw=implode(' , ',$def_tamu).",idt.*";
+            }else if(strlen($request->nomer_telpon)>15){
+                $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')";
+                $selectRaw=implode(' , ',$def_tamu)."";
+            }else if($request->identity_number>=5){
+               $where[]="(idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number like '%".$request->no_identity."%')";
+                $selectRaw=implode(' , ',$def_tamu).",idt.*";
+            }
+
+            if(strlen($request->nomer_telpon)>15){
+                $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')"; 
+            }
 
 
         }
 
+       
             $data=DB::table('tamu as t')
             ->leftJoin('identity_tamu as idt','idt.tamu_id','=','t.id')
             ->selectRaw($selectRaw);
+
             if(count($where)){
-                $data=$data->whereRaw('('.implode(') and (', $where).')');
-                $data=(array)$data->groupBy('idt.id')->first();
+                $data=$data->whereRaw('('.implode(') or (', $where).')');
+                $data=$data->groupBy('idt.id')->first();
+
+                if($data){
+                    $data=(array)$data;
+                    $data['tujuan_json']=CV::build_from_array('tujuan_tamu',json_decode($data->def_tujuan??'[]'));
+                }else{
+                    $data=[];
+                }
+
 
             }else{
                 $data=[];
             }
 
             if(count($data)){
+
+
+                if($data['def_tujuan']==null){
+                    $data['def_tujuan']=[];
+                }else{
+                   
+                    $data['def_tujuan']=CV::build_from_array('tujuan_tamu',json_decode($data['def_tujuan']));
+                }
 
                 if(isset($data['path_identity'])){
                     $data['path_identity']=url($data['path_identity']);
@@ -78,9 +119,9 @@ class IdentityExtractCtrl extends Controller
                 
 
 
-                return array('code'=>200,'data'=>$data);
+                return array('code'=>200,'data'=>$data,'w'=>$where);
             }else{
-                return array('code'=>500,'data'=>[]);
+                return array('code'=>500,'data'=>[],'w'=>$where);
 
             }
 

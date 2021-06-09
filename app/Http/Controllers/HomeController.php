@@ -28,6 +28,18 @@ class HomeController extends Controller
 
     }
 
+    static function generate_id($pre='T'){
+        do {
+            $token=uniqid($pre);
+            $token=strtoupper($token);
+            $tamu=DB::table('tamu')->where('string_id',$token)->first();
+            # code...
+        } while ($tamu!=null);
+
+        return $token;
+        
+    }
+
 
     public function batalkan($tamu_id){
         $data=DB::table('log_tamu as log')
@@ -72,7 +84,6 @@ class HomeController extends Controller
     public function daftar_tamu(Request $request){
 
     }
-
 
     public function gate_check_out($id_log,$slug,Request $request){
            $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
@@ -212,7 +223,7 @@ class HomeController extends Controller
                     ])
                    ->whereNull('gate_checkout')
                    ->where('id',$id_log)
-                   ->where('provos_checkin','>',$day)->first();
+                   ->where('gate_checkin','>',$day)->first();
                    $log_tamu=null;
 
                 if($log_tamu_record){
@@ -302,10 +313,10 @@ class HomeController extends Controller
 
 
         ")
-        ->where('log.provos_checkin','>=',$day)
+        ->where('log.gate_checkin','>=',$day)
         ->where('log.id','=',$id_log)
         ->where('log.gate_checkout','=',null)
-        ->orderBy('log.provos_checkin','desc')
+        ->orderBy('log.gate_checkin','desc')
         ->first();
 
 
@@ -358,11 +369,6 @@ class HomeController extends Controller
         }
 
 
-
-
-     
-
-
         $U=Auth::User();
         $day=Carbon::now()->startOfDay();
 
@@ -371,10 +377,10 @@ class HomeController extends Controller
         ->where('nomer_telpon','like',"%".$request->nomer_telpon.'%')
         ->first();
 
-        if(!$check_tamu){
             $data=[
                 'nama'=>$request->nama,
             ];
+
             if($request->alamat){
                 $data['alamat']=$request->alamat;
             }
@@ -404,16 +410,62 @@ class HomeController extends Controller
                 $data['golongan_darah']=$request->golongan_darah;
             }
 
+        if($check_tamu){
+            if(!$check_tamu->izin_akses_masuk){
+                Alert::error('Gagal','Tamu Ini Tidak Di Izinkan Masuk');
+                return back();
+            }
 
+            DB::table('tamu')->where('id',$check_tamu->id)->update($data);
+            $check_tamu=
+                DB::table('tamu as ind')
+                ->where('id',$check_tamu->id)
+                ->first();
+        }
+         
+
+
+        if(!$check_tamu){
+            // JSKJSKJSK
+            $token=static::generate_id('T');
+            $data['string_id']=$token;
 
 
             $id_tamu=DB::table('tamu')->insertGetId($data);
-
             $check_tamu=
                 DB::table('tamu as ind')
                 ->where('id',$id_tamu)
                 ->first();
+            
         }
+
+          $path_foto=null;
+         if($request->foto_file){
+            $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
+            $path_foto=Storage::url($path_foto);
+            }else if($request->file_foto_cam){
+                
+            if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+
+                $data_foto = base64_decode($data_foto);
+                $path_foto=Storage::put('public/indentity/id-'.
+                    ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
+                
+                $path_foto='/storage/indentity/id-'.
+                    ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png';
+
+
+            }
+        }
+
+        if($path_foto){
+            $data_up=['foto'=>$path_foto];
+            DB::table('tamu')->where('id',$check_tamu->id)->update($data_up);
+        }
+
+
+
 
         $check_id=DB::table('identity_tamu as ind')
         ->where('tamu_id',$check_tamu->id)
@@ -442,7 +494,6 @@ class HomeController extends Controller
 
         if(!$check_id){
 
-
                 $check_id=DB::table('identity_tamu')->insertGetId([
                     'tamu_id'=>$check_tamu->id,
                     'identity_number'=>$request->no_identity,
@@ -469,20 +520,19 @@ class HomeController extends Controller
             'tamu_id'=>$check_tamu->id,
            ])
            ->whereNull('gate_checkout')
-           ->where('provos_checkin','>',$day)->first();
+           ->where('gate_checkin','>',$day)->first();
+
 
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
-                        'provos_checkin'=>Carbon::now(),
+                        'gate_checkin'=>Carbon::now(),
                         'jenis_id'=>$request->jenis_identity,
                         'tamu_id'=>$check_tamu->id,
-                        'provos_handle'=>$U->id,
+                        'gate_handle'=>$U->id,
                         'keperluan'=>$request->keperluan,
                         'instansi'=>$request->instansi,
                         'kategori_tamu'=>$request->kategori_tamu,
                         'tujuan'=>json_encode($request->tujuan??[]),
-
-                    
                 ]);
 
                 if($log_tamu){
@@ -537,7 +587,7 @@ class HomeController extends Controller
 
 
 
-        $checkin='PROVOS';
+        $checkin='GATE_CHECKIN';
         if($request->status){
             $checkin=$request->status;
 
@@ -545,37 +595,36 @@ class HomeController extends Controller
 
         $log_tamu=[];
         switch($checkin){
-            case 'PROVOS':
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','=','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-                    ")
-                ->where('log.provos_checkin','>=',$day)
-                ->where('log.provos_checkin','<=',$day_last)
-                ->where('log.gate_checkin','=',null)
-                ->where('log.gate_checkout','=',null)
-                ->groupBy('v.id','log.id')
+            // case 'PROVOS':
+            //     $log_tamu=DB::table('log_tamu as log')
+            //     ->join('tamu as v','v.id','=','log.tamu_id')
+            //     ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            //     ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+            //         (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+            //         (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+            //         (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+            //         ")
+            //     ->where('log.gate_checkin','>=',$day)
+            //     ->where('log.gate_checkout','<=',$day_last)
+                
+            //     ->groupBy('v.id','log.id')
 
-                ->orderBy('log.provos_checkin','desc')
-                ->get();
-            break;
+            //     ->orderBy('log.provos_checkin','desc')
+            //     ->get();
+            // break;
             case 'GATE_CHECKIN':
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                   
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
-                ->where('log.provos_checkin','>=',$day)
-                ->where('log.provos_checkin','<=',$day_last)
+                ->where('log.gate_checkin','>=',$day)
+                ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
-                ->orderBy('log.provos_checkin','desc')
+                ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id')
 
 
@@ -586,13 +635,14 @@ class HomeController extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
-                ->where('log.provos_checkin','>=',$day)
-                ->where('log.provos_checkin','<=',$day_last)
-                ->orderBy('log.provos_checkin','desc')
+                ->where('log.gate_checkin','>=',$day)
+                ->where('log.gate_checkin','<=',$day_last)
+                ->where('log.gate_checkout','!=',null)
+                ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id')
                 ->get();
             break;

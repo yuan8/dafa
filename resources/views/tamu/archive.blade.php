@@ -15,8 +15,11 @@
     			<thead>
     				<tr>
     					<th>FOTO</th>
-    					<th>IDENTITY</th>
+                        <th>IZIN AKSES MASUK</th>
+                        <th>JENIS TAMU</th>
 
+
+    					<th>IDENTITY</th>
     					<th>NAMA</th>
     					<th>NOMER TELPON</th>
     					<th>PEKERJAAN</th>
@@ -29,10 +32,23 @@
     			</thead>
     			<tbody>
     				@foreach ($data as $key=>$d)
+                    @if($d->tamu_khusus)
+                        <tr class="bg-info">
+                            <td colspan ="12" class="text-center"><b>TAMU KHUSUS</b></td>
+                        </tr>
+                    @endif
     				<tr>
     					<td>
     						<img src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
     					</td>
+                        <td></td>
+                        <td>
+                            @if($d->tamu_khusus)
+                            TAMU KHUSUS - {{$d->jenis_tamu_khusus}}
+                            @else
+                            BIASA
+                            @endif
+                        </td>
     					<td>
     						@foreach (explode( '||', $d->idt_list??'') as $element)
     							<p style="font-size:12px; margin:0px; padding: 0px;"><b>{{$element}}</b></p>
@@ -55,8 +71,11 @@
     						{{$d->tempat_lahir}} / {{$d->tanggal_lahir}}
     					</td>
     					<td>{{$d->alamat}}</td>
-    					<td>
-    						<a href="{{route('g.daftar_tamu.gate_provos',['id'=>$d->id_tamu,'slug'=>Str::slug($d->nama)])}}" class="btn btn-primary btn-sm">Form Input Provos</a>
+    					<td style="min-width: 200px;">
+    						<div class="btn-group">
+              <a href="{{route('g.daftar_tamu.gate_provos',['id'=>$d->id_tamu,'slug'=>Str::slug($d->nama)])}}" class="btn btn-primary btn-sm">Form Masuk</a>
+              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>                  
+                            </div>
     					</td>
     				</tr>
     					{{-- expr --}}

@@ -18,8 +18,10 @@ class LogTamu extends Migration
             $table->id();
             $table->bigInteger('tamu_id')->unsigned();
             $table->string('jenis_id')->nullable();
-            $table->dateTime('provos_checkin');
-            $table->bigInteger('provos_handle');
+            
+            // $table->dateTime('provos_checkin');
+            // $table->bigInteger('provos_handle');
+
             $table->string('foto_checkin')->nullable();
             $table->mediumText('tujuan')->nullable();
             $table->mediumText('keperluan')->nullable();

@@ -2,7 +2,6 @@
 
 @section('content')
 @php
-dd('ss');
 @endphp
     
 @php

@@ -5,7 +5,7 @@
 
 <div class="card">
     <div class="card-header with-border">
-        <h4><b>PROVOS</b></h4>
+        <h4><b>CHEKIN</b></h4>
     </div>
     <div class="card-body">
         <div class="row" id="vinput">
