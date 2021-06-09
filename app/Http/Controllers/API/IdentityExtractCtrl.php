@@ -64,20 +64,20 @@ class IdentityExtractCtrl extends Controller
                 $selectRaw=implode(' , ',$def_tamu).",idt.*";
 
         }else{
-             if(strlen($request->nomer_telpon)>15 and ($request->jenis_identity)){
+             if(strlen($request->nomer_telpon??'')>15 and ($request->jenis_identity)){
                 $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%') and (idt.jenis_identity = '".$request->jenis_identity."')";
 
                 $selectRaw=implode(' , ',$def_tamu).",idt.*";
 
-            }else if(strlen($request->nomer_telpon)>15){
+            }else if(strlen($request->nomer_telpon??'')>15){
                 $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')";
                 $selectRaw=implode(' , ',$def_tamu)."";
-            }else if($request->identity_number>=5){
+            }else if(strlen($request->no_identity??'')>=5){
                $where[]="(idt.jenis_identity = '".$request->jenis_identity."') and (idt.identity_number like '%".$request->no_identity."%')";
                 $selectRaw=implode(' , ',$def_tamu).",idt.*";
             }
 
-            if(strlen($request->nomer_telpon)>15){
+            if(strlen($request->nomer_telpon??'')>15){
                 $where[]="(t.nomer_telpon like '%".$request->nomer_telpon."%')"; 
             }
 
@@ -124,9 +124,9 @@ class IdentityExtractCtrl extends Controller
                 
 
 
-                return array('code'=>200,'data'=>$data,'w'=>$where);
+                return array('code'=>200,'data'=>$data,'w'=>$where,'R'=>$request->all());
             }else{
-                return array('code'=>500,'data'=>[],'w'=>$where);
+                return array('code'=>500,'data'=>[],'w'=>$where,'R'=>$request->all());
 
             }
 
