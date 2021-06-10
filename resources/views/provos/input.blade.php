@@ -914,26 +914,6 @@ var vpicItput=new Vue({
                                 }
                             }
 
-                            if((this.item.def_instansi!=undefined) && !isEmpty(this.item.def_instansi)){
-                                if(vinput.instansi!=this.item.def_instansi){
-                                    vinput.instansi=this.item.def_instansi;
-                                    
-                                }
-                            }
-
-                            if((this.item.def_keperluan!=undefined) && !isEmpty(this.item.def_keperluan)){
-                                if(vinput.keperluan!=this.item.def_keperluan){
-                                    vinput.keperluan=this.item.def_keperluan;
-                                    
-                                }
-                            }
-
-                             if((this.item.def_tujuan!=undefined) && !isEmpty(this.item.def_tujuan)){
-                                if(vinput.tujuan_json!=this.item.def_tujuan){
-                                    vinput.tujuan_json=this.item.def_tujuan;
-                                }
-                            }
-
                              if((this.item.def_kategori_tamu!=undefined) && !isEmpty(this.item.def_kategori_tamu)){
                                 if(vinput.kategori_tamu!=this.item.def_kategori_tamu){
                                     vinput.kategori_tamu=this.item.def_kategori_tamu;
@@ -941,6 +921,32 @@ var vpicItput=new Vue({
                                 }
                             }
 
+                            if((this.item.def_instansi!=undefined) && !isEmpty(this.item.def_instansi)){
+                                if(vinput.instansi!=this.item.def_instansi){
+                                    vinput.instansi=this.item.def_instansi;
+                                    
+                                }
+                            }
+
+                            if(this.item.tamu_khusus){
+
+
+                                if((this.item.def_keperluan!=undefined) && !isEmpty(this.item.def_keperluan)){
+                                    if(vinput.keperluan!=this.item.def_keperluan){
+                                        vinput.keperluan=this.item.def_keperluan;
+                                        
+                                    }
+                                }
+
+                                 if((this.item.def_tujuan!=undefined) && !isEmpty(this.item.def_tujuan)){
+                                    if(vinput.tujuan_json!=this.item.def_tujuan){
+                                        vinput.tujuan_json=this.item.def_tujuan;
+                                    }
+                                }
+
+                            
+
+                            }
 
                             vinput.identity.rendered_def=null;
                             vinput.identity.rendered=null;

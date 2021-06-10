@@ -70,6 +70,20 @@
                   
                  
                     <input type="hidden" name="foto" v-model="foto">
+
+                     <div class="form-group" >
+                        <label>Kategori Tamu*</label>
+                        <select class="form-control" name="kategori_tamu" v-model="kategori_tamu">
+                            @foreach (config('web_config.kategori_tamu') as $k)
+                                
+                            <option {{$k['tag']}} {{old('kategori_tamu')==$k['tag']?'selected':""}} >{{$k['name']}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                     <div class="form-group">
+                        <label>Instansi*</label>
+                       <input type="text" class="form-control" required="" v-model="instansi" name="instansi">
+                    </div>
                    
                     <div class="form-group" >
                         <label>JENIS TAMU</label>
@@ -84,6 +98,7 @@
                                 </div>
                                 <hr>
                             </div>
+
                            
 
                     <div v-if="tamu_khusus==true">
@@ -101,19 +116,7 @@
                         <p style="margin-top: 10px;"><b>DATA KUNJUNGAN ISI OTOMATIS</b></p>
                      <hr>
 
-                     <div class="form-group" >
-                        <label>Kategori Tamu*</label>
-                        <select class="form-control" name="kategori_tamu" v-model="kategori_tamu">
-                            @foreach (config('web_config.kategori_tamu') as $k)
-                                
-                            <option {{$k['tag']}} {{old('kategori_tamu')==$k['tag']?'selected':""}} >{{$k['name']}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                     <div class="form-group">
-                        <label>Instansi*</label>
-                       <input type="text" class="form-control" required="" v-model="instansi" name="instansi">
-                    </div>
+                   
                     <div class="form-group">
                          <label>Tujuan*</label>
                         <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
@@ -265,7 +268,10 @@
                                             </div>
                                         </td>
                                         <td style="width:200px;">
-                                            <img v-bind:src="item.path_rendered" style="width:100px;">
+                                            <img v-bind:src="item.path_rendered" style="width:100px;"
+                                             v-bind:onclick="'show_pic.show(`'+item.path_rendered+'`)'"
+
+                                             >
                                             <div>
                                                 <div v-on:change="id_file_change(key,$event)" class="input-group">
                                                     <input type="file" v-bind:name="'identity['+item.id+'][path_file_src]'" class="form-control" accept="image/*">

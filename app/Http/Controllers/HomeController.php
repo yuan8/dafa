@@ -523,6 +523,8 @@ class HomeController extends Controller
            ->where('gate_checkin','<=',$day)
            ->first();
 
+          
+
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
                         'gate_checkin'=>Carbon::now(),
@@ -546,14 +548,19 @@ class HomeController extends Controller
                }
            }else{
              Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
-
              return back()->withInput();
 
            }
 
+
+
            
            if($log_tamu){
              Alert::success('Berhasil','Berhasil Menambahkan Tamu');
+             DB::table('tamu')->where('id',$check_tamu->id)->update([
+                 'def_keperluan'=>$request->keperluan,
+                 'def_instansi'=>$request->instansi,
+               ]);
            }
 
 
@@ -916,7 +923,6 @@ class HomeController extends Controller
         ->where('log.gate_checkin','=',null)
         ->orderBy('log.provos_checkin','desc')
         ->first();
-        // dd($data_record);
 
 
 
@@ -956,10 +962,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $U=Auth::User();
-        if($U->role==2){
-            return redirect()->route('p.input');
-        }
+        
 
         $fingerprint=$request->fingerprint();
         return view('home')->with(['fingerprint'=>$fingerprint]);

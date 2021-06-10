@@ -33,7 +33,7 @@
                     
     				<tr>
     					<td>
-    						<img src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
+    						<img onclick="show_pic.show('{{url($d->foto??'tamu-def.png')}}')" src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
     					</td>
                         <td>
                             {{($d->izin_akses_masuk?'DI IZINKAN':'TIDAK DI IZINKAN') }}
@@ -70,7 +70,9 @@
     					<td style="min-width: 200px;">
     						<div class="btn-group">
                               <a href="{{route('g.daftar_tamu.gate_provos',['id'=>$d->id_tamu,'slug'=>Str::slug($d->nama)])}}" class="btn btn-primary btn-sm">Form Masuk</a>
-                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>                  
+                              @if(Auth::User()->can('is_admin'))
+                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>   
+                              @endif
                             </div>
     					</td>
     				</tr>

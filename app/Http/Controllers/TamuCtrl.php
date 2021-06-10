@@ -36,7 +36,6 @@ class TamuCtrl extends Controller
 
             ])->first();
            
-
             if($request->tamu_khusus){
                 $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
@@ -75,7 +74,7 @@ class TamuCtrl extends Controller
                 $data['def_keperluan']=$request->keperluan;
                 $data['def_tujuan']=$request->tujuan;
                 $data['def_instansi']=$request->instansi;
-                $data['tamu_khusus']=$request->tamu_khusus;
+                $data['tamu_khusus']=$request->tamu_khusus??0;
                 $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
 
 
@@ -106,6 +105,8 @@ class TamuCtrl extends Controller
                 }
 
                 $data['izin_akses_masuk']=$request->izin_akses_masuk??false;
+                $data['tamu_khusus']=$request->tamu_khusus??false;
+
 
                 $data['keterangan_tolak_izin_akses']=$request->keterangan_tolak_izin_akses??null;
                 if($request->alamat){

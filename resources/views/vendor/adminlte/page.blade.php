@@ -68,6 +68,30 @@
         @endif
 
     </div>
+
+    <div class="modal" id="show_pic">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">.</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <img v-bind:src="path" class="img-responsive" style="max-width: 100%;">
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
 @stop
 
 <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -78,6 +102,21 @@
 
     @stack('js')
     @yield('js')
+    <script type="text/javascript">
+        var show_pic=new Vue({
+            el:"#show_pic",
+            data:{
+                path:null
+            },
+            methods:{
+                show:function(path){
+                    this.path=path;
+                    $('#show_pic').modal();
+                }
+            }
+
+        });
+    </script>
 @stop
 
 

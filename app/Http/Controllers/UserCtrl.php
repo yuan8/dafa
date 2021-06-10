@@ -30,7 +30,7 @@ class UserCtrl extends Controller
 	    	}
 
 	    	if($data->id==Auth::User()->id){
-	    		if(!Hash::check($request->password, $data->password)){
+	    		if(!Hash::check($request->old_password, $data->password)){
 	    			Alert::error('Gagal','Pasword Lama Tidak Sesuai');
 	    			return back();
 	    		}
@@ -43,9 +43,8 @@ class UserCtrl extends Controller
 	    	if($uu){
 				Alert::success('Berhasil','Berhasil Merubah Password');
 
-
 	    	}else{
-	    	Alert::error('Gagal','Data Tidak Tersedia');
+		    	Alert::error('Gagal','Data Tidak Tersedia');
 
 	    	}
 
@@ -65,14 +64,21 @@ class UserCtrl extends Controller
 
     public function update($id,$slug,Request $request){
     	$re=$request->all()??[];
-		$re['username']=Str::slug($request->username);
-		
+		$re['username']=str_replace('-', '_', Str::slug($request->username));
 		$data=DB::table('users')->where('id',$id)->first();
 
 		if($data){
 			$chek_uname=DB::table('users')
 			->where('id','!=',$data->id)
 			->where('username',$re['username'])->first();
+			$valide=Validator::make($re,[
+				'username'=>"required|string"
+			]);
+
+			if($valide->fails()){
+				Alert::error('Gagal',$valide->errors()->first());
+				return back();
+			}
 
 			if($chek_uname){
 				Alert::error('Gagal','Username Telah Digunakan Sebelumnya');
@@ -90,18 +96,42 @@ class UserCtrl extends Controller
 
 			
 			$data_up=[
-				'username'=>Str::slug($request->username),
+				'username'=>$re['username'],
 				'jabatan'=>$request->jabatan,
 				'pangkat'=>$request->pangkat,
 				'name'=>$request->name,
+				'updated_at'=>Carbon::now()
 			];
 
-			if($request->role){
-				if(in_array($request->role, [0,1,2,3])){
-					$data_up['role']=$request->role;
+			if($id!=Auth::user()->id){
+				if($request->email){
 
+					$data_up['email']=$request->email;
+					$valide=Validator::make($data_up,[
+						'email'=>"required|email"
+					]);
+
+					if($valide->fails()){
+						Alert::error('Gagal',$valide->errors()->first());
+						return back();
+					}
+					$chek=DB::table('users')->where('email',$request->email)
+					->where('id','!=',$id)->first();
+					if($chek){
+						Alert::error('Gagal','Email - telah digunakan sebelumnya');
+						return back();
+					}
+				}
+				if($request->role){
+					if(in_array($request->role, [0,1,2,3])){
+						$data_up['role']=$request->role;
+
+					}
 				}
 			}
+
+
+
 			if($request->status){
 				if($request->status=='NULL_VALUE'){
 					$data_up['deleted_at']=null;
@@ -112,9 +142,11 @@ class UserCtrl extends Controller
 			}
 
 			$uup=DB::table('users')->where('id',$id)->update($data_up);
-
 			if($uup){
 				Alert::success('Berhasil','Berhasil Merubah Data');
+				if(isset($data_up['deleted_at']) and $data_up['deleted_at']!=null){
+					DB::table('sessions')->where('user_id',$id)->delete();
+				}
 
 			}else{
 				Alert::error('Gagal','Data Tidak Tersedia');
