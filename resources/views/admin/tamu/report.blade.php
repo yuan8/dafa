@@ -85,7 +85,8 @@
 
                 <tr class="vis_">
                     <td class="text-center">
-                        <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
+                        {{-- <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;"> --}}
+                        <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td>
                     <td><p><b>{{ Carbon\Carbon::parse($v->log_created_at)->format('ymd').'-'.$v->id_log }}</b></p>
                         {{ $v->nama }}
@@ -117,7 +118,8 @@
                         <br>
                         <span class="badge badge-warning">{{ $v->identity_number }}</span>
                        <div style="margin-top: 10px;">
-                            <img src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
+                            {{-- <img src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;"> --}}
+                            <img onclick="show_pic.show('{{asset($v->path_identity)}}')" src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
                        </div>
                     </td>
                     <td>
