@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
             $event->menu->add('MAIN NAVIGATION');
             $event->menu->add([
-                'text' => 'Daftar Tamu',
+                'text' => 'Master Data Tamu',
                 'url' => route('g.daftar_tamu'),
                 // 'can'=>'provos_and_gate',
             ]);
@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $event->menu->add([
-                'text' => 'Tamu Record',
+                'text' => 'Data Tamu Hari Ini',
                 'url' => route('g.index'),
                 'can'=>'is_provos',
                 'icon'=>'fas fa-list-alt'
@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             //     'icon'=>"fas fa-circle"
 
             // ]);
-           
+
             $event->menu->add('ADMIN MENU');
              $event->menu->add([
                 'text' => 'Master Bagian',
@@ -71,13 +71,13 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $event->menu->add([
-                'text' => 'Pengguna',
+                'text' => 'Master Pengguna',
                 'url' => route('a.u.index'),
                 'can'=>'is_admin',
                 'icon'=>"fas fa-users"
             ]);
              $event->menu->add([
-                'text' => 'Report',
+                'text' => 'Laporan',
                 'can'=>'is_admin',
                 'icon'=>"fas fa-copy",
                 'submenu'=>[
@@ -89,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
 
                 ]
             ]);
-           
+
         });
     }
 }

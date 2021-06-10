@@ -16,22 +16,22 @@
                      <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
                      <hr style="background: #fff">
                  </div>
-                
+
                 <div class="col-md-12 text-center" style="margin-bottom: 10px;">
                     <div id="cam-record" v-bind:height="height+'px'" v-bind:width="width+'px'"
                      style=" overflow: hidden; border-radius: 10px;">
-                         
+
                      </div>
 
                 </div>
-               
+
             </div>
-       
+
           <div class="box-footer">
                 <div class="btn-group">
                     <button v-if="!url_filled" class="btn btn-primary" @click="takePic">AMBIL</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">AMBIL UANG</button>
-                   
+                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">AMBIL ULANG</button>
+
                     <button v-if="url_filled"  class="btn btn-primary" @click="save">GUNAKAN</button>
 
                 </div>
@@ -49,7 +49,7 @@
     @method('PUT')
     <div class="card" id="vinput">
         <div class="card-header bg-danger" v-if="izin_akses_masuk==false">
-            TAMU TIDAK DI IZINKAN MASUK 
+            TAMU TIDAK DI IZINKAN MASUK
         </div>
         <div class="card-body">
 
@@ -61,21 +61,21 @@
                          <input type="hidden" name="file_foto_cam" v-model="foto_file_cam">
                         <div class="input-group input-group-sm " style="margin-top: 10px; border-top:1px solid #222" >
                             <input type="file" v-on:change="processFileFoto($event)" class="form-control" id="file-foto" name="foto_file" accept="image/*">
-                           
+
                             <span  class="input-group-addon">
                                 <button v-on:click="getFotoCam()" type="button" class="btn btn-primary btn-sm"><i class="fa fa-camera"></i> .</button>
                             </span>
                         </div>
                     </div>
-                  
-                 
+
+
                     <input type="hidden" name="foto" v-model="foto">
 
                      <div class="form-group" >
                         <label>Kategori Tamu*</label>
                         <select class="form-control" name="kategori_tamu" v-model="kategori_tamu">
                             @foreach (config('web_config.kategori_tamu') as $k)
-                                
+
                             <option {{$k['tag']}} {{old('kategori_tamu')==$k['tag']?'selected':""}} >{{$k['name']}}</option>
                             @endforeach
                         </select>
@@ -84,7 +84,7 @@
                         <label>Instansi*</label>
                        <input type="text" class="form-control" required="" v-model="instansi" name="instansi">
                     </div>
-                   
+
                     <div class="form-group" >
                         <label>JENIS TAMU</label>
                         <select class="form-control" name="tamu_khusus" v-model="tamu_khusus">
@@ -99,7 +99,7 @@
                                 <hr>
                             </div>
 
-                           
+
 
                     <div v-if="tamu_khusus==true">
                         <label>ID TAMU KHUSUS</label>
@@ -116,14 +116,14 @@
                         <p style="margin-top: 10px;"><b>DATA KUNJUNGAN ISI OTOMATIS</b></p>
                      <hr>
 
-                   
+
                     <div class="form-group">
                          <label>Tujuan*</label>
                         <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
-                        <v-select class="vue-select2" multiple="" 
+                        <v-select class="vue-select2" multiple=""
                             :options="options_tujuan" v-model="tujuan_json"
                             :searchable="true" language="en-US">
-                        </v-select>  
+                        </v-select>
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
@@ -137,8 +137,8 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                          
-                           
+
+
                             <div class="form-group">
                                 <label for="">Nama Tamu*</label>
                                 <input name="nama" required type="text" v-model="nama"   class="form-control">
@@ -161,16 +161,16 @@
 
                                 </select>
                             </div>
-                           
+
                              <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
-                            
+
                             </div>
                                <div class="form-group">
                                 <label for="">Tempat Lahir</label>
                                 <input name="tempat_lahir" type="text" v-model="tempat_lahir" class="form-control">
-                            
+
                             </div>
                             <div v-if="tamu_khusus==true">
                                 <p class="text-danger">Jenis Tamu Khusus <b>@{{jenis_tamu_khusus}}</b>  Mewajibkan Memasukan Data ID <b>@{{list_jenis_tamu_khusus[jenis_tamu_khusus]}}</b> Terlebih Dahulu</p>
@@ -181,8 +181,8 @@
                                 </div>
                                 <hr>
                             </div>
-                           
-                           
+
+
                         </div>
 
                         <div class="col-md-6">
@@ -197,13 +197,13 @@
                                         $id_route=route('g.tamu.id_khusus',['id'=>$data->id,'hash_log'=>$hs.$exp.base64_decode(date('Ymd'))]);
                                     @endphp
                                      <iframe class="col-md-12" src="{{$id_route}}">
-                                        
+
                                     </iframe>
                                     <div class="col-md-12">
-                                       
+
                                     <div class="btn-group text-left">
                                         <a href="{{$id_route}}" download="" class="btn btn-xs btn-primary">DOWNLOAD ID</a>
-                                    </div> 
+                                    </div>
                                     </div>
                                 </div>
                                 <hr>
@@ -211,20 +211,20 @@
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">
-                            
+
                             </div>
 
                             <div class="form-group">
                                 <label for="">Pekerjaan</label>
                                 <input  name="pekerjaan" type="text" v-model="pekerjaan" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Alamat</label>
                             <textarea name="alamat"  v-model="alamat" class="form-control" id="" cols="30" rows="4"></textarea>
                             </div>
                         </div>
-                       
+
                     </div>
 
                     <div class="row">
@@ -282,7 +282,7 @@
                                                 <select required="" v-bind:name="'identity['+item.id+'][jenis_identity]'" class="form-control" v-model="data_id[key].jenis_identity">
                                                     <option v-for="ji in list_jenis_identity" v-bind:value="ji.tag">@{{ji.name}}</option>
                                                 </select>
-                                                
+
                                             <td>
                                                 <input required="" type="text" v-bind:name="'identity['+item.id+'][identity_number]'"  v-on:keyup="numberIdentity(key,$event)" class="form-control" v-model="data_id[key].identity_number_k" >
                                             </td>
@@ -296,11 +296,11 @@
                            </div>
                        </div>
                    </div>
-                   
-                
+
+
                 </div>
             </div>
-            
+
         </div>
     </div>
 </form>
@@ -328,7 +328,7 @@
     var vinput = new Vue({
         el: '#vinput',
          data: {
-            // 
+            //
             izin_akses_masuk:{{$data->izin_akses_masuk?1:0}},
             keterangan_tolak_izin_akses:'{{preg_replace( "/\r|\n/", " ",$data->keterangan_tolak_izin_akses)}}',
             jenis_tamu_khusus:'{{$data->jenis_tamu_khusus??'REKANAN'}}',
@@ -406,9 +406,9 @@
             },
             get_identity:function(expt='dd'){
 
-               
+
             },
-          
+
 
             submit_form:function(){
                 window.vmodalsubmit.isActive=true;
@@ -420,7 +420,7 @@
 
                 }
             },
-           
+
             phoneNumber:function(){
                 if(this.nomer_telpon){
                     var val=this.nomer_telpon;
@@ -442,9 +442,9 @@
                                 if( !isNaN(parseInt(arr_val[i])) || (arr_val[i]=='-')){
                                     char_phone+=arr_val[i];
                                 }
-                                
+
                             }
-                            
+
 
                         }
                         if(window.them_phone!=char_phone){
@@ -526,14 +526,14 @@
         },
 
         watch:{
-           
+
             nomer_telpon:'phoneNumber',
             tamu_khusus:function(val,old){
-                
-                    
+
+
                     this.bc();
 
-                
+
 
             },
             tujuan_json:"bc",
@@ -557,7 +557,7 @@
                     this.bc();
 
                 }
-               
+
 
 
             },
@@ -625,14 +625,14 @@
             height:240
         },
         methods:{
-            
+
             save:function(){
                 $('#file-foto').val(null);
                 $('#file-foto').trigger('change');
 
                 vinput.foto_file_cam=this.pic_data;
                 vinput.foto=this.foto=this.pic_data;
-                
+
 
             },
             closePicInput:function(){
@@ -652,7 +652,7 @@
                         alert("getUserMedia() is not supported by your browser");
                     }
                 }
-                
+
             },
             attacthCam:function(){
                 this.pic_data=null;
@@ -662,19 +662,19 @@
                     height: 240,
                     dest_width: 640,
                     dest_height: 480,
-                    
+
                     crop_width: 480,
                     crop_height: 490,
-                    
+
                     image_format: 'png',
                     jpeg_quality: 90,
-                    
+
                     // flip horizontal (mirror mode)
                     flip_horiz: true,
                         fps: 15,
                     // facingMode: "environment"
                     });
-                    
+
                     window.Webcam.attach('#cam-record')
                 },1000);
 
@@ -738,7 +738,7 @@
         <div class="modal-body">
           <p>Apakah anda yakin mengirim form ini?</p>
           <p><b>Nama</b>: @{{ nama }}, <b>NO TELP</b>: @{{ nomer_telpon }} </p>
-         
+
         </div>
         <div class="modal-footer">
           <button type="button" @click="submit" class="btn btn-primary">KIRIM</button>
@@ -760,7 +760,7 @@
           },
           methods:{
               submit:function(){
-                  
+
                   $('#submit-form-provos').submit();
               }
           },

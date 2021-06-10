@@ -14,24 +14,24 @@
                 <div class="col-md-12">
                      <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
                  </div>
-                
+
                 <div class="col-md-12" style="margin-bottom: 10px;">
                     <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
 
                 </div>
-               
+
             </div>
-       
+
           <div class="box-footer">
-               
+
                 <div class="btn-group">
-                    <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
-                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Resnap</button>
-                   
-                    <button v-if="url_filled"  class="btn btn-primary" @click="save">Save Data</button>
+                    <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Ambil</button>
+                    <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Ambil Ulang</button>
+
+                    <button v-if="url_filled"  class="btn btn-primary" @click="save">Gunakan</button>
 
                 </div>
-          
+
            </div>
        </div>
     </div>
@@ -39,7 +39,7 @@
 <H4><b>TAMBAH DATA TAMU MASUK</b></H4>
 <div class="btn-group" id="action_input">
     <a href="{{ route('p.receiver',['fingerprint'=>$fingerprint ])}}" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
-   
+
 </div>
 <div id="data-pencarian">
     <div class="card" v-if="item!=null">
@@ -99,7 +99,7 @@
 <form action="{{ route('p.submit',['fingerprint'=>$fingerprint]) }}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
     @csrf
     <div class="card" id="vinput">
-        
+
 
         <div class="card-body">
 
@@ -116,8 +116,8 @@
                             </span>
                         </div>
                     </div>
-                  
-                 
+
+
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
@@ -132,7 +132,7 @@
                         <label>Kategori Tamu*</label>
                         <select class="form-control" name="kategori_tamu" v-model="kategori_tamu">
                             @foreach (config('web_config.kategori_tamu') as $k)
-                                
+
                             <option {{$k['tag']}} {{old('kategori_tamu')==$k['tag']?'selected':""}} >{{$k['name']}}</option>
                             @endforeach
                         </select>
@@ -144,10 +144,10 @@
                     <div class="form-group">
                         <label>Tujuan*</label>
                         <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
-                        <v-select class="vue-select2" multiple="" 
+                        <v-select class="vue-select2" multiple=""
                             :options="options_tujuan" v-model="tujuan_json"
                             :searchable="true" language="en-US">
-                        </v-select>     
+                        </v-select>
 
                        {{--  <select class="form-control" v-model="tujuan"  multiple="">
                             @foreach (config('web_config.tujuan_tamu')??[] as $t)
@@ -204,7 +204,7 @@
                             <div class="form-group">
                                 <label for="">@{{jenis_identity}} Berlaku Hingga</label>
                                 <input  name="berlaku_hingga" type="date" v-model="berlaku_hingga" class="form-control">
-                            
+
                             </div>
                         </div>
 
@@ -212,29 +212,29 @@
                             <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Tempat Lahir</label>
                                 <input name="tempat_lahir" type="text" v-model="tempat_lahir" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Pekerjaan</label>
                                 <input  name="pekerjaan" type="text" v-model="pekerjaan" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Alamat</label>
                             <textarea name="alamat"  v-model="alamat" class="form-control" id="" cols="30" rows="4"></textarea>
                             </div>
                         </div>
-                       
+
                     </div>
 
                      <div class="row">
@@ -248,15 +248,15 @@
                                 <label>CAPTURE @{{jenis_identity}}</label>
                                 <div >
                                 <img src="" :src="identity.rendered" id="file-identity" class="img-thumbnail">
-                                    
+
                                 </div>
                             </div>
                         </div>
-                   
-                
+
+
                 </div>
             </div>
-            
+
         </div>
     </div>
 </form>
@@ -378,20 +378,20 @@
                              if((res.data.berlaku_hingga!=undefined) && !isEmpty(res.data.berlaku_hingga)){
                                 if(vinput.identity.berlaku_hingga!=res.data.berlaku_hingga){
                                     vinput.identity.berlaku_hingga=res.data.berlaku_hingga;
-                                   
+
                                 }
                             }
 
                              if((res.data.berlaku_hingga!=undefined) && !isEmpty(res.data.berlaku_hingga)){
                                 if(vinput.berlaku_hingga!=res.data.berlaku_hingga){
                                     vinput.berlaku_hingga=res.data.berlaku_hingga;
-                                   
+
                                 }
                             }
                             if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
                                 if(vinput.no_identity!=res.data.identity_number){
                                     vinput.no_identity=res.data.identity_number;
-                                   
+
                                 }
                             }
 
@@ -404,7 +404,7 @@
                             //     }
                             // }
 
-                             
+
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
 
@@ -413,20 +413,20 @@
                         vinput.identity.rendered=null;
                         vinput.identity.recorded=null;
 
-                           
+
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
                     }
                 });
             },
 
-         
+
             display_identity:function(){
                 $.post('{{route('api.identity.match')}}',{'jenis_identity':this.jenis_identity!=null?this.jenis_identity:null,'no_identity':(this.no_identity.length>5?this.no_identity:null),'nomer_telpon':(this.nomer_telpon.length>12?this.nomer_telpon:null)},function(res){
-                        
+
                        if(res.code==200){
                          if(vinput.identity.file==null){
-                            
+
                         }
                     }else{
 
@@ -492,9 +492,9 @@
                                 if( !isNaN(parseInt(arr_val[i])) || (arr_val[i]=='-')){
                                     char_phone+=arr_val[i];
                                 }
-                                
+
                             }
-                            
+
 
                         }
                         if(window.them_phone!=char_phone){
@@ -517,7 +517,7 @@
             },
             bc:function(){
                 window.bc_provos.postMessage(vinput.$data);
-               
+
 
                 if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.kategori_tamu!=null)){
                     this.btn_check=true;
@@ -543,7 +543,7 @@
         },
 
         watch:{
-           
+
             nomer_telpon:'phoneNumber',
             no_identity:'numberIdentity',
             nama:'namaTamu',
@@ -606,7 +606,7 @@
             }
         }
     });
-    
+
     $(function(){
         setTimeout(function(){
         window.vinput.bc();
@@ -633,7 +633,7 @@ var vpicItput=new Vue({
 
                 vinput.foto_file_cam=this.pic_data;
                 vinput.foto=this.foto=this.pic_data;
-                
+
 
             },
             closePicInput:function(){
@@ -653,7 +653,7 @@ var vpicItput=new Vue({
                         alert("getUserMedia() is not supported by your browser");
                     }
                 }
-                
+
             },
             attacthCam:function(){
                 this.pic_data=null;
@@ -663,19 +663,19 @@ var vpicItput=new Vue({
                     height: 240,
                     dest_width: 640,
                     dest_height: 480,
-                    
+
                     crop_width: 480,
                     crop_height: 490,
-                    
+
                     image_format: 'png',
                     jpeg_quality: 90,
-                    
+
                     // flip horizontal (mirror mode)
                     flip_horiz: true,
                         fps: 15,
                     // facingMode: "environment"
                     });
-                    
+
                     window.Webcam.attach('#cam-record')
                 },300);
 
@@ -758,7 +758,7 @@ var vpicItput=new Vue({
           },
           methods:{
               submit:function(){
-                  
+
                   $('#submit-form-provos').submit();
               }
           },
@@ -805,7 +805,7 @@ var vpicItput=new Vue({
                            },500);
 
                         }
-                        
+
                     }else{
                         vdatacari.item=null;
                         window.BUILD_IN_FORM=0;
@@ -827,17 +827,17 @@ var vpicItput=new Vue({
                             if((this.item.tamu_nomer_telpon!=undefined) && !isEmpty(this.item.tamu_nomer_telpon)){
                                 if(vinput.nomer_telpon!=this.item.tamu_nomer_telpon){
                                     vinput.nomer_telpon=this.item.tamu_nomer_telpon;
-                                    
+
                                 }
                             }
 
-                           
+
 
 
                                 if((this.item.identity_number!=undefined) && !isEmpty(this.item.identity_number)){
                                     if(vinput.no_identity!=this.item.identity_number){
                                         vinput.no_identity=this.item.identity_number;
-                                        
+
                                     }
                                 }
 
@@ -845,57 +845,57 @@ var vpicItput=new Vue({
                             if((this.item.jenis_identity!=undefined) && !isEmpty(this.item.jenis_identity)){
                                 if(vinput.jenis_identity!=this.item.jenis_identity){
                                     vinput.jenis_identity=this.item.jenis_identity;
-                                    
+
                                 }
                             }
 
                             if((this.item.tamu_tempat_lahir!=undefined) && !isEmpty(this.item.tamu_tempat_lahir)){
                                 if(vinput.tempat_lahir!=this.item.tamu_tempat_lahir){
                                     vinput.tempat_lahir=this.item.tempat_lahir;
-                                    
+
                                 }
                             }
                             if((this.item.tamu_tanggal_lahir!=undefined) && !isEmpty(this.item.tamu_tanggal_lahir)){
                                 if(vinput.tanggal_lahir!=this.item.tamu_tanggal_lahir){
                                     vinput.tanggal_lahir=this.item.tamu_tanggal_lahir;
-                                    
+
                                 }
                             }
 
-                            
+
 
                             if((this.item.tamu_pekerjaan!=undefined) && !isEmpty(this.item.tamu_pekerjaan)){
                                 if(vinput.pekerjaan!=this.item.tamu_pekerjaan){
                                     vinput.pekerjaan=this.item.tamu_pekerjaan;
-                                    
+
                                 }
                             }
 
                             if((this.item.tamu_golongan_darah!=undefined) && !isEmpty(this.item.tamu_golongan_darah)){
                                 if(vinput.golongan_darah!=this.item.tamu_golongan_darah){
                                     vinput.golongan_darah=this.item.tamu_golongan_darah;
-                                    
+
                                 }
                             }
 
                              if((this.item.tamu_alamat!=undefined) && !isEmpty(this.item.tamu_alamat)){
                                 if(vinput.alamat!=this.item.tamu_alamat){
                                     vinput.alamat=this.item.tamu_alamat;
-                                    
+
                                 }
                             }
 
                              if((this.item.tamu_tempat_lahir!=undefined) && !isEmpty(this.item.tamu_tempat_lahir)){
                                 if(vinput.tempat_lahir!=this.item.tamu_tempat_lahir){
                                     vinput.tempat_lahir=this.item.tamu_tempat_lahir;
-                                    
+
                                 }
                             }
 
                              if((this.item.tamu_nama!=undefined) && !isEmpty(this.item.tamu_nama)){
                                 if(vinput.nama!=this.item.tamu_nama){
                                     vinput.nama=this.item.tamu_nama;
-                                    
+
                                 }
                             }
 
@@ -903,28 +903,28 @@ var vpicItput=new Vue({
                              if((this.item.tamu_jenis_kelamin!=undefined) && !isEmpty(this.item.tamu_jenis_kelamin)){
                                 if(vinput.jenis_kelamin!=this.item.tamu_jenis_kelamin){
                                     vinput.jenis_kelamin=this.item.tamu_jenis_kelamin;
-                                    
+
                                 }
                             }
 
                             if((this.item.alamat!=undefined) && !isEmpty(this.item.alamat)){
                                 if(vinput.alamat!=this.item.alamat){
                                     vinput.jenis_kelamin=this.item.tamu_jenis_kelamin;
-                                    
+
                                 }
                             }
 
                              if((this.item.def_kategori_tamu!=undefined) && !isEmpty(this.item.def_kategori_tamu)){
                                 if(vinput.kategori_tamu!=this.item.def_kategori_tamu){
                                     vinput.kategori_tamu=this.item.def_kategori_tamu;
-                                    
+
                                 }
                             }
 
                             if((this.item.def_instansi!=undefined) && !isEmpty(this.item.def_instansi)){
                                 if(vinput.instansi!=this.item.def_instansi){
                                     vinput.instansi=this.item.def_instansi;
-                                    
+
                                 }
                             }
 
@@ -934,7 +934,7 @@ var vpicItput=new Vue({
                                 if((this.item.def_keperluan!=undefined) && !isEmpty(this.item.def_keperluan)){
                                     if(vinput.keperluan!=this.item.def_keperluan){
                                         vinput.keperluan=this.item.def_keperluan;
-                                        
+
                                     }
                                 }
 
@@ -944,7 +944,7 @@ var vpicItput=new Vue({
                                     }
                                 }
 
-                            
+
 
                             }
 
@@ -961,7 +961,7 @@ var vpicItput=new Vue({
                                 }
                             }
 
-                             
+
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
             }
@@ -1026,7 +1026,7 @@ var vpicItput=new Vue({
                   // document.body.className = this[hidden] ? "hidden" : "visible";
                 }
               // console.log('page active : '+this_page_active);
-                
+
         }
         if( document[hidden] !== undefined )
             onchange({type: document[hidden] ? "blur" : "focus"});
@@ -1034,10 +1034,10 @@ var vpicItput=new Vue({
 
 
 
-    // SCANE  
+    // SCANE
     onScan.attachTo(document, {
         singleScanQty:1,
-        onScan: function(sScanned, iQty) { 
+        onScan: function(sScanned, iQty) {
             if(this_page_active){
                 window.BUILD_IN_FORM=true;
                  window.vdatacari.get_identity('string_id',$sScanned);
@@ -1045,8 +1045,8 @@ var vpicItput=new Vue({
          },
         onScanError: function(oDebug) {  },
         onScanButtonLongPress: function() {  },
-        onKeyDetect: function(iKeyCode, oEvent){ 
-            
+        onKeyDetect: function(iKeyCode, oEvent){
+
         },
         onKeyProcess: function(sChar, oEvent){  },
         onPaste: function(sPasted){

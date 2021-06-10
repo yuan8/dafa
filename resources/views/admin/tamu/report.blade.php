@@ -3,26 +3,26 @@
 @section('content')
 <div class="card">
     <div class="card-header with-border" id="venv">
-       
+
        <form id="form_env" method="get">
         @can('is_gate')
         @endcan
            <div class="row ">
                <div class="col-md-6">
                    <div class="form-group">
-                       <label>MULAI</label> 
-                       <input type="date" class="form-control" name="start" v-model="start">   
+                       <label>MULAI</label>
+                       <input type="date" class="form-control" name="start" v-model="start">
                    </div>
                </div>
                <div class="col-md-6">
                    <div class="form-group">
-                       <label>HINGGA</label> 
-                       <input type="date" class="form-control" name="end" v-model="end">   
+                       <label>HINGGA</label>
+                       <input type="date" class="form-control" name="end" v-model="end">
                    </div>
                </div>
            </div>
-               
-        
+
+
         <hr>
         <div class="row">
             <div class="col-md-3">
@@ -44,7 +44,7 @@
                <div>
                     <div class="btn-group">
                     <button v-on:click="export_excel('EXCEL')" class="btn btn-success">EXCEL</button>
-                     <button v-on:click="export_excel('PDF')" class="btn btn-primary">PDF</button>
+                    <button v-on:click="export_excel('PDF')" class="btn btn-primary">PDF</button>
                 </div>
                </div>
             </div>
@@ -52,19 +52,19 @@
                 <div class="form-group">
                 <input type="hidden" name="tujuan_json" v-model="JSON.stringify(tujuan_json)">
                     <label>TUJUAN <button v-on:click="clear_tujuan()" class="btn-circle btn-xs btn-primary">Clear</button></label>
-                    <v-select class="vue-select2" multiple="" 
+                    <v-select class="vue-select2" multiple=""
                         :options="options" v-model="tujuan_json"
                         :searchable="true" language="en-US">
-                    </v-select>    
+                    </v-select>
 
-                    
+
                 </div>
             </div>
         </div>
-       </form> 
+       </form>
     </div>
     <div class="card-body ">
-        
+
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
@@ -82,7 +82,7 @@
                  @php
                         $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':($v->provos_checkin?'PROVOS':'')));
                     @endphp
-               
+
                 <tr class="vis_">
                     <td class="text-center">
                         <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
@@ -108,7 +108,7 @@
                         </div>
                     </td>
                     <td>
-                        
+
                         <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
 
                         <p >{{ $v->keperluan }}</p>
@@ -128,20 +128,20 @@
                                 @case('CHECKIN')
                                     TAMU TELAH MEMASUKI GATE
                                     @break
-                            
+
                              @case('CHECKOUT')
                                     TELAH MENEYELESAIKAN KUNJUNGAN
                                     @break
                                     <p>{{ Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a') }}</p>
-                            
+
                                 @default
                                         TELAH MENEYELESAIKAN KUNJUNGAN
                             @endswitch
 
-                            
+
 
                     </td>
-                   
+
 
 
 
@@ -162,14 +162,14 @@
                                             <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}
                                                 <b class="text-center">{{$v->nama_gate_out_handle}}</b>
                                             </a></li>
-                                          
+
                                         </ol>
                                         <span class="filling-line" aria-hidden="true" ></span>
                                     </div>
                                     <!-- .events -->
                                 </div>
                                 <!-- .events-wrapper -->
-                                
+
                                 <!-- .cd-timeline-navigation -->
                             </div>
                         </div>
@@ -183,13 +183,13 @@
 
     </div>
     <div class="box-footer">
-        
+
     </div>
 
 </div>
 
 <div class="modal fade" id="modal-id-phone-call">
-   
+
 </div>
 
 <form id="form-export">
@@ -208,7 +208,7 @@
     function add(){
         var dom=element.replace('NGABALIN','NGABALIN '+count);
         $('#list-visitor tbody').prepend(dom);
-        
+
     }
     var state='{{$req->check??'PROVOS'}}';
     @if(config('web_config.broadcast_network'))
@@ -230,7 +230,7 @@
         });
     }
 
-    
+
 </script>
 <script type="text/javascript">
 
@@ -272,7 +272,7 @@
             },
             toArray:function(){
 
-            }
+            },
 
         },
         watch:{
@@ -300,7 +300,7 @@
 
             }
         }
-       
+
     })
 
 </script>
