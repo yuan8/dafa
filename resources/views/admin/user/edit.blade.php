@@ -21,6 +21,10 @@
 					<input type="text" required="" class="form-control" name="username" value="{{$data->username}}">
 				</div>
 				<div class="form-group">
+					<label>EMAIL*</label>
+					<input type="email" required="" class="form-control" name="email" value="{{$data->email}}">
+				</div>
+				<div class="form-group">
 					<label>NRP* </label>
 					<input type="text" required="" class="form-control" name="nrp" value="{{$data->nrp}}">
 				</div>

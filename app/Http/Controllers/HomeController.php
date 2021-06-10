@@ -520,8 +520,10 @@ class HomeController extends Controller
             'tamu_id'=>$check_tamu->id,
            ])
            ->whereNull('gate_checkout')
-           ->where('gate_checkin','>',$day)->first();
+           ->where('gate_checkin','<=',$day)
+           ->first();
 
+          
 
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
@@ -546,14 +548,19 @@ class HomeController extends Controller
                }
            }else{
              Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
-
              return back()->withInput();
 
            }
 
+
+
            
            if($log_tamu){
              Alert::success('Berhasil','Berhasil Menambahkan Tamu');
+             DB::table('tamu')->where('id',$check_tamu->id)->update([
+                 'def_keperluan'=>$request->keperluan,
+                 'def_instansi'=>$request->instansi,
+               ]);
            }
 
 
@@ -583,6 +590,19 @@ class HomeController extends Controller
                 return redirect()->route('g.index');
              }
 
+        }
+        $where=[];
+
+        if($request->q){
+                $where[]="(v.nama like '%".$request->q."%')";
+                $where[]="(log.tujuan like '%".$request->q."%')";
+                $where[]="(log.instansi like '%".$request->q."%')";
+                $where[]="(log.keperluan like '%".$request->q."%')";
+
+
+                $where[]="(v.alamat like '%".$request->q."%')";
+                $where[]="(replace(ind.identity_number,'-','') like '%".str_replace('-', '', $request->q)."%')";
+                $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
         }
 
 
@@ -625,10 +645,9 @@ class HomeController extends Controller
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
                 ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id')
+                ->groupBy('v.id','log.id');
 
 
-                ->get();
             break;
             case 'GATE_CHECKOUT':
                 $log_tamu=DB::table('log_tamu as log')
@@ -643,19 +662,28 @@ class HomeController extends Controller
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','!=',null)
                 ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id')
-                ->get();
+                ->groupBy('v.id','log.id');
             break;
         }
+
+        if($log_tamu){
+            if(count($where)){
+                $log_tamu=$log_tamu->whereRaw('('.implode(" OR ",$where).")");
+            }
+
+            $log_tamu=$log_tamu->get();
+
+            $fingerprint=$request->fingerprint();
+            return view('gate.index')->with([
+                'data_visitor'=>$log_tamu,
+                'fingerprint'=>$fingerprint,
+                'req'=>$request,
+                'active_h'=>$day_last,
+                'status'=>$checkin
+            ]);
+        }
         
-        $fingerprint=$request->fingerprint();
-        return view('gate.index')->with([
-            'data_visitor'=>$log_tamu,
-            'fingerprint'=>$fingerprint,
-            'req'=>$request,
-            'active_h'=>$day_last,
-            'status'=>$checkin
-        ]);
+        
     }
 
     public function gate_check_in($id_log,$slug,Request $request){
@@ -895,7 +923,6 @@ class HomeController extends Controller
         ->where('log.gate_checkin','=',null)
         ->orderBy('log.provos_checkin','desc')
         ->first();
-        // dd($data_record);
 
 
 
@@ -935,10 +962,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $U=Auth::User();
-        if($U->role==2){
-            return redirect()->route('p.input');
-        }
+        
 
         $fingerprint=$request->fingerprint();
         return view('home')->with(['fingerprint'=>$fingerprint]);

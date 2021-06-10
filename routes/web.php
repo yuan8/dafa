@@ -20,9 +20,9 @@ Route::get('/', function () {
 Route::prefix('tamu')->middleware('auth:web')->group(function(){
     Route::get('/daftar-tamu',[App\Http\Controllers\TamuCtrl::class, 'daftarTamuList'])->name('g.daftar_tamu');
 
-    Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit');
+    Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit')->middleware('can:is_admin');
 
-    Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update');
+    Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update')->middleware('can:is_admin');
 
     Route::get('/identity-tamu-khusus/{id}/id-generate.pdf',[App\Http\Controllers\TamuCtrl::class, 'identity_tamu_khusus'])->name('g.tamu.id_khusus');
 

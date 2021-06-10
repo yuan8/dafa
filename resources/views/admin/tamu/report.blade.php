@@ -29,8 +29,6 @@
                 <div class="form-group">
                     <label for="">STATUS</label>
                     <select class="form-control"  name="status" v-model="status" id="">
-                        <option value="">-</option>
-                        <option value="PROVOS">PROVOS</option>
                         <option value="GATE_CHECKIN">MASUK</option>
                         <option value="GATE_CHECKOUT">KELUAR</option>
                     </select>
@@ -94,6 +92,8 @@
                         <p>{{
                             config('web_config.kategori_tamu')[$v->kategori_tamu]??$v->kategori_tamu
                         }}</p>
+                        <p><span class="badge badge-primary">{{$v->instansi}}</span>
+                        </p>
                     </td>
 
                     </td>
@@ -108,8 +108,7 @@
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">{{$v->instansi}}</span>
-                        <br>
+                        
                         <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
 
                         <p >{{ $v->keperluan }}</p>
@@ -153,16 +152,9 @@
                         <div class="cd-horizontal-timeline loaded">
                             <div class="timeline">
                                 <div class="events-wrapper">
-                                    <div class="events" style="width: 100%;">
-                                      <ol>
-                                       
-                                            <li><a href="#" data-date="{{ $v->provos_checkin }}" class="{{ $gate_ls=='PROVOS'?'selected':'older-event' }}" style="left: 5%;">PROVOS {{(in_array($gate_ls, ['PROVOS','CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->provos_checkin)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_provos_handle}}</b>
-                                            </a>
-                                                
-                                            </li>
-
-                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 40%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
+                                  <div class="events" style="width: 100%;">
+                                        <ol>
+                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 20%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
                                                 <b class="text-center">{{$v->nama_gate_handle}}</b>
                                             </a>
                                             </li>

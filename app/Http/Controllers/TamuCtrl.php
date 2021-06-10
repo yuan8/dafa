@@ -36,7 +36,6 @@ class TamuCtrl extends Controller
 
             ])->first();
            
-
             if($request->tamu_khusus){
                 $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
@@ -75,7 +74,7 @@ class TamuCtrl extends Controller
                 $data['def_keperluan']=$request->keperluan;
                 $data['def_tujuan']=$request->tujuan;
                 $data['def_instansi']=$request->instansi;
-                $data['tamu_khusus']=$request->tamu_khusus;
+                $data['tamu_khusus']=$request->tamu_khusus??0;
                 $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
 
 
@@ -106,6 +105,8 @@ class TamuCtrl extends Controller
                 }
 
                 $data['izin_akses_masuk']=$request->izin_akses_masuk??false;
+                $data['tamu_khusus']=$request->tamu_khusus??false;
+
 
                 $data['keterangan_tolak_izin_akses']=$request->keterangan_tolak_izin_akses??null;
                 if($request->alamat){
@@ -165,6 +166,81 @@ class TamuCtrl extends Controller
                 $data['updated_at']=Carbon::now();
                $up= DB::table('tamu')->where('id',$tamu->id)->update($data);
                if($up){
+                $now=Carbon::now();
+                $new_id=[];
+
+                $col=collect($request->identity??[]);
+                $col=$col->pluck('id')->toArray();
+
+                DB::table('identity_tamu')
+                ->where('tamu_id',$tamu->id)
+                ->whereNotIn('id',$col)
+                ->delete();
+
+                foreach ($request->identity??[] as $key => $n) {
+                    if(strpos($n['id'], 'new-')!==false){
+                        if($n['jenis_identity'] and $n['identity_number']){
+                            $new_id[]=$n;
+                        }
+                    }else{
+
+                        $check=DB::table('identity_tamu')->where([
+                        ['id','=',$n['id']],
+                        ['jenis_identity','=',$n['jenis_identity']],
+                        ['identity_number','=',$n['identity_number']],
+                        ['tamu_id','=',$tamu->id],
+                        ])->first();
+
+                        if(!$check){
+                            DB::table('identity_tamu')->where('id',$n['id'])
+                            ->where('tamu_id',$tamu->id)->update([
+                                'jenis_identity'=>$n['jenis_identity'],
+                                'identity_number'=>$n['identity_number'],
+                                'berlaku_hingga'=>$n['berlaku_hingga'],
+                                'updated_at'=>$now,
+                                'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):DB::raw('path_identity')
+                            ]);
+
+                        }else{
+                                DB::table('identity_tamu')->where('id',$n['id'])
+                                ->where('tamu_id',$tamu->id)->update([
+                                    'updated_at'=>$now,
+                                    'berlaku_hingga'=>$n['berlaku_hingga'],
+                                    'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):DB::raw('path_identity')
+                                ]);
+
+                        }
+
+
+                    }
+                }
+
+                foreach ($new_id as $key => $n) {
+                    $check=DB::table('identity_tamu')->where([
+                        ['jenis_identity','=',$n['jenis_identity']],
+                        ['tamu_id','=',$tamu->id],
+
+                    ])->first();
+
+                    if(!$check){
+                        DB::table('identity_tamu')->insertOrIgnore([
+                            'tamu_id'=>$tamu->id,
+                            'jenis_identity'=>$n['jenis_identity'],
+                            'identity_number'=>$n['identity_number'],
+                            'berlaku_hingga'=>$n['berlaku_hingga'],
+                            'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($tamu->id).'/'.$n['jenis_identity'],$n['path_file_src'])):null,
+                            'created_at'=>$now,
+                            'updated_at'=>$now,
+                        ]);
+                    }
+
+                }
+
+                if(!$request->identity){
+                    DB::table('identity_tamu')->where('tamu_id',$tamu->id)->delete();
+                }
+
+
                 Alert::success('Berhasil','DATA BERHASIL DI PERBARUI');
                }
 
@@ -261,6 +337,9 @@ class TamuCtrl extends Controller
             foreach ($identity as $key => $value) {
                 $identity[$key]->path_rendered=url($value->path_identity);
                 $identity[$key]->path_def=url($value->path_identity);
+                $identity[$key]->path_file=null;
+                $identity[$key]->identity_number_k=$value->identity_number;
+
                 $identity[$key]->berlaku_hingga=$value->berlaku_hingga?Carbon::parse($value->berlaku_hingga)->format('Y-m-d'):null;
 
                 # code...
@@ -270,6 +349,7 @@ class TamuCtrl extends Controller
             }else{
 
             }
+
 
             return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
         }
@@ -345,7 +425,7 @@ class TamuCtrl extends Controller
 			$end=$request->end;
 		}
 
-		  $day=Carbon::now()->startOfDay();
+		$day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
 
         if($request->date){
@@ -394,27 +474,29 @@ class TamuCtrl extends Controller
             }
         }
 
-
+        if($checkin==null){
+            $checkin='GATE_CHECKIN';
+        }
 
 
         $log_tamu=[];
         switch($checkin){
-            case 'PROVOS':
-            	$status='PROVOS';
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','=','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,(select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                          ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
-                ->where('log.gate_checkin','=',null)
-                ->whereRaw(implode(' and ', $where_raw))
+            // case 'PROVOS':
+            // 	$status='PROVOS';
+            //     $log_tamu=DB::table('log_tamu as log')
+            //     ->join('tamu as v','v.id','=','log.tamu_id')
+            //     ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            //     ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,(select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+            //         (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+            //         (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
+            //               ->where('log.provos_checkin','>=',Carbon::parse($start))
+            //     ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+            //     ->where('log.gate_checkin','=',null)
+            //     ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+            //     ->orderBy('log.provos_checkin','desc');
                 
-            break;
+            // break;
             case 'GATE_CHECKIN':
             	$status='CHECKIN';
 
@@ -422,15 +504,14 @@ class TamuCtrl extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                          ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+                ->where('log.gate_checkin','>=',Carbon::parse($start))
+                ->where('log.gate_checkin','<=',Carbon::parse($end)->endOfDay())
                 ->where('log.gate_checkout','=',null)
                 ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+                ->orderBy('log.gate_checkin','desc');
                
             break;
             case 'GATE_CHECKOUT':
@@ -440,32 +521,32 @@ class TamuCtrl extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+                    
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+                ->where('log.gate_checkin','>=',Carbon::parse($start))
+                ->where('log.gate_checkin','<=',Carbon::parse($end)->endOfDay())
                 ->where('log.gate_checkout','!=',null)
                 ->whereRaw(implode(' and ', $where_raw))
 
-                ->orderBy('log.provos_checkin','desc');
+                ->orderBy('log.gate_checkin','desc');
                 
             break;
 
             default:
 
-             $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
-                ->where('log.provos_checkin','>=',Carbon::parse($start))
-                ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
-                ->whereRaw(implode(' and ', $where_raw))
+             // $log_tamu=DB::table('log_tamu as log')
+             //    ->join('tamu as v','v.id','log.tamu_id')
+             //    ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+             //    ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+             //        (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
+             //        (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+             //        (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
+             //    ->where('log.provos_checkin','>=',Carbon::parse($start))
+             //    ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
+             //    ->whereRaw(implode(' and ', $where_raw))
                 
-                ->orderBy('log.provos_checkin','desc');
+             //    ->orderBy('log.provos_checkin','desc');
                 
 
             break;
@@ -627,16 +708,16 @@ class TamuCtrl extends Controller
 			$sheet->setCellValue(static::nta(12).($start+$key), implode(', ',json_decode($v->tujuan??[]) ) );
 			$sheet->setCellValue(static::nta(13).($start+$key), $v->keperluan);
 
-			$sheet->setCellValue(static::nta(14).($start+$key), $v->provos_checkin);
-			$sheet->setCellValue(static::nta(15).($start+$key), $v->gate_checkin);
-			$sheet->setCellValue(static::nta(16).($start+$key), $v->gate_checkout);
-			$sheet->setCellValue(static::nta(17).($start+$key), $v->status);
-			$sheet->getStyle(static::nta(1).($start+$key).':'.static::nta(17).($start+$key))->applyFromArray($DATASTYLE);
+			
+			$sheet->setCellValue(static::nta(14).($start+$key), $v->gate_checkin);
+			$sheet->setCellValue(static::nta(15).($start+$key), $v->gate_checkout);
+			$sheet->setCellValue(static::nta(16).($start+$key), $v->status);
+			$sheet->getStyle(static::nta(1).($start+$key).':'.static::nta(16).($start+$key))->applyFromArray($DATASTYLE);
 
 
 		}
 
-		$sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(17).(($start+$key)));
+		$sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(16).(($start+$key)));
 
 		$writer = new Xlsx($spreadsheet);
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -656,8 +737,7 @@ class TamuCtrl extends Controller
 		$pdf->loadHtml($DOM );
 		$pdf->setPaper('legal', 'landscape');
 		header('Content-Type: application/pdf');
-       
-		return $pdf->stream(urlencode('export-tamu-('.$start_date.')-('.$end_date.')'.".pdf") );
+		return $pdf->stream(urlencode('export-tamu-('.$start_date.')-('.$end_date.')'.".pdf"),array("Attachment" => false) );
 
 	}
 

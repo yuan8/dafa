@@ -40,9 +40,9 @@
 <H4><b>TAMBAH DATA TAMU</b></H4>
 <div class="btn-group" id="action_input">
     <a href="{{ route('g.receiver',['fingerprint'=>$fingerprint ])}}" onclick="setTimeout(function(){vinput.bc; console.log('bc_run')},3000)" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
-    <button v-if="env=='KTP'" @click="ktp" class="btn btn-primary bg-info">EXTRASI DATA KTP</button>
+  {{--   <button v-if="env=='KTP'" @click="ktp" class="btn btn-primary bg-info">EXTRASI DATA KTP</button>
     <button v-if="env=='SIM'" @click="sim" class="btn btn-danger">EXTRASI DATA SIM</button>
-    <button v-if="env=='LAINYA'" @click="lainya" class="btn btn-success">EXTRASI DATA LAINYA</button>
+    <button v-if="env=='LAINYA'" @click="lainya" class="btn btn-success">EXTRASI DATA LAINYA</button> --}}
 </div>
 
 
@@ -566,6 +566,11 @@
                 }
             },
             foto: 'bc',
+            tujuan_json: 'bc',
+            instansi: 'bc',
+            keperluan: 'bc',
+
+
             foto_file: function(file,old){
                   if(file!=null){
                     var reader = new FileReader();

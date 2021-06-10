@@ -100,7 +100,6 @@
 				<th>PERKERJAAN</th>
 				<th>KATEGORI TAMU</th>
 				<th>TUJUAN</th>
-				<th>PROVOS DATE</th>
 				<th>MASUK DATE</th>
 				<th>KELUAR DATE</th>
 				<th>STATUS</th>
@@ -121,7 +120,6 @@
 				<th>13</th>
 				<th>14</th>
 				<th>15</th>
-				<th>16</th>
 
 
 
@@ -167,15 +165,15 @@
 					<td>{{ $v->tempat_lahir}}/{{$v->tanggal_lahir}}</td>
 					<td>{{$v->alamat}}</td>
 					<td>{{$v->pekerjaan}}</td>
-					<td>{{$v->kategori_tamu}}</td>
+					<td>{{$v->kategori_tamu}}
+						
+						<p><b>{{$v->instansi}}</b></p>
+					</td>
 					<td>
-						<b>{{$v->instansi}}</b>
 						<p>{{implode(', ',json_decode($v->tujuan??[]) )}}</p>
 						<p>{{$v->keperluan}}</p>
 					</td>
-					<td>
-						{{$v->provos_checkin}}
-					</td>
+					
 					<td>
 						{{$v->gate_checkin}}
 					</td>

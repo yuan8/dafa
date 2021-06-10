@@ -36,7 +36,9 @@
         <div class="row">
             <div class="col-md-5">
                 
-
+                <div class="form-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search" value="{{$req->q}}">
+                </div>
             </div>
         </div>
        </form> 
@@ -64,7 +66,7 @@
                
                 <tr class="vis_">
                     <td class="text-center">
-                        <img src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
+                        <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td>
                     <td>
                         <p>
@@ -74,6 +76,8 @@
                         <p>{{
                             config('web_config.kategori_tamu')[$v->kategori_tamu]??$v->kategori_tamu
                         }}</p>
+                        <p>  <span class="badge badge-primary">{{$v->instansi}}</span>
+                        </p>
                     </td>
                     <td>{{ $v->nomer_telpon }}
                         <br>
@@ -84,8 +88,7 @@
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">{{$v->instansi}}</span>
-                        <br>
+                      
                         <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
 
                         <p >{{ $v->keperluan }}</p>
@@ -94,7 +97,7 @@
                         <br>
                         <span class="badge badge-warning">{{ $v->identity_number }}</span>
                        <div style="margin-top: 10px;">
-                            <img src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
+                            <img onclick="show_pic.show('{{asset($v->path_identity)}}')" src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
                        </div>
                     </td>
                     <td>
