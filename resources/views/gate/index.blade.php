@@ -8,51 +8,54 @@
 </script>
 <div class="card">
     <div class="card-header with-border" id="venv">
-       
+
        <form id="form_env" method="get">
         @can('is_gate')
 
-        
+
         @endcan
-           <b>DATA TAMU : <span><div class="btn-group">
+           <b>DATA TAMU HARI INI : <span><div class="btn-group">
                <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
                <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
                 <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
                  <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
                  <input type="hidden" name="date" v-model="active_h">
             </div>
-        </span></b> 
-        <b style="margin-left: 10px;">STATUS : 
+        </span></b>
+        <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                   <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">MASUK</button>
-                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >KELUAR</button>
+                   <button class="btn " v-on:click="status='REKAP'"v-bind:class="status=='REKAP'?'btn btn-primary':'btn-default'" >REKAP</button>
+                    <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (5)</button>
+                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (10)</button>
+
+
                     <input type="hidden" name="status" v-model=status>
 
                 </div>
             </span>
-        </b> 
+        </b>
         <hr>
         <div class="row">
             <div class="col-md-5">
-                
+
                 <div class="form-group">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{$req->q}}">
                 </div>
             </div>
         </div>
-       </form> 
+       </form>
     </div>
     <div class="card-body ">
-        
+
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
                 <tr>
                     <th>FOTO</th>
                     <th>NAMA</th>
-                    <th>NO TELPON</th>
-                    <th>KEPERLUAN</th>
+                    <th>NO. TELEPON</th>
+                    <th>TUJUAN & KEPERLUAN</th>
                     <th>JENIS IDENTITAS</th>
                     <th>STATUS</th>
                     <th>AKSI</th>
@@ -61,9 +64,9 @@
             <tbody>
                 @foreach($data_visitor as $v)
                  @php
-                    $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':''));
+                    $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':($v->rekap?'REKAP':'')));
                 @endphp
-               
+
                 <tr class="vis_">
                     <td class="text-center">
                         <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
@@ -83,19 +86,19 @@
                         <br>
                         <div class="btn-group" style="margin-top: 10px;">
                           {{--   <a target="_blank" href="https://api.whatsapp.com/send?phone={{str_replace('-', '', str_replace('+', '', $v->nomer_telpon))}}"  class="btn btn-success btn-xs">Whatapps</a> --}}
-                            <button  onclick="phone_call('{{$v->nama}}','{{$v->nomer_telpon}}')" class="btn btn-primary btn-xs">Phone Call</button>
+                            <button onclick="phone_call('{{$v->nama}}','{{$v->nomer_telpon}}')" class="btn btn-primary btn-xs">Phone Call</button>
 
                         </div>
                     </td>
                     <td>
-                      
-                        <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
+
+                        <strong > {{implode(', ',json_decode($v->tujuan,true))}}</strong>
 
                         <p >{{ $v->keperluan }}</p>
                     </td>
                     <td><b>{{ $v->jenis_id }}</b>
                         <br>
-                        <span class="badge badge-warning">{{ $v->identity_number }}</span>
+                        <span class="badge badge-warning"><div style="font-size:14;">{{ $v->identity_number }}</div></span>
                        <div style="margin-top: 10px;">
                             <img onclick="show_pic.show('{{asset($v->path_identity)}}')" src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
                        </div>
@@ -106,28 +109,28 @@
                                     TAMU TERDAFTAR DI PROVOS
                                     @break
                                 @case('CHECKIN')
-                                    TAMU TELAH MEMASUKI GATE
+                                    TAMU TELAH MEMASUKI GEDUNG
                                     @break
-                            
+
                              @case('CHECKOUT')
                                     @if($v->checkout_from_gate)
-                                    TELAH MENEYELESAIKAN KUNJUNGAN
+                                    TELAH MENYELESAIKAN KUNJUNGAN
                                     @else
                                    <span class="text-red">MEMBATALKAN</span> KUJUNGAN
                                     @endif
                                 @break
                                  @default
-                                        TELAH MENEYELESAIKAN KUNJUNGAN
+                                        TELAH MENYELESAIKAN KUNJUNGAN
                             @endswitch
 
-                            
+
 
                     </td>
                     <td>
                         <div class="btn-group-vertical">
                             @can('is_gate')
                                 @if($gate_ls=='CHECKIN')
-                                
+
                                 @endif
                             @endcan
                             @can('gate_check_out_provos')
@@ -139,7 +142,7 @@
                                 <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GATE</a>
                             @endif
                             @if($gate_ls=='CHECKOUT')
-                                <P>TELAH MENEYELESAIKAN KUNJUNGAN</P>
+                                <P>TELAH MENYELESAIKAN KUNJUNGAN</P>
                                 <p>{{ Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a') }}</p>
                             @endif
                             @endcan
@@ -166,14 +169,14 @@
                                             <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}
                                                 <b class="text-center">{{$v->nama_gate_out_handle}}</b>
                                             </a></li>
-                                          
+
                                         </ol>
                                         <span class="filling-line" aria-hidden="true" ></span>
                                     </div>
                                     <!-- .events -->
                                 </div>
                                 <!-- .events-wrapper -->
-                                
+
                                 <!-- .cd-timeline-navigation -->
                             </div>
                         </div>
@@ -187,11 +190,11 @@
 </div>
 
 <div class="modal fade" id="modal-id-phone-call">
-   
+
 </div>
 
 <div class="modal fade modal-danger" id="modal-t-danger">
-   
+
 </div>
 @stop
 
@@ -204,7 +207,7 @@
     function add(){
         var dom=element.replace('NGABALIN','NGABALIN '+count);
         $('#list-visitor tbody').prepend(dom);
-        
+
     }
     var state='{{$req->check??'PROVOS'}}';
     @if(config('web_config.broadcast_network'))
@@ -234,12 +237,12 @@
         });
     }
 
-    
+
 </script>
 <script type="text/javascript">
 
 
-   
+
 
     var venv=new Vue({
         el:'#venv',
@@ -265,7 +268,7 @@
                 },500);
             }
         }
-       
+
     })
 
 </script>

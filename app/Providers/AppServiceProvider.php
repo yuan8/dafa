@@ -41,14 +41,14 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $event->menu->add([
-                'text' => 'Checkin',
+                'text' => 'Registrasi Tamu Baru',
                 'url' => route('p.input'),
                 'can'=>'is_provos',
                 'icon'=>'fas fa-user-check'
             ]);
 
             $event->menu->add([
-                'text' => 'Data Tamu Hari Ini',
+                'text' => 'Data Tamu',
                 'url' => route('g.index'),
                 'can'=>'is_provos',
                 'icon'=>'fas fa-list-alt'
@@ -79,12 +79,14 @@ class AppServiceProvider extends ServiceProvider
              $event->menu->add([
                 'text' => 'Laporan',
                 'can'=>'is_admin',
+                'can'=>'is_provos',
                 'icon'=>"fas fa-copy",
                 'submenu'=>[
                     [
                         'text' => 'Pengunjung',
                         'url' => route('g.report'),
-                        'can'=>'is_admin'
+                        'can'=>'is_admin',
+                        'can'=>'is_provos'
                     ]
 
                 ]

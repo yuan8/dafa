@@ -5,7 +5,7 @@
 	  <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	
+
 	 <style type="text/css" >
 	 	 @font-face {
 	        font-family: 'Roboto';
@@ -28,7 +28,7 @@
 			    vertical-align: top;
 			    color: #222;
 			    text-align: left;
-			    font-weight: bold;	
+			    font-weight: bold;
 
 			}
 
@@ -63,7 +63,7 @@
 
 
 
-	
+
 	 </style>
 </head>
 <body>
@@ -134,20 +134,20 @@
 		                   $v->status="TAMU TERDAFTAR DI PROVOS";
 		                    break;
 		                case 'CHECKIN':
-		                   $v->status="TAMU TELAH MEMASUKI GATE"; 
+		                   $v->status="TAMU TELAH MEMASUKI GATE";
 		                    break;
-		            
+
 		             	case 'CHECKOUT':
 			             	if($v->checkout_from_gate){
-			                     $v->status="TELAH MENEYELESAIKAN KUNJUNGAN";
+			                     $v->status="TELAH MENYELESAIKAN KUNJUNGAN";
 			                  }else{
 			                     $v->status="MEMBATALKAN KUNJUNGAN";
 
 			                  }
 		                    break;
-		            
+
 		                default:
-		                   $v->status="TELAH MENEYELESAIKAN KUNJUNGAN";
+		                   $v->status="TELAH MENYELESAIKAN KUNJUNGAN";
 		            }
 
 			@endphp
@@ -166,14 +166,14 @@
 					<td>{{$v->alamat}}</td>
 					<td>{{$v->pekerjaan}}</td>
 					<td>{{$v->kategori_tamu}}
-						
+
 						<p><b>{{$v->instansi}}</b></p>
 					</td>
 					<td>
 						<p>{{implode(', ',json_decode($v->tujuan??[]) )}}</p>
 						<p>{{$v->keperluan}}</p>
 					</td>
-					
+
 					<td>
 						{{$v->gate_checkin}}
 					</td>

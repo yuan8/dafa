@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content')
-<H4><b>TAMU</b></H4>
+<H4><b>MASTER DATA TAMU</b></H4>
 
 <div class="card">
     <div class="card-header with-border">
@@ -17,9 +17,9 @@
     					<th>FOTO</th>
                         <th>IZIN AKSES MASUK</th>
                         <th>JENIS TAMU</th>
-    					<th>IDENTITY</th>
+    					<th>IDENTITAS</th>
     					<th>NAMA</th>
-    					<th>NOMER TELPON</th>
+    					<th>NOMER TELEPON</th>
     					<th>PEKERJAAN</th>
     					<th>GOL DARAH</th>
     					<th>JENIS KELAMIN</th>
@@ -30,7 +30,7 @@
     			</thead>
     			<tbody>
     				@foreach ($data as $key=>$d)
-                    
+
     				<tr>
     					<td>
     						<img onclick="show_pic.show('{{url($d->foto??'tamu-def.png')}}')" src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
@@ -47,7 +47,7 @@
                         </td>
     					<td>
     						@foreach (explode( '||', $d->idt_list??'') as $element)
-    							<p style="font-size:12px; margin:0px; padding: 0px;"><b>{{$element}}</b></p>
+    							<p style="font-size:12px; margin:0px; padding: 3px; font-weight: bolder;"><b>{{$element}}</b></p>
     						@endforeach
     					</td>
     					<td>
@@ -71,7 +71,7 @@
     						<div class="btn-group">
                               <a href="{{route('g.daftar_tamu.gate_provos',['id'=>$d->id_tamu,'slug'=>Str::slug($d->nama)])}}" class="btn btn-primary btn-sm">Form Masuk</a>
                               @if(Auth::User()->can('is_admin'))
-                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>   
+                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>
                               @endif
                             </div>
     					</td>

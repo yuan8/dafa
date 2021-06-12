@@ -16,7 +16,7 @@ use Storage;
 use Alert;
 class TamuCtrl extends Controller
 {
-    
+
     public function simpan_data_tamu($id,Request $request){
 
         $tamu=DB::table('tamu')->where('id',$id)->first();
@@ -35,7 +35,7 @@ class TamuCtrl extends Controller
                 ['jenis_identity','=',config('web_config.jenis_tamu_khusus.'.$request->jenis_tamu_khusus)],
 
             ])->first();
-           
+
             if($request->tamu_khusus){
                 $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
@@ -52,7 +52,7 @@ class TamuCtrl extends Controller
                     'instansi'=>'required|string',
                     'tujuan'=>'required|array',
                     'req_id_def'=>'required|string'
-                  
+
                 ]);
 
                 if($valid->fails()){
@@ -66,7 +66,7 @@ class TamuCtrl extends Controller
                 ])->first();
 
                 if($no){
-                    Alert::error('Gagal','Nomer telpon Telah Digunakan sebelumnya');
+                    Alert::error('Gagal','Nomer telepon Telah Digunakan sebelumnya');
                     return back();
                 }
 
@@ -99,7 +99,7 @@ class TamuCtrl extends Controller
             return redirect()->route('g.daftar_tamu');
         }
 
-            
+
                 if($request->alamat){
                     $data['alamat']=$request->alamat;
                 }
@@ -112,7 +112,7 @@ class TamuCtrl extends Controller
                 if($request->alamat){
                     $data['alamat']=$request->alamat;
                 }
-            
+
                 if($request->nomer_telpon){
                     $data['nomer_telpon']=$request->nomer_telpon;
                 }
@@ -125,11 +125,11 @@ class TamuCtrl extends Controller
                  if($request->tanggal_lahir){
                     $data['tanggal_lahir']=$request->tanggal_lahir;
                 }
-                
+
                 if($request->agama){
                     $data['agama']=$request->agama;
                 }
-                
+
                 if($request->pekerjaan){
                     $data['pekerjaan']=$request->pekerjaan;
                 }
@@ -143,14 +143,14 @@ class TamuCtrl extends Controller
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
                     $path_foto=Storage::url($path_foto);
                 }else if($request->file_foto_cam){
-                        
+
                     if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
                         $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
 
                         $data_foto = base64_decode($data_foto);
                         $path_foto=Storage::put('public/indentity/id-'.
                             ($tamu?$tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
-                        
+
                         $path_foto='/storage/indentity/id-'.
                             ($tamu?$tamu->id:'cache').'/foto/def-cam-profile.png';
 
@@ -288,7 +288,7 @@ class TamuCtrl extends Controller
                 $dompdf = new Dompdf();
                 $dompdf->setBasePath(public_path('/'));
                 $view=view('tamu.id_khusus.print')->with(['code_id'=>$tamu->string_id,'tamu'=>$tamu,'foto'=>$foto])->render();
-              
+
 
                 // return $view;
                 $dompdf->loadHtml($view);
@@ -324,8 +324,8 @@ class TamuCtrl extends Controller
                 $dompdf->render();
 
                 // Output the generated PDF to Browser
-                return $dompdf->stream('id-'.'ERROR'.'.pdf' ,array("Attachment" => false));        }   
-        
+                return $dompdf->stream('id-'.'ERROR'.'.pdf' ,array("Attachment" => false));        }
+
     }
 
     public function edit($id,$slug){
@@ -353,7 +353,7 @@ class TamuCtrl extends Controller
 
             return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
         }
-        
+
     }
 
 
@@ -396,7 +396,7 @@ class TamuCtrl extends Controller
         if(count($where)){
             $data=$data->whereRaw('('.implode(') or (', $where).')');
         }
-		
+
 		$data=$data
 
         ->orderBy(DB::raw("(".'('.implode(') + (', $where).')'.")"),'DESC')
@@ -434,7 +434,7 @@ class TamuCtrl extends Controller
 
              $day_last=Carbon::parse($request->date)->endOfDay();
              if($last_date->gt($day_last)){
-                Alert::error('','Anda tidak dapat meilihat data melebihi '.$last_date->format('d F Y'));
+                Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
                 return redirect()->route('g.index');
              }
 
@@ -453,7 +453,7 @@ class TamuCtrl extends Controller
         	'1=1'
         ];
 
-        
+
 
         if($request->tujuan_json){
             $request->tujuan_json=json_decode($request->tujuan_json??'[]');
@@ -495,7 +495,7 @@ class TamuCtrl extends Controller
             //     ->whereRaw(implode(' and ', $where_raw))
 
             //     ->orderBy('log.provos_checkin','desc');
-                
+
             // break;
             case 'GATE_CHECKIN':
             	$status='CHECKIN';
@@ -512,7 +512,7 @@ class TamuCtrl extends Controller
                 ->whereRaw(implode(' and ', $where_raw))
 
                 ->orderBy('log.gate_checkin','desc');
-               
+
             break;
             case 'GATE_CHECKOUT':
             	$status='CHECKOUT';
@@ -521,7 +521,7 @@ class TamuCtrl extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    
+
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
                 ->where('log.gate_checkin','>=',Carbon::parse($start))
@@ -530,7 +530,7 @@ class TamuCtrl extends Controller
                 ->whereRaw(implode(' and ', $where_raw))
 
                 ->orderBy('log.gate_checkin','desc');
-                
+
             break;
 
             default:
@@ -545,13 +545,13 @@ class TamuCtrl extends Controller
              //    ->where('log.provos_checkin','>=',Carbon::parse($start))
              //    ->where('log.provos_checkin','<=',Carbon::parse($end)->endOfDay())
              //    ->whereRaw(implode(' and ', $where_raw))
-                
+
              //    ->orderBy('log.provos_checkin','desc');
-                
+
 
             break;
         }
-        
+
 
 
 
@@ -566,15 +566,15 @@ class TamuCtrl extends Controller
                    $status="TAMU TERDAFTAR DI PROVOS";
                     break;
                 case 'CHECKIN':
-                   $status="TAMU TELAH MEMASUKI GATE"; 
+                   $status="TAMU TELAH MEMASUKI GATE";
                     break;
-            
+
              	case 'CHECKOUT':
-                   $status="TELAH MENEYELESAIKAN KUNJUNGAN";    
+                   $status="TELAH MENYELESAIKAN KUNJUNGAN";
                     break;
-            
+
                 default:
-                   $status="TELAH MENEYELESAIKAN KUNJUNGAN";
+                   $status="TELAH MENYELESAIKAN KUNJUNGAN";
             }
 
         	switch ($request->export) {
@@ -586,10 +586,10 @@ class TamuCtrl extends Controller
         		case 'PDF':
         			return static::export_pdf($log_tamu,$start,$end,$status);
 
-        	
+
 
         			break;
-        		
+
         		default:
         			# code...
         			break;
@@ -613,7 +613,7 @@ class TamuCtrl extends Controller
 
 
 
-        
+
 
 
 
@@ -653,7 +653,7 @@ class TamuCtrl extends Controller
 		            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
 		        ],
 		    ],
-		    
+
 		];
 
 		$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
@@ -675,16 +675,16 @@ class TamuCtrl extends Controller
                    $v->status="TAMU TERDAFTAR DI PROVOS";
                     break;
                 case 'CHECKIN':
-                   $v->status="TAMU TELAH MEMASUKI GATE"; 
+                   $v->status="TAMU TELAH MEMASUKI GATE";
                     break;
-            
+
              	case 'CHECKOUT':
-                   $v->status="TELAH MENEYELESAIKAN KUNJUNGAN";    
+                   $v->status="TELAH MENYELESAIKAN KUNJUNGAN";
                     break;
-            
+
                 default:
                   if($v->checkout_from_gate){
-                     $v->status="TELAH MENEYELESAIKAN KUNJUNGAN";
+                     $v->status="TELAH MENYELESAIKAN KUNJUNGAN";
                   }else{
                      $v->status="MEMBATALKAN KUNJUNGAN";
 
@@ -708,7 +708,7 @@ class TamuCtrl extends Controller
 			$sheet->setCellValue(static::nta(12).($start+$key), implode(', ',json_decode($v->tujuan??[]) ) );
 			$sheet->setCellValue(static::nta(13).($start+$key), $v->keperluan);
 
-			
+
 			$sheet->setCellValue(static::nta(14).($start+$key), $v->gate_checkin);
 			$sheet->setCellValue(static::nta(15).($start+$key), $v->gate_checkout);
 			$sheet->setCellValue(static::nta(16).($start+$key), $v->status);

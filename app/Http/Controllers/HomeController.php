@@ -37,7 +37,7 @@ class HomeController extends Controller
         } while ($tamu!=null);
 
         return $token;
-        
+
     }
 
 
@@ -120,7 +120,7 @@ class HomeController extends Controller
                 if($request->alamat){
                     $data['alamat']=$request->alamat;
                 }
-            
+
                 if($request->nomer_telpon){
                     $data['nomer_telpon']=$request->nomer_telpon;
                 }
@@ -133,11 +133,11 @@ class HomeController extends Controller
                  if($request->tanggal_lahir){
                     $data['tanggal_lahir']=$request->tanggal_lahir;
                 }
-                
+
                 if($request->agama){
                     $data['agama']=$request->agama;
                 }
-                
+
                 if($request->pekerjaan){
                     $data['pekerjaan']=$request->pekerjaan;
                 }
@@ -151,14 +151,14 @@ class HomeController extends Controller
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
                     $path_foto=Storage::url($path_foto);
                 }else if($request->file_foto_cam){
-                        
+
                     if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
                         $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
 
                         $data_foto = base64_decode($data_foto);
                         $path_foto=Storage::put('public/indentity/id-'.
                             ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png',$data_foto);
-                        
+
                         $path_foto='/storage/indentity/id-'.
                             ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png';
 
@@ -193,7 +193,7 @@ class HomeController extends Controller
                     }
                 }
 
-               
+
                 if(!$check_id){
                     $check_id=DB::table('identity_tamu')->insertGetId([
                         'tamu_id'=>$tamu->id,
@@ -272,7 +272,7 @@ class HomeController extends Controller
                 return redirect()->route('g.index');
             }
 
-            
+
 
     }
 
@@ -342,10 +342,10 @@ class HomeController extends Controller
 
     public function provos_submit(Request $request){
         $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
-        
+
         $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
-        
+
 
         $valid=Validator::make($request->all(),[
             'no_identity'=>'required',
@@ -384,7 +384,7 @@ class HomeController extends Controller
             if($request->alamat){
                 $data['alamat']=$request->alamat;
             }
-        
+
             if($request->nomer_telpon){
                 $data['nomer_telpon']=$request->nomer_telpon;
             }
@@ -397,11 +397,11 @@ class HomeController extends Controller
              if($request->tanggal_lahir){
                 $data['tanggal_lahir']=$request->tanggal_lahir;
             }
-            
+
             if($request->agama){
                 $data['agama']=$request->agama;
             }
-            
+
             if($request->pekerjaan){
                 $data['pekerjaan']=$request->pekerjaan;
             }
@@ -422,7 +422,7 @@ class HomeController extends Controller
                 ->where('id',$check_tamu->id)
                 ->first();
         }
-         
+
 
 
         if(!$check_tamu){
@@ -436,7 +436,7 @@ class HomeController extends Controller
                 DB::table('tamu as ind')
                 ->where('id',$id_tamu)
                 ->first();
-            
+
         }
 
           $path_foto=null;
@@ -444,14 +444,14 @@ class HomeController extends Controller
             $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
             $path_foto=Storage::url($path_foto);
             }else if($request->file_foto_cam){
-                
+
             if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
                 $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
 
                 $data_foto = base64_decode($data_foto);
                 $path_foto=Storage::put('public/indentity/id-'.
                     ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
-                
+
                 $path_foto='/storage/indentity/id-'.
                     ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png';
 
@@ -475,7 +475,7 @@ class HomeController extends Controller
         $path_identity=null;
 
         if($check_id){
-            
+
 
             if($check_id->tamu_id!=$check_tamu->id){
                 $check_id=null;
@@ -513,7 +513,7 @@ class HomeController extends Controller
 
         }
 
-       
+
 
        if($check_tamu && $check_id){
            $log_tamu=DB::table('log_tamu as log')->where([
@@ -523,7 +523,7 @@ class HomeController extends Controller
            ->where('gate_checkin','<=',$day)
            ->first();
 
-          
+
 
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
@@ -554,7 +554,7 @@ class HomeController extends Controller
 
 
 
-           
+
            if($log_tamu){
              Alert::success('Berhasil','Berhasil Menambahkan Tamu');
              DB::table('tamu')->where('id',$check_tamu->id)->update([
@@ -566,8 +566,8 @@ class HomeController extends Controller
 
            return redirect()->route('g.index');
        }
-        
-        
+
+
         // $valid=Validator::make($request->all(),[
         //     ''=
 
@@ -581,12 +581,12 @@ class HomeController extends Controller
 
         if($request->date){
             $last_date=Carbon::now()->addDays(-3)->endOfDay();
-            
+
             $day=Carbon::parse($request->date)->startOfDay();
 
              $day_last=Carbon::parse($request->date)->endOfDay();
              if($last_date->gt($day_last)){
-                Alert::error('','Anda tidak dapat meilihat data melebihi '.$last_date->format('d F Y'));
+                Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
                 return redirect()->route('g.index');
              }
 
@@ -607,7 +607,7 @@ class HomeController extends Controller
 
 
 
-        $checkin='GATE_CHECKIN';
+        $checkin='REKAP';
         if($request->status){
             $checkin=$request->status;
 
@@ -626,7 +626,7 @@ class HomeController extends Controller
             //         ")
             //     ->where('log.gate_checkin','>=',$day)
             //     ->where('log.gate_checkout','<=',$day_last)
-                
+
             //     ->groupBy('v.id','log.id')
 
             //     ->orderBy('log.provos_checkin','desc')
@@ -637,7 +637,7 @@ class HomeController extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                   
+
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
@@ -654,7 +654,7 @@ class HomeController extends Controller
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-                    
+
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
@@ -663,6 +663,23 @@ class HomeController extends Controller
                 ->where('log.gate_checkout','!=',null)
                 ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id');
+            break;
+
+            case 'REKAP':
+                $log_tamu=DB::table('log_tamu as log')
+                ->join('tamu as v','v.id','log.tamu_id')
+                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
+                ->where('log.gate_checkin','>=',$day)
+                ->where('log.gate_checkin','<=',$day_last)
+                ->where('log.gate_checkout','=',null)
+                ->orderBy('log.gate_checkin','desc')
+                ->groupBy('v.id','log.id');
+
             break;
         }
 
@@ -682,8 +699,8 @@ class HomeController extends Controller
                 'status'=>$checkin
             ]);
         }
-        
-        
+
+
     }
 
     public function gate_check_in($id_log,$slug,Request $request){
@@ -720,7 +737,7 @@ class HomeController extends Controller
                 if($request->alamat){
                     $data['alamat']=$request->alamat;
                 }
-            
+
                 if($request->nomer_telpon){
                     $data['nomer_telpon']=$request->nomer_telpon;
                 }
@@ -733,11 +750,11 @@ class HomeController extends Controller
                  if($request->tanggal_lahir){
                     $data['tanggal_lahir']=$request->tanggal_lahir;
                 }
-                
+
                 if($request->agama){
                     $data['agama']=$request->agama;
                 }
-                
+
                 if($request->pekerjaan){
                     $data['pekerjaan']=$request->pekerjaan;
                 }
@@ -751,14 +768,14 @@ class HomeController extends Controller
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
                     $path_foto=Storage::url($path_foto);
                 }else if($request->file_foto_cam){
-                        
+
                     if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
                         $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
 
                         $data_foto = base64_decode($data_foto);
                         $path_foto=Storage::put('public/indentity/id-'.
                             ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png',$data_foto);
-                        
+
                         $path_foto='/storage/indentity/id-'.
                             ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png';
 
@@ -877,7 +894,7 @@ class HomeController extends Controller
                 return redirect()->route('g.index');
             }
 
-            
+
 
 
     }
@@ -941,13 +958,13 @@ class HomeController extends Controller
 
     public function provos_index(Request $request){
         $fingerprint=$request->fingerprint();
-        
+
         return view('provos.index')->with(['fingerprint'=>$fingerprint]);
     }
 
     public function provos_input(Request $request){
         $fingerprint=$request->fingerprint();
-        
+
         return view('provos.input')->with(['fingerprint'=>$fingerprint]);
     }
 
@@ -962,7 +979,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        
+
 
         $fingerprint=$request->fingerprint();
         return view('home')->with(['fingerprint'=>$fingerprint]);

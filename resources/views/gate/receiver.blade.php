@@ -16,9 +16,9 @@
                 <div class="text-center" style="width:100%; min-height:100px; border:1px solid #222">
                     <img src="" :src="foto" alt="" onerror="errFoto(this)" style="max-width:100%;">
                 </div>
-            
+
             </div>
-            
+
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-6">
@@ -55,7 +55,7 @@
                             <label for="">Nomer Telpon</label>
                             <p>@{{ nomer_telpon }}</p>
                            <hr>
-                           
+
                         </div>
                         <div class="form-group">
                             <label for="">Tempat Lahir</label>
@@ -66,7 +66,7 @@
                             <label for="">Tanggal Lahir</label>
                             <p>@{{ tanggal_lahir }}</p>
                            <hr>
-                           
+
                         </div>
                         <div class="form-group">
                             <label for="">Alamat</label>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                 </div>
-            
+
             </div>
         </div>
     </div>
@@ -120,18 +120,18 @@ var bc_provos = new BroadcastChannel('bcgate-{{$fingerprint}}');
             }
         },
         watch:{
-           
+
         }
 });
 
-bc_provos.onmessage = function (ev) { 
+bc_provos.onmessage = function (ev) {
     vinput.changedata(ev.data);
 
  }
-  
 
 
 
-   
+
+
 </script>
 @stop

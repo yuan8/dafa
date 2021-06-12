@@ -13,7 +13,7 @@
     @yield('css')
     <style type="text/css">
     tr th, tr td{
-        font-size: 10px!important;
+        font-size: 11px!important;
     }
 </style>
 @stop

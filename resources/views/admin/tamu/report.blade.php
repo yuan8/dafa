@@ -71,8 +71,8 @@
                 <tr>
                     <th>FOTO</th>
                     <th>NAMA</th>
-                    <th>NO TELPON</th>
-                    <th>KEPERLUAN</th>
+                    <th>NO TELEPON</th>
+                    <th>TUJUAN & KEPERLUAN</th>
                     <th>JENIS IDENTITAS</th>
                     <th>STATUS</th>
                 </tr>
@@ -110,13 +110,13 @@
                     </td>
                     <td>
 
-                        <small > {{implode(', ',json_decode($v->tujuan,true))}}</small>
+                        <strong > {{implode(', ',json_decode($v->tujuan,true))}}</strong>
 
                         <p >{{ $v->keperluan }}</p>
                     </td>
                     <td><b>{{ $v->jenis_id }}</b>
                         <br>
-                        <span class="badge badge-warning">{{ $v->identity_number }}</span>
+                        <span class="badge badge-warning"><div style="font-size:14;">{{ $v->identity_number }}</div></span>
                        <div style="margin-top: 10px;">
                             {{-- <img src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;"> --}}
                             <img onclick="show_pic.show('{{asset($v->path_identity)}}')" src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
@@ -132,12 +132,12 @@
                                     @break
 
                              @case('CHECKOUT')
-                                    TELAH MENEYELESAIKAN KUNJUNGAN
+                                    TELAH MENYELESAIKAN KUNJUNGAN
                                     @break
                                     <p>{{ Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a') }}</p>
 
                                 @default
-                                        TELAH MENEYELESAIKAN KUNJUNGAN
+                                        TELAH MENYELESAIKAN KUNJUNGAN
                             @endswitch
 
 
@@ -157,12 +157,12 @@
                                   <div class="events" style="width: 100%;">
                                         <ol>
                                             <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 20%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_gate_handle}}</b>
+                                                <b class="text-center">(oleh : {{$v->nama_gate_handle}})</b>
                                             </a>
                                             </li>
 
                                             <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_gate_out_handle}}</b>
+                                                <b class="text-center">(oleh : {{$v->nama_gate_out_handle}})</b>
                                             </a></li>
 
                                         </ol>
