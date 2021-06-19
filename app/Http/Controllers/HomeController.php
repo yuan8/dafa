@@ -579,18 +579,28 @@ class HomeController extends Controller
         $day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
 
-        if($request->date){
-            $last_date=Carbon::now()->addDays(-3)->endOfDay();
 
-            $day=Carbon::parse($request->date)->startOfDay();
+        if($request->status=='REKAP' OR $request->status==NULL){
+            $day=Carbon::parse($request->start_date)->startOfDay();
+            $day_last=Carbon::parse($request->end_date)->endOfDay();
+        }else{
 
-             $day_last=Carbon::parse($request->date)->endOfDay();
-             if($last_date->gt($day_last)){
-                Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
-                return redirect()->route('g.index');
-             }
+            if($request->date){
+                $last_date=Carbon::now()->addDays(-3)->endOfDay();
+
+                $day=Carbon::parse($request->date)->startOfDay();
+
+                 $day_last=Carbon::parse($request->date)->endOfDay();
+                 if($last_date->gt($day_last)){
+                    Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
+                    return redirect()->route('g.index');
+                 }
+
+            }
 
         }
+
+        
         $where=[];
 
         if($request->q){
@@ -598,8 +608,6 @@ class HomeController extends Controller
                 $where[]="(log.tujuan like '%".$request->q."%')";
                 $where[]="(log.instansi like '%".$request->q."%')";
                 $where[]="(log.keperluan like '%".$request->q."%')";
-
-
                 $where[]="(v.alamat like '%".$request->q."%')";
                 $where[]="(replace(ind.identity_number,'-','') like '%".str_replace('-', '', $request->q)."%')";
                 $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
@@ -676,7 +684,6 @@ class HomeController extends Controller
                     ")
                 ->where('log.gate_checkin','>=',$day)
                 ->where('log.gate_checkin','<=',$day_last)
-                ->where('log.gate_checkout','=',null)
                 ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id');
 
@@ -699,6 +706,8 @@ class HomeController extends Controller
 
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
+                'date_start'=>$day,
+                'date_end'=>$day_last,
                 'fingerprint'=>$fingerprint,
                 'req'=>$request,
                 'rekap_tamu'=>$rekap_tamu,

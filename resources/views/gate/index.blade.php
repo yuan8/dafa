@@ -14,25 +14,44 @@
 
 
         @endcan
-           <b>DATA TAMU HARI INI : <span><div class="btn-group">
-               <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
-               <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
-                <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
-                 <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
+           <b>DATA TAMU  : <span>
+            @can('is_admin')
+            <div class="input-group" v-if="status=='REKAP'">
+                <input type="date" name="start_date" class="form-control" v-model="Date.parse(date_start)">
+                <input type="date" name="end_date" v-model="Date.parse(date_end)" class="form-control">
+
+            </div>
+            @endcan
+            <div class="btn-group">
+              @can('is_gate_only')
+                 <button type="button" class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
+              @endcan
+              @can('is_admin')
+                    <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
+                <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
+                <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
+                 <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
+
+              @endcan
+             
                  <input type="hidden" name="date" v-model="active_h">
             </div>
-        </span></b>
+        </span>
+       
+    </b>
        
         <hr>
 
         <div class="row">
             <div class="col-md-6">
-                <b style="margin-left: 10px;">STATUS :
+                 <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                   <button class="btn " v-on:click="status='REKAP'"v-bind:class="status=='REKAP'?'btn btn-primary':'btn-default'" >REKAP</button>
-                    <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in??0}})</button>
-                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out??0}})</button>
+                  @can('is_admin')
+                   <button type="button" class="btn " v-on:click="status='REKAP'"v-bind:class="status=='REKAP'?'btn btn-primary':'btn-default'" >REKAP</button>
+                  @endcan
+                    <button type="button" class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in??0}})</button>
+                   <button type="button" class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out??0}})</button>
 
 
                     <input type="hidden" name="status" v-model=status>
@@ -40,6 +59,7 @@
                 </div>
             </span>
         </b>
+                
             </div>
             <div class="col-md-5">
 
@@ -48,7 +68,7 @@
                 </div>
             </div>
         </div>
-        href
+        <hr>
        </form>
     </div>
     <div class="card-body ">
@@ -252,6 +272,9 @@
     var venv=new Vue({
         el:'#venv',
         data:{
+            h_def:'{{ Carbon\Carbon::now()->format('d F Y') }}',
+            h_start:'{{ $date_start??Carbon\Carbon::now()->format('d F Y') }}',
+            h_end:'{{ $date_end??Carbon\Carbon::now()->format('d F Y') }}',
             h:'{{ Carbon\Carbon::now()->format('d F Y') }}',
             h_1:'{{ Carbon\Carbon::now()->addDays(-1)->format('d F Y') }}',
             h_2:'{{ Carbon\Carbon::now()->addDays(-2)->format('d F Y') }}',
@@ -263,19 +286,47 @@
         methods:{
             change_env:function(d){
                 this.active_h=d;
-                $('#form_env').submit();
+                this.check_date(this.status);  
+
+                 setTimeout(function(){
+                    $('#form_env').submit();
+
+                },500);
+            },
+            check_date:function(v){
+                var v=this.status;
+
+                console.log(v,[this.h,this.h_1,this.h_2,this.h_3],([this.h,this.h_1,this.h_2,this.h_3].includes(this.active_h)));
+                 if(['GATE_CHECKIN','GATE_CHECKOUT'].includes(v)){
+                    if(!([this.h,this.h_1,this.h_2,this.h_3].includes(this.active_h))){
+                        this.active_h=this.h_def;
+                    }
+                }
             }
         },
+
         watch:{
-            status:function(v,old){
+            active_h:function(){
+                this.check_date(this.status);  
                 setTimeout(function(){
-                $('#form_env').submit();
+                    $('#form_env').submit();
+
+                },500);
+            },
+            status:function(v,old){
+                this.check_date(v);  
+                setTimeout(function(){
+                    $('#form_env').submit();
 
                 },500);
             }
         }
 
-    })
+    });
+
+    setTimeout(function(){
+        window.venv.check_date();
+    },500);
 
 </script>
 @stop
