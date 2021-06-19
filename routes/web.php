@@ -95,6 +95,8 @@ Route::prefix('gate')->middleware(['auth:web'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'gate_index'])->name('g.index');
     Route::get('/report', [App\Http\Controllers\TamuCtrl::class, 'report'])->name('g.report');
 
+    Route::get('/rekap', [App\Http\Controllers\HomeController::class, 'rekap'])->name('g.rekap');
+
      Route::delete('/batalkan-kunjungan/{id}', [App\Http\Controllers\HomeController::class, 'batalkan'])->name('k.batalkan');
 
 

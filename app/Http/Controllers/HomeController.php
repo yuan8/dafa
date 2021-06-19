@@ -576,13 +576,14 @@ class HomeController extends Controller
 
 
     public function gate_index(Request $request){
+
         $day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
-
 
         if($request->status=='REKAP' OR $request->status==NULL){
             $day=Carbon::parse($request->start_date)->startOfDay();
             $day_last=Carbon::parse($request->end_date)->endOfDay();
+
         }else{
 
             if($request->date){
@@ -595,12 +596,9 @@ class HomeController extends Controller
                     Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
                     return redirect()->route('g.index');
                  }
-
             }
-
         }
 
-        
         $where=[];
 
         if($request->q){
@@ -613,33 +611,14 @@ class HomeController extends Controller
                 $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
         }
 
-
-
         $checkin='REKAP';
         if($request->status){
             $checkin=$request->status;
-
         }
+
 
         $log_tamu=[];
         switch($checkin){
-            // case 'PROVOS':
-            //     $log_tamu=DB::table('log_tamu as log')
-            //     ->join('tamu as v','v.id','=','log.tamu_id')
-            //     ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-            //     ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-            //         (select upin.name from users as upin where upin.id=log.provos_handle) as nama_provos_handle,
-            //         (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-            //         (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-            //         ")
-            //     ->where('log.gate_checkin','>=',$day)
-            //     ->where('log.gate_checkout','<=',$day_last)
-
-            //     ->groupBy('v.id','log.id')
-
-            //     ->orderBy('log.provos_checkin','desc')
-            //     ->get();
-            // break;
             case 'GATE_CHECKIN':
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
@@ -654,8 +633,6 @@ class HomeController extends Controller
                 ->where('log.gate_checkout','=',null)
                 ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id');
-
-
             break;
             case 'GATE_CHECKOUT':
                 $log_tamu=DB::table('log_tamu as log')
@@ -686,9 +663,10 @@ class HomeController extends Controller
                 ->where('log.gate_checkin','<=',$day_last)
                 ->orderBy('log.gate_checkin','desc')
                 ->groupBy('v.id','log.id');
-
             break;
+
         }
+
 
         if($log_tamu){
             if(count($where)){
@@ -704,6 +682,7 @@ class HomeController extends Controller
             ->where('log.gate_checkin','<=',$day_last)
             ->selectRaw("sum(case when (gate_checkout is null) then 1 else null end ) as count_in,sum(case when (gate_checkout is not null) then 1 else null end ) as count_out ")->first();
 
+
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
                 'date_start'=>$day,
@@ -714,8 +693,122 @@ class HomeController extends Controller
                 'active_h'=>$day_last,
                 'status'=>$checkin
             ]);
+
+
         }
 
+
+    }
+
+
+    public function rekap(Request $request){
+       
+        $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
+        $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
+
+        $where=[];
+
+        $where_def=[
+            "log.gate_checkin >= '".$day."'" ,
+            "log.gate_checkout >= '".$day_last."'"
+        ];
+
+        
+        if($request->q){
+                $where[]="(v.nama like '%".$request->q."%')";
+                $where[]="(log.tujuan like '%".$request->q."%')";
+                $where[]="(log.instansi like '%".$request->q."%')";
+                $where[]="(log.keperluan like '%".$request->q."%')";
+                $where[]="(v.alamat like '%".$request->q."%')";
+                $where[]="(replace(ind.identity_number,'-','') like '%".str_replace('-', '', $request->q)."%')";
+                $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
+        }
+
+        $checkin='ALL';
+        if($request->status){
+            $checkin=$request->status;
+        }
+
+        $whereRaw=[];
+        if(count($where)){
+                foreach ($where as $key => $w) {
+                    $wr=[];
+                    foreach ($where_def as $keyd => $wd) {
+                        $wr[]='('.$d.' and '.$wd.')';
+                    }
+
+                    $whereRaw[]='('.implode(') and (', $wr).')';
+                    # code...
+                }
+        }else{
+            $whereRaw[]=implode(' and ', $where_def);
+        }
+
+
+
+        dd($whereRaw);
+
+        $log_tamu=[];
+
+        switch($checkin){
+            case 'GATE_CHECKIN':
+                $log_tamu=DB::table('log_tamu as log')
+                ->join('tamu as v','v.id','log.tamu_id')
+                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
+                ->where('log.gate_checkin','>=',$day)
+                ->where('log.gate_checkin','<=',$day_last)
+                ->orderBy('log.gate_checkin','desc')
+                ->groupBy('v.id','log.id');
+            break;
+            case 'GATE_CHECKOUT':
+                $log_tamu=DB::table('log_tamu as log')
+                ->join('tamu as v','v.id','log.tamu_id')
+                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
+                ->where('log.gate_checkout','>=',$day)
+                ->where('log.gate_checkout','<=',$day_last)
+                ->orderBy('log.gate_checkin','desc')
+                ->groupBy('v.id','log.id');
+            break;
+
+            case 'ALL':
+                $log_tamu=DB::table('log_tamu as log')
+                ->join('tamu as v','v.id','log.tamu_id')
+                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+
+                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
+                    ")
+                ->where([
+                    ['log.gate_checkin','>=',$day],
+                    ['log.gate_checkin','<=',$day_last]
+                ])
+                ->orWhere([
+                    ['log.gate_checkout','>=',$day],
+                    ['log.gate_checkout','<=',$day_last]
+                ])
+                ->orderBy('log.gate_checkin','desc')
+                ->groupBy('v.id','log.id');
+            break;
+        }
+
+
+
+        return view('gate.rekap')->with([
+            'data'=>$log_tamu,
+            'start_date'=>$day,
+            'end_date'=>$day_last
+        ]);
 
     }
 
