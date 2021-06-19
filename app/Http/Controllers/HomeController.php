@@ -691,10 +691,17 @@ class HomeController extends Controller
             $log_tamu=$log_tamu->get();
 
             $fingerprint=$request->fingerprint();
+
+            $rekap_tamu=DB::table('log_tamu as log')
+            ->where('log.gate_checkin','>=',$day)
+            ->where('log.gate_checkin','<=',$day_last)
+            ->selectRaw("sum(case when (gate_checkout is null) then 1 else null end ) as count_in,sum(case when (gate_checkout is not null) then 1 else null end ) as count_out ")->first();
+
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
                 'fingerprint'=>$fingerprint,
                 'req'=>$request,
+                'rekap_tamu'=>$rekap_tamu,
                 'active_h'=>$day_last,
                 'status'=>$checkin
             ]);

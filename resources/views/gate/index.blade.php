@@ -22,12 +22,17 @@
                  <input type="hidden" name="date" v-model="active_h">
             </div>
         </span></b>
-        <b style="margin-left: 10px;">STATUS :
+       
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
                    <button class="btn " v-on:click="status='REKAP'"v-bind:class="status=='REKAP'?'btn btn-primary':'btn-default'" >REKAP</button>
-                    <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (5)</button>
-                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (10)</button>
+                    <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in??0}})</button>
+                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out??0}})</button>
 
 
                     <input type="hidden" name="status" v-model=status>
@@ -35,8 +40,7 @@
                 </div>
             </span>
         </b>
-        <hr>
-        <div class="row">
+            </div>
             <div class="col-md-5">
 
                 <div class="form-group">
@@ -44,6 +48,7 @@
                 </div>
             </div>
         </div>
+        href
        </form>
     </div>
     <div class="card-body ">
@@ -252,7 +257,8 @@
             h_2:'{{ Carbon\Carbon::now()->addDays(-2)->format('d F Y') }}',
             h_3:'{{ Carbon\Carbon::now()->addDays(-3)->format('d F Y') }}',
             active_h:'{{$active_h->format('d F Y')}}',
-            status:'{{$status}}'
+            status:'{{$status}}',
+            rekap:<?=json_encode($rekap_tamu)?>
         },
         methods:{
             change_env:function(d){

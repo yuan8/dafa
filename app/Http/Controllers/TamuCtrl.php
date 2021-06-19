@@ -35,7 +35,6 @@ class TamuCtrl extends Controller
                 ['jenis_identity','=',config('web_config.jenis_tamu_khusus.'.$request->jenis_tamu_khusus)],
 
             ])->first();
-
             if($request->tamu_khusus){
                 $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
@@ -70,13 +69,13 @@ class TamuCtrl extends Controller
                     return back();
                 }
 
-                $data['def_kategori_tamu']=$request->kategori_tamu;
                 $data['def_keperluan']=$request->keperluan;
                 $data['def_tujuan']=$request->tujuan;
                 $data['def_instansi']=$request->instansi;
+                $data['def_kategori_tamu']=$request->kategori_tamu;
+
                 $data['tamu_khusus']=$request->tamu_khusus??0;
                 $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
-
 
 
 
@@ -138,6 +137,17 @@ class TamuCtrl extends Controller
                     $data['golongan_darah']=$request->golongan_darah;
                 }
 
+
+                 if($request->instansi){
+                    $data['def_instansi']=$request->instansi;
+                }
+
+                if($request->kategori_tamu){
+                    $data['def_kategori_tamu']=$request->kategori_tamu;
+                }
+
+                
+
                 $path_foto=null;
                  if($request->foto_file){
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
@@ -164,6 +174,7 @@ class TamuCtrl extends Controller
 
 
                 $data['updated_at']=Carbon::now();
+
                $up= DB::table('tamu')->where('id',$tamu->id)->update($data);
                if($up){
                 $now=Carbon::now();
