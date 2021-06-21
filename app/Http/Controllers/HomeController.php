@@ -739,6 +739,8 @@ class HomeController extends Controller
        $where_def_rekap_out=[
             "log.gate_checkout >= '".$day."'" ,
             "log.gate_checkout <= '".$day_last."'" ,
+            "log.gate_checkout is not null" ,
+
         ];
 
        $where_def_rekap_in=[
@@ -790,6 +792,8 @@ class HomeController extends Controller
                             "log.gate_checkout >= '".$day."'" ,
                             "log.gate_checkout <= '".$day_last."'" ,
                          ];
+                        $where_def[]="log.gate_checkout is not null ";
+
                         
 
                        
@@ -902,7 +906,7 @@ class HomeController extends Controller
             ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
               ->whereRaw(implode(' and ', $where_def_rekap))
             ->orderBy('log.gate_checkin','desc')
-            ->groupBy('v.id','log.id')
+            ->groupBy('log.id')
             ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_in).') then 1 else 0 end ) as count_data,sum(case when  (v.tamu_khusus=true and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_khusus,
                 sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_non_khusus
                 ')
@@ -919,19 +923,30 @@ class HomeController extends Controller
 
 
             
+            $log_rekap_out_chek=DB::table('log_tamu as log')
+            ->join('tamu as v','v.id','log.tamu_id')
+            ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            ->whereRaw(implode(' and ', $where_def_rekap))
+            ->orderBy('log.gate_checkin','desc')
+            ->selectRaw('log.id')
+            // ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_out).') then 1 else 0 end ) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
+            //     sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_out).')) then 1 else 0 end) as count_non_khusus
+
+            //     ')
+            ->get();
+
+
             $log_rekap_out=DB::table('log_tamu as log')
             ->join('tamu as v','v.id','log.tamu_id')
             ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
             ->whereRaw(implode(' and ', $where_def_rekap))
             ->orderBy('log.gate_checkin','desc')
-            ->groupBy('log.id')
-            ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_out).') then 1 else 0 end ) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
+            ->selectRaw('count(case when (('.implode(') or (', $whereRaw_rekap_out).')) then log.id else null end) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
                 sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_out).')) then 1 else 0 end) as count_non_khusus
 
-                ')
+           ')
             ->first();
 
-            dd($whereRaw_rekap_out,$where_def_rekap);
 
              if(!$log_rekap_out){
                 $log_rekap_out=[
