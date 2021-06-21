@@ -25,7 +25,7 @@
     <div class="card-header with-border" >
 
        <form id="form_env" method="get">
-       
+
            <b>DATA TAMU  : <span>
             @can('is_admin')
             <div class="input-group" >
@@ -42,15 +42,15 @@
             	<button type="button" v-on:click="active_date=h3" v-bind:class="active_date==h3?'btn btn-primary':'btn btn-default'" >@{{h3}}</button>
             	<input type="hidden" name="start_date" v-model="date_start">
             	<input type="hidden" name="end_date" v-model="date_start">
-            	
+
             </div>
 
             @endcan
-           
+
         </span>
-       
+
     </b>
-       
+
         <hr>
 
         <div class="row">
@@ -58,7 +58,7 @@
                  <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                 
+
 
                     <button type="button" class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in.count_data??0}})</button>
                    <button type="button" class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out.count_data??0}})</button>
@@ -68,7 +68,7 @@
                 </div>
             </span>
         </b>
-                
+
             </div>
             <div class="col-md-4">
 
@@ -284,7 +284,7 @@
             		this.rekap_inher=this.rekap.count_out;
             	}
             }
-            
+
         },
 
         watch:{
@@ -292,14 +292,14 @@
         		console.log(v);
         	},
             date_end:function(){
-          
+
                 setTimeout(function(){
                     $('#form_env').submit();
 
                 },500);
             },
             date_start:function(){
-   
+
                 setTimeout(function(){
                     $('#form_env').submit();
 
@@ -346,7 +346,7 @@
 
     window.venv.change_status();
 
-   
+
 
 </script>
 @stop

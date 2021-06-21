@@ -90,18 +90,18 @@
 				<th>FOTO</th>
 
 				<th>JENIS ID</th>
-				<th>NOMER ID</th>
-				<th>NOMER TELP</th>
+				<th>NOMOR ID</th>
+				<th>NOMOR TELP</th>
 				<th>NAMA</th>
 				<th>JENIS KELAMIN</th>
 				<th>GOL. DARAH</th>
-				<th>TMP/TGL LAHIR</th>
+				<th>TMPT/TGL LAHIR</th>
 				<th>ALAMAT</th>
-				<th>PERKERJAAN</th>
+				<th>PEKERJAAN</th>
 				<th>KATEGORI TAMU</th>
 				<th>TUJUAN</th>
-				<th>MASUK DATE</th>
-				<th>KELUAR DATE</th>
+				<th>TANGGAL & JAM MASUK</th>
+				<th>TANGGAL & JAM KELUAR</th>
 				<th>STATUS</th>
 			</tr>
 			<tr class="n bg-primary-2">

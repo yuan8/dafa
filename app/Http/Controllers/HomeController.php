@@ -703,7 +703,7 @@ class HomeController extends Controller
 
 
     public function rekap(Request $request){
-       
+
         $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
 
@@ -735,7 +735,7 @@ class HomeController extends Controller
             "log.gate_checkin <= '".$day_last."'" ,
 
          ];
-       
+
        $where_def_rekap_out=[
             "log.gate_checkout >= '".$day."'" ,
             "log.gate_checkout <= '".$day_last."'" ,
@@ -785,7 +785,7 @@ class HomeController extends Controller
                          ];
 
                         $where_def[]="log.gate_checkout is null ";
-                      
+
                         break;
                     case 'GATE_CHECKOUT':
                         $where_def=[
@@ -794,11 +794,12 @@ class HomeController extends Controller
                          ];
                         $where_def[]="log.gate_checkout is not null ";
 
-                        
 
-                       
+
+
+
                         break;
-                    
+
                     default:
                         # code...
                         break;
@@ -810,11 +811,11 @@ class HomeController extends Controller
                     $wr=$where_def;
                     $wr_r_in=$where_def_rekap_in;
                     $wr_r_out=$where_def_rekap_out;
-                    
 
 
 
-                   
+
+
                     $wr[]=$w;
                     $wr_r_in[]=$w;
                     $wr_r_out[]=$w;
@@ -861,7 +862,7 @@ class HomeController extends Controller
                 }
 
                 break;
-            
+
             default:
                 # code...
                 break;
@@ -893,7 +894,7 @@ class HomeController extends Controller
                 log.gate_checkout as gate_checkout,
                 (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                 (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle,
-                (case when (log.gate_checkout is not null) then 1 else 0 end) as status_out  
+                (case when (log.gate_checkout is not null) then 1 else 0 end) as status_out
                 ")
             ->whereRaw(implode(' or ', $whereRaw))
             ->orderBy('log.gate_checkin','desc')
@@ -922,19 +923,6 @@ class HomeController extends Controller
             }
 
 
-            
-            $log_rekap_out_chek=DB::table('log_tamu as log')
-            ->join('tamu as v','v.id','log.tamu_id')
-            ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-            ->whereRaw(implode(' and ', $where_def_rekap))
-            ->orderBy('log.gate_checkin','desc')
-            ->selectRaw('log.id')
-            // ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_out).') then 1 else 0 end ) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
-            //     sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_out).')) then 1 else 0 end) as count_non_khusus
-
-            //     ')
-            ->get();
-
 
             $log_rekap_out=DB::table('log_tamu as log')
             ->join('tamu as v','v.id','log.tamu_id')
@@ -953,12 +941,12 @@ class HomeController extends Controller
                     'count_data'=>0,
                     'count_khusus'=>0,
                     'count_non_khusus'=>0,
-                    
+
                 ];
             }
 
 
-            
+
 
             if($request->v_export=='EXCEL'){
 
@@ -984,7 +972,7 @@ class HomeController extends Controller
 
             }
 
-        
+
 
         return view('gate.rekap')->with([
             'data'=>$log_tamu,
