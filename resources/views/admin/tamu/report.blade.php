@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="card">
+   
     <div class="card-header with-border" id="venv">
 
        <form id="form_env" method="get">
@@ -64,7 +65,7 @@
        </form>
     </div>
     <div class="card-body ">
-
+       
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>

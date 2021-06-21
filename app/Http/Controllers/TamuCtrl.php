@@ -17,6 +17,36 @@ use Alert;
 class TamuCtrl extends Controller
 {
 
+    public function view($id,$slug){
+        $tamu=DB::table('tamu as t')->where('id',$id)->first();
+
+        if($tamu){
+            $identity=DB::table('identity_tamu as idt')->where('tamu_id',$id)->get();
+
+            foreach ($identity as $key => $value) {
+                $identity[$key]->path_rendered=url($value->path_identity);
+                $identity[$key]->path_def=url($value->path_identity);
+                $identity[$key]->path_file=null;
+                $identity[$key]->identity_number_k=$value->identity_number;
+
+                $identity[$key]->berlaku_hingga=$value->berlaku_hingga?Carbon::parse($value->berlaku_hingga)->format('Y-m-d'):null;
+
+                # code...
+            }
+            if($tamu->tamu_khusus){
+
+            }else{
+
+            }
+
+            if(Auth::User()->can('is_admin')){
+                return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
+            }else{
+                 return view('tamu.view')->with(['data'=>$tamu,'data_id'=>$identity]);
+            }
+        }
+    }
+
     public function simpan_data_tamu($id,Request $request){
 
         $tamu=DB::table('tamu')->where('id',$id)->first();

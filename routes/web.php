@@ -22,6 +22,8 @@ Route::prefix('tamu')->middleware('auth:web')->group(function(){
 
     Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit')->middleware('can:is_admin');
 
+     Route::get('/view-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'view'])->name('g.tamu.view')->middleware('can:is_gate');
+
     Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update')->middleware('can:is_admin');
 
     Route::get('/identity-tamu-khusus/{id}/id-generate.pdf',[App\Http\Controllers\TamuCtrl::class, 'identity_tamu_khusus'])->name('g.tamu.id_khusus');

@@ -10,6 +10,9 @@ use DB;
 use Alert;
 use Storage;
 use CV;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Dompdf\Dompdf;
 class HomeController extends Controller
 {
     /**
@@ -524,7 +527,6 @@ class HomeController extends Controller
            ->first();
 
 
-
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
                         'gate_checkin'=>Carbon::now(),
@@ -611,7 +613,7 @@ class HomeController extends Controller
                 $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
         }
 
-        $checkin='REKAP';
+        $checkin='GATE_CHECKIN';
         if($request->status){
             $checkin=$request->status;
         }
@@ -680,8 +682,7 @@ class HomeController extends Controller
             $rekap_tamu=DB::table('log_tamu as log')
             ->where('log.gate_checkin','>=',$day)
             ->where('log.gate_checkin','<=',$day_last)
-            ->selectRaw("sum(case when (gate_checkout is null) then 1 else null end ) as count_in,sum(case when (gate_checkout is not null) then 1 else null end ) as count_out ")->first();
-
+            ->selectRaw("count(distinct(case when (gate_checkout is null) then log.id else null end )) as count_in,count(distinct(case when (gate_checkout is not null) then log.id else null end) ) as count_out ")->first();
 
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
@@ -706,14 +707,9 @@ class HomeController extends Controller
         $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
 
+        $date_2=Carbon::parse($request->start_date??date('Y-m-d'))->format('d F Y');
+
         $where=[];
-
-        $where_def=[
-            "log.gate_checkin >= '".$day."'" ,
-            "log.gate_checkout >= '".$day_last."'"
-        ];
-
-
         if($request->q){
                 $where[]="(v.nama like '%".$request->q."%')";
                 $where[]="(log.tujuan like '%".$request->q."%')";
@@ -724,91 +720,273 @@ class HomeController extends Controller
                 $where[]="(replace(v.nomer_telpon,'-','') like '%".str_replace('-', '', $request->q)."%')";
         }
 
-        $checkin='ALL';
+        $checkin='GATE_CHECKIN';
         if($request->status){
             $checkin=$request->status;
         }
 
+        $where_def=[
+            "log.gate_checkin >= '".$day."'" ,
+            "log.gate_checkin <= '".$day_last."'" ,
+        ];
+
+        $where_def_rekap=[
+            "log.gate_checkin >= '".$day."'" ,
+            "log.gate_checkin <= '".$day_last."'" ,
+
+         ];
+
+       $where_def_rekap_out=[
+            "log.gate_checkout >= '".$day."'" ,
+            "log.gate_checkout <= '".$day_last."'" ,
+        ];
+
+       $where_def_rekap_in=[
+            "log.gate_checkin >= '".$day."'" ,
+            "log.gate_checkin <= '".$day_last."'" ,
+            "log.gate_checkout is null" ,
+
+        ];;
+
         $whereRaw=[];
+        $whererawre_inher='';
+        $whereRaw_rekap_in=[];
+        $whereRaw_rekap_out=[];
+
+        if($request->tujuan_json){
+            $request->tujuan_json=json_decode($request->tujuan_json??'[]');
+        }else{
+            $request->tujuan_json=[];
+
+        }
+
+        if($request->tujuan_json){
+            $request->tujuan=collect($request->tujuan_json)->pluck('code');
+
+        }
+
+        if(count($request->tujuan??[])){
+
+            foreach ($request->tujuan??[] as $key => $value) {
+                $where[]="log.tujuan like '%".$value."%'";
+            }
+        }
+
+
+
+            if($checkin!='ALL'){
+                switch ($checkin) {
+                    case 'GATE_CHECKIN':
+                        $where_def=[
+                            "log.gate_checkin >= '".$day."'" ,
+                            "log.gate_checkin <= '".$day_last."'" ,
+                         ];
+
+                        $where_def[]="log.gate_checkout is null ";
+
+                        break;
+                    case 'GATE_CHECKOUT':
+                        $where_def=[
+                            "log.gate_checkout >= '".$day."'" ,
+                            "log.gate_checkout <= '".$day_last."'" ,
+                         ];
+
+
+
+                        break;
+
+                    default:
+                        # code...
+                        break;
+                }
+            }
+
         if(count($where)){
                 foreach ($where as $key => $w) {
-                    $wr=[];
-                    foreach ($where_def as $keyd => $wd) {
-                        $wr[]='('.$d.' and '.$wd.')';
-                    }
+                    $wr=$where_def;
+                    $wr_r_in=$where_def_rekap_in;
+                    $wr_r_out=$where_def_rekap_out;
 
-                    $whereRaw[]='('.implode(') and (', $wr).')';
+
+
+
+
+                    $wr[]=$w;
+                    $wr_r_in[]=$w;
+                    $wr_r_out[]=$w;
+
+                    $whereRaw[]='('.implode(') and (',$wr).')';
+                    $whereRaw_rekap_in[]='('.implode(') and (',$wr_r_in).')';
+                    $whereRaw_rekap_out[]='('.implode(') and (',$wr_r_out).')';
+
+
+
                     # code...
                 }
+
+
         }else{
             $whereRaw[]=implode(' and ', $where_def);
+            $whereRaw_rekap_in[]=implode(' and ', $where_def_rekap_in);
+            $whereRaw_rekap_out[]=implode(' and ', $where_def_rekap_out);
+
+
         }
 
+        $whereRaw_inher=$whereRaw;
 
-
-        dd($whereRaw);
-
-        $log_tamu=[];
-
-        switch($checkin){
-            case 'GATE_CHECKIN':
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-                    ")
-                ->where('log.gate_checkin','>=',$day)
-                ->where('log.gate_checkin','<=',$day_last)
-                ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id');
-            break;
-            case 'GATE_CHECKOUT':
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-                    ")
-                ->where('log.gate_checkout','>=',$day)
-                ->where('log.gate_checkout','<=',$day_last)
-                ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id');
-            break;
-
+        switch ($request->jenis_tamu) {
             case 'ALL':
-                $log_tamu=DB::table('log_tamu as log')
-                ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+                # code...
+                break;
 
-                    (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
-                    (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-                    ")
-                ->where([
-                    ['log.gate_checkin','>=',$day],
-                    ['log.gate_checkin','<=',$day_last]
-                ])
-                ->orWhere([
-                    ['log.gate_checkout','>=',$day],
-                    ['log.gate_checkout','<=',$day_last]
-                ])
-                ->orderBy('log.gate_checkin','desc')
-                ->groupBy('v.id','log.id');
-            break;
+            case 'TAMU_KHUSUS':
+                # code...
+                foreach ($whereRaw as $key => $value) {
+                    # code...
+                    $whereRaw[$key].=' and (v.tamu_khusus =true)';
+                }
+
+                break;
+
+            case 'TAMU':
+                # code...
+            foreach ($whereRaw as $key => $value) {
+                    # code...
+                    $whereRaw[$key].=' and (v.tamu_khusus =false)';
+                }
+
+                break;
+
+            default:
+                # code...
+                break;
         }
+
+
+
+          $log_tamu=DB::table('log_tamu as log')
+            ->join('tamu as v','v.id','log.tamu_id')
+            ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            ->selectRaw("
+                v.id as id_tamu,
+                v.nama,
+                v.foto,
+                v.tamu_khusus,
+                v.jenis_tamu_khusus,
+                ind.jenis_identity,
+                ind.identity_number,
+                log.id as id_log,
+                log.created_at as log_created_at,
+                log.gate_handle as id_gate_handle,
+                log.gate_out_handle as id_gate_out_handle,
+                log.keperluan as keperluan,
+                log.tujuan as tujuan,
+                log.kategori_tamu,
+                log.instansi as instansi,
+
+                log.gate_checkin as gate_checkin,
+                log.gate_checkout as gate_checkout,
+                (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
+                (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle,
+                (case when (log.gate_checkout is not null) then 1 else 0 end) as status_out
+                ")
+            ->whereRaw(implode(' or ', $whereRaw))
+            ->orderBy('log.gate_checkin','desc')
+            ->groupBy('v.id','log.id')
+            ->get();
+
+
+            $log_rekap_in=DB::table('log_tamu as log')
+            ->join('tamu as v','v.id','log.tamu_id')
+            ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+              ->whereRaw(implode(' and ', $where_def_rekap))
+            ->orderBy('log.gate_checkin','desc')
+            ->groupBy('v.id','log.id')
+            ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_in).') then 1 else 0 end ) as count_data,sum(case when  (v.tamu_khusus=true and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_khusus,
+                sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_non_khusus
+                ')
+            ->first();
+
+            if(!$log_rekap_in){
+                $log_rekap_in=[
+                    'count_data'=>0,
+                    'count_khusus'=>0,
+                    'count_non_khusus'=>0,
+
+                ];
+            }
+
+
+
+            $log_rekap_out=DB::table('log_tamu as log')
+            ->join('tamu as v','v.id','log.tamu_id')
+            ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+            ->whereRaw(implode(' and ', $where_def_rekap))
+            ->orderBy('log.gate_checkin','desc')
+            ->groupBy('log.id')
+            ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_out).') then 1 else 0 end ) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
+                sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_out).')) then 1 else 0 end) as count_non_khusus
+
+                ')
+            ->first();
+
+            dd($whereRaw_rekap_out,$where_def_rekap);
+
+             if(!$log_rekap_out){
+                $log_rekap_out=[
+                    'count_data'=>0,
+                    'count_khusus'=>0,
+                    'count_non_khusus'=>0,
+
+                ];
+            }
+
+
+
+
+            if($request->v_export=='EXCEL'){
+
+            }elseif($request->v_export=='PDF'){
+
+                $dompdf = \App::make('dompdf.wrapper');
+                // $dompdf->setBasePath(public_path('/'));
+                $view=view('tamu.export_rekap')->with(
+                    [
+                    'data'=>$log_tamu,
+                    'status'=>$checkin,
+                    'day'=>$day,
+                    'day_last'=>$day_last,
+                    'req'=>$request,
+                    'tujuan_json'=>is_array($request->tujuan_json)?$request->tujuan_json:json_decode($request->tujuan_json??'[]'),
+                    'tujuan'=>$request->tujuan??[]
+
+                ])->render();
+                $dompdf->loadHtml($view);
+                $dompdf->setPaper('A4', $request->jenis_table=='LENGKAP'?'landscape':'potrait');
+                // $dompdf->render();
+                return $dompdf->stream('REKAP-'.($checkin).'_'.($day).'-'.($day_last).'.pdf' ,array("Attachment" => false));
+
+            }
 
 
 
         return view('gate.rekap')->with([
             'data'=>$log_tamu,
-            'start_date'=>$day,
-            'end_date'=>$day_last
+            'date_start'=>$day->format('Y-m-d'),
+            'date_end'=>$day_last->format('Y-m-d'),
+            'req'=>$request,
+            'rekap'=>['count_in'=>$log_rekap_in,'count_out'=>$log_rekap_out],
+            'status'=>$checkin,
+            'date_2'=>$date_2,
+            'tujuan_json'=>is_array($request->tujuan_json)?$request->tujuan_json:json_decode($request->tujuan_json??'[]'),
+            'tujuan'=>$request->tujuan??[]
         ]);
+
+    }
+
+
+    static function rekap_export($data){
 
     }
 

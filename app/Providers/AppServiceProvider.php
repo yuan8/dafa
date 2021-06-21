@@ -79,25 +79,25 @@ class AppServiceProvider extends ServiceProvider
 
             $event->menu->add([
                 'text' => 'Rekap',
-                'url' => route('a.u.index'),
-                'can'=>'is_admin',
-                'icon'=>"fas fa-users"
-            ]);
-             $event->menu->add([
-                'text' => 'Laporan',
-                'url' => route('g.report'),
+                'url' => route('g.rekap'),
                 'can'=>'is_gate',
-                'icon'=>"fas fa-copy",
-                // 'submenu'=>[
-                //     [
-                //         'text' => 'Pengunjung',
-                //         'url' => route('g.report'),
-                //         'can'=>'is_admin',
-                //         'can'=>'is_provos'
-                //     ]
-
-                // ]
+                'icon'=>"fas fa-copy"
             ]);
+            //  $event->menu->add([
+            //     'text' => 'Laporan',
+            //     'url' => route('g.report'),
+            //     'can'=>'is_gate',
+            //     'icon'=>"fas fa-copy",
+            //     // 'submenu'=>[
+            //     //     [
+            //     //         'text' => 'Pengunjung',
+            //     //         'url' => route('g.report'),
+            //     //         'can'=>'is_admin',
+            //     //         'can'=>'is_provos'
+            //     //     ]
+
+            //     // ]
+            // ]);
 
         });
     }

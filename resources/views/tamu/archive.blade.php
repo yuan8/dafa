@@ -71,7 +71,10 @@
     						<div class="btn-group">
                               <a href="{{route('g.daftar_tamu.gate_provos',['id'=>$d->id_tamu,'slug'=>Str::slug($d->nama)])}}" class="btn btn-primary btn-sm">Form Masuk</a>
                               @if(Auth::User()->can('is_admin'))
-                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning"><i class="fa fa-pen"></i> Edit</a>
+                              <a href="{{route('g.tamu.edit',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning btn-sm"><i class="fa fa-pen"></i> Edit</a>
+                              @else
+                               <a href="{{route('g.tamu.view',['id'=>$d->id,'slug'=>Str::slug($d->nama)])}}" class="btn btn-warning btn-sm"><i class="fa fa-eye"></i> Detail</a>
+
                               @endif
                             </div>
     					</td>
