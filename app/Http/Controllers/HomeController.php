@@ -702,7 +702,7 @@ class HomeController extends Controller
 
 
     public function rekap(Request $request){
-       
+
         $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
 
@@ -713,7 +713,7 @@ class HomeController extends Controller
             "log.gate_checkout >= '".$day_last."'"
         ];
 
-        
+
         if($request->q){
                 $where[]="(v.nama like '%".$request->q."%')";
                 $where[]="(log.tujuan like '%".$request->q."%')";

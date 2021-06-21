@@ -10,7 +10,7 @@
     <div class="card-header with-border" id="venv">
 
        <form id="form_env" method="get">
-       
+
            <b>DATA TAMU  : <span>
             @can('is_admin')
             <div class="input-group" >
@@ -19,14 +19,14 @@
             </div>
             @endcan
             <div class="btn-group">
-             
-             
+
+
                  <input type="hidden" name="date" v-model="active_h">
             </div>
         </span>
-       
+
     </b>
-       
+
         <hr>
 
         <div class="row">
@@ -34,7 +34,7 @@
                  <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                  
+
                     <button type="button" class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in??0}})</button>
                    <button type="button" class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out??0}})</button>
 
@@ -44,7 +44,7 @@
                 </div>
             </span>
         </b>
-                
+
             </div>
             <div class="col-md-5">
 
@@ -72,7 +72,7 @@
             </thead>
             <tbody>
                 @foreach($data_visitor as $v)
-                 
+
                 @endforeach
             </tbody>
         </table>
@@ -152,7 +152,7 @@
         methods:{
             change_env:function(d){
                 this.active_h=d;
-                this.check_date(this.status);  
+                this.check_date(this.status);
 
                  setTimeout(function(){
                     $('#form_env').submit();
@@ -173,14 +173,14 @@
 
         watch:{
             active_h:function(){
-                this.check_date(this.status);  
+                this.check_date(this.status);
                 setTimeout(function(){
                     $('#form_env').submit();
 
                 },500);
             },
             status:function(v,old){
-                this.check_date(v);  
+                this.check_date(v);
                 setTimeout(function(){
                     $('#form_env').submit();
 
