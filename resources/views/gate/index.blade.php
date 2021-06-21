@@ -14,44 +14,20 @@
 
 
         @endcan
-           <b>DATA TAMU  : <span>
-            @can('is_admin')
-            <div class="input-group" v-if="status=='REKAP'">
-                <input type="date" name="start_date" class="form-control" v-model="Date.parse(date_start)">
-                <input type="date" name="end_date" v-model="Date.parse(date_end)" class="form-control">
-
-            </div>
-            @endcan
-            <div class="btn-group">
-              @can('is_gate_only')
-                 <button type="button" class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
-              @endcan
-              @can('is_admin')
-                    <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
-                <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
-                <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
-                 <button type="button" v-if="(status=='GATE_CHECKIN') || (status=='GATE_CHECKOUT')" class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
-
-              @endcan
-             
+           <b>DATA TAMU HARI INI : <span><div class="btn-group">
+               <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
+               <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
+                <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
+                 <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
                  <input type="hidden" name="date" v-model="active_h">
             </div>
-        </span>
-       
-    </b>
-       
-        <hr>
-
-        <div class="row">
-            <div class="col-md-6">
-                 <b style="margin-left: 10px;">STATUS :
+        </span></b>
+        <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                  @can('is_admin')
-                   <button type="button" class="btn " v-on:click="status='REKAP'"v-bind:class="status=='REKAP'?'btn btn-primary':'btn-default'" >REKAP</button>
-                  @endcan
-                    <button type="button" class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in??0}})</button>
-                   <button type="button" class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out??0}})</button>
+                   
+                    <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in}})</button>
+                   <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out}})</button>
 
 
                     <input type="hidden" name="status" v-model=status>
@@ -59,8 +35,8 @@
                 </div>
             </span>
         </b>
-                
-            </div>
+        <hr>
+        <div class="row">
             <div class="col-md-5">
 
                 <div class="form-group">
@@ -68,7 +44,6 @@
                 </div>
             </div>
         </div>
-        <hr>
        </form>
     </div>
     <div class="card-body ">
@@ -83,6 +58,14 @@
                     <th>TUJUAN & KEPERLUAN</th>
                     <th>JENIS IDENTITAS</th>
                     <th>STATUS</th>
+                    <th>JAM MASUK</th>
+                    <th>USER HANDEL MASUK</th>
+
+                    <th>JAM KELUAR</th>
+                    <th>USER HANDEL KELUAR</th>
+
+
+
                     <th>AKSI</th>
                 </tr>
             </thead>
@@ -134,79 +117,67 @@
                                     TAMU TERDAFTAR DI PROVOS
                                     @break
                                 @case('CHECKIN')
-                                    TAMU TELAH MEMASUKI GEDUNG
+                                    MASUK
                                     @break
 
                              @case('CHECKOUT')
                                     @if($v->checkout_from_gate)
-                                    TELAH MENYELESAIKAN KUNJUNGAN
+                                    KELUAR
                                     @else
                                    <span class="text-red">MEMBATALKAN</span> KUJUNGAN
                                     @endif
                                 @break
                                  @default
-                                        TELAH MENYELESAIKAN KUNJUNGAN
+                                 KELUAR
                             @endswitch
 
 
 
                     </td>
                     <td>
-                        <div class="btn-group-vertical">
+                        {{ $v->gate_checkin?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-' }}
+                      
+                    </td>
+                    <td>
+                        {{$v->nama_gate_handle??'-'}}
+                    </td>
+                    <td>
+                         {{ $v->gate_checkout?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-' }}
+                    </td>
+                    <td>
+                        {{$v->nama_gate_out_handle??'-'}}
+                        
+                    </td>
+                    <td>
+                              <div class="btn-group-vertical">
                             @can('is_gate')
                                 @if($gate_ls=='CHECKIN')
 
                                 @endif
                             @endcan
                             @can('gate_check_out_provos')
-                            @if($gate_ls=='PROVOS')
-                                <a href="javascript:void(0)" onclick="batalkan({{$v->id_log}})" class="btn btn-danger btn-sm">BATALKAN KUNJUNGAN</a>
-                                <a href="{{route('g.input',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-primary btn-sm">CHECKIN GATE</a>
-                            @endif
-                            @if($gate_ls=='CHECKIN')
-                                <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GATE</a>
-                            @endif
-                            @if($gate_ls=='CHECKOUT')
-                                <P>TELAH MENYELESAIKAN KUNJUNGAN</P>
-                                <p>{{ Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a') }}</p>
-                            @endif
+                                @if($gate_ls=='PROVOS')
+                                    <a href="javascript:void(0)" onclick="batalkan({{$v->id_log}})" class="btn btn-danger btn-sm">BATALKAN KUNJUNGAN</a>
+                                    <a href="{{route('g.input',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-primary btn-sm">CHECKIN GATE</a>
+                                @endif
+                                @if($gate_ls=='CHECKIN')
+                                    <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GATE</a>
+                                @endif
+                                @if($gate_ls=='CHECKOUT')
+                                   
+                                @endif
                             @endcan
                         </div>
+
                     </td>
 
 
 
 
 
+
                 </tr>
-                <tr class="vis_">
-                    <td colspan="7">
-                        <div class="cd-horizontal-timeline loaded">
-                            <div class="timeline">
-                                <div class="events-wrapper">
-                                    <div class="events" style="width: 100%;">
-                                        <ol>
-                                            <li><a href="#" data-date="{{ $v->gate_checkin }}" style="left: 20%;" class="{{ $gate_ls=='CHECKIN'?'selected':($gate_ls=='PROVOS'?'older-event':'') }}">MASUK {{(in_array($gate_ls, ['CHECKIN','CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_gate_handle}}</b>
-                                            </a>
-                                            </li>
-
-                                            <li><a href="#" data-date="{{ $v->gate_checkout }}" style="left: 70%;" class="{{ $v->gate_checkout?'selected':'' }} }}">KELUAR {{(in_array($gate_ls, ['CHECKOUT'])?Carbon\Carbon::parse($v->gate_checkout)->format('d/m/Y h:i a'):'-')}}
-                                                <b class="text-center">{{$v->nama_gate_out_handle}}</b>
-                                            </a></li>
-
-                                        </ol>
-                                        <span class="filling-line" aria-hidden="true" ></span>
-                                    </div>
-                                    <!-- .events -->
-                                </div>
-                                <!-- .events-wrapper -->
-
-                                <!-- .cd-timeline-navigation -->
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                
                 @endforeach
             </tbody>
         </table>
@@ -272,61 +243,31 @@
     var venv=new Vue({
         el:'#venv',
         data:{
-            h_def:'{{ Carbon\Carbon::now()->format('d F Y') }}',
-            h_start:'{{ $date_start??Carbon\Carbon::now()->format('d F Y') }}',
-            h_end:'{{ $date_end??Carbon\Carbon::now()->format('d F Y') }}',
             h:'{{ Carbon\Carbon::now()->format('d F Y') }}',
             h_1:'{{ Carbon\Carbon::now()->addDays(-1)->format('d F Y') }}',
             h_2:'{{ Carbon\Carbon::now()->addDays(-2)->format('d F Y') }}',
             h_3:'{{ Carbon\Carbon::now()->addDays(-3)->format('d F Y') }}',
             active_h:'{{$active_h->format('d F Y')}}',
             status:'{{$status}}',
-            rekap:<?=json_encode($rekap_tamu)?>
+            rekap:<?=json_encode($rekap_tamu)?>,
+
         },
         methods:{
             change_env:function(d){
                 this.active_h=d;
-                this.check_date(this.status);  
-
-                 setTimeout(function(){
-                    $('#form_env').submit();
-
-                },500);
-            },
-            check_date:function(v){
-                var v=this.status;
-
-                console.log(v,[this.h,this.h_1,this.h_2,this.h_3],([this.h,this.h_1,this.h_2,this.h_3].includes(this.active_h)));
-                 if(['GATE_CHECKIN','GATE_CHECKOUT'].includes(v)){
-                    if(!([this.h,this.h_1,this.h_2,this.h_3].includes(this.active_h))){
-                        this.active_h=this.h_def;
-                    }
-                }
+                $('#form_env').submit();
             }
         },
-
         watch:{
-            active_h:function(){
-                this.check_date(this.status);  
-                setTimeout(function(){
-                    $('#form_env').submit();
-
-                },500);
-            },
             status:function(v,old){
-                this.check_date(v);  
                 setTimeout(function(){
-                    $('#form_env').submit();
+                $('#form_env').submit();
 
                 },500);
             }
         }
 
-    });
-
-    setTimeout(function(){
-        window.venv.check_date();
-    },500);
+    })
 
 </script>
 @stop
