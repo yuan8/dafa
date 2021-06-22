@@ -707,7 +707,6 @@ class HomeController extends Controller
 
         $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
-
         $date_2=Carbon::parse($request->start_date??date('Y-m-d'))->format('d F Y');
         $where=[];
         if($request->q){
@@ -1291,27 +1290,27 @@ class HomeController extends Controller
                 'NO'=>1,
                 'JENIS IDENTITAS'=>2,
                 'NOMER IDENTITAS'=>3,
-                'NAMA'=>4,
-                'KATEGORI & JENIS TAMU'=>5,
+                'NAMA'=>4, 
+                'JENIS TAMU'=>5, 
                 'INSTANSI'=>6,
                 'TUJUAN'=>7,
                 'KEPERLUAN'=>8,
-                'TANGGAL & JAM MASUK'=>9,
+                'JAM MASUK'=>9,
                 'USER HANDLE MASUK'=>10,
-                'TANGGAL & JAM KELUAR'=>11,
+                'JAM KELUAR'=>11,
                 'USER HANDLE KELUAR'=>12
             ];
 
         }else{
-
+            
             $HEAD=[
                 'NO'=>1,
-                'NAMA'=>2,
-                'KATEGORI & JENIS TAMU'=>3,
+                'NAMA'=>2, 
+                'JENIS TAMU'=>3, 
                 'TUJUAN'=>4,
                 'KEPERLUAN'=>5,
-                'TANGGAL & JAM MASUK'=>6,
-                'TANGGAL & JAM KELUAR'=>7,
+                'JAM MASUK'=>6,
+                'JAM KELUAR'=>7,
             ];
         }
 
@@ -1360,7 +1359,7 @@ class HomeController extends Controller
                 'center'=>true,
                 'horizontal'=>\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
             ],
-
+            
         ];
 
         $spreadsheet = new Spreadsheet();
@@ -1384,9 +1383,11 @@ class HomeController extends Controller
         $d2=$dt['day_last']->format('Y-m-d');
 
         $sheet->setCellValue(static::nta(1).(1),$title);
+        $tujuan=collect($dt['tujuan_json']??[])->pluck('label')->toArray();
+
         $sheet->getStyle(static::nta(1).(1))->applyFromArray($TITLE);
-        $sheet->setCellValue(static::nta(1).(2), implode(', ',$dt['tujuan']));
-        $sheet->setCellValue(static::nta(1).(3), 'TANGGAL CETAK');
+        $sheet->setCellValue(static::nta(1).(2), implode(', ',$tujuan??[]));
+        $sheet->setCellValue(static::nta(1).(3), 'WAKTU EXPORT');
         $sheet->setCellValue(static::nta(2).(3), Carbon::now()->format('Y-m-d H:I'));
         $sheet->setCellValue(static::nta(1).(4), 'KUNJUNGAN');
         $sheet->setCellValue(static::nta(2).(4), $this_day->format('Y-m-d'));
@@ -1432,12 +1433,12 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama);
                         # code...
                         break;
-                    case 'KATEGORI & JENIS TAMU':
+                    case 'JENIS TAMU':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->tamu_khusus?''.($v->jenis_tamu_khusus):$v->kategori_tamu);
                         # code...
                         break;
                      case 'TUJUAN':
-                        $tujuan=collect((CV::build_from_array('tujuan_tamu',json_decode($v->tujuan??'[]'))))->pluck('label')->toArray();
+                            $tujuan=collect((CV::build_from_array('tujuan_tamu',json_decode($v->tujuan??'[]'))))->pluck('label')->toArray();
 
                          $sheet->setCellValue(static::nta($c).($key+$start),implode(', ',$tujuan??[]));
                         # code...
@@ -1450,11 +1451,11 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->keperluan);
                         # code...
                         break;
-                    case 'TANGGAL & JAM MASUK':
+                    case 'JAM MASUK':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkin?Carbon::parse($v->gate_checkin)->format('Y-m-d H:i'):'-');
                         # code...
                         break;
-                    case 'TANGGAL & JAM KELUAR':
+                    case 'JAM KELUAR':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkout?Carbon::parse($v->gate_checkout)->format('Y-m-d H:i'):'-');
                         # code...
                         break;
@@ -1466,7 +1467,7 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama_gate_out_handle??'-');
                         # code...
                         break;
-
+                    
                     default:
                         # code...
                         break;
@@ -1480,7 +1481,7 @@ class HomeController extends Controller
 
         $sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(count($HEAD)).($key_last));
 
-
+       
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
