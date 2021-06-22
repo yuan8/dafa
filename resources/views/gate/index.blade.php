@@ -15,7 +15,7 @@
 
         @endcan
            <b>DATA TAMU HARI INI : <span><div class="btn-group">
-               <button class="btn btn-primary"  >@{{ h }}</button>
+               <button type="button"  class="btn btn-primary"  >@{{ h }}</button>
 
                 <input type="hidden" name="date" v-model="active_h">
             </div>
