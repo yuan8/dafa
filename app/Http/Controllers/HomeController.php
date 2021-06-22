@@ -1298,7 +1298,7 @@ class HomeController extends Controller
                 'TANGGAL & JAM MASUK'=>9,
                 'OPERATOR MASUK'=>10,
                 'TANGGAL & JAM KELUAR'=>11,
-                'OEPRATOR KELUAR'=>12
+                'OPERATOR KELUAR'=>12
             ];
 
         }else{
