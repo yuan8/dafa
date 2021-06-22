@@ -693,8 +693,8 @@ class HomeController extends Controller
 
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
-                'date_start'=>$day,
-                'date_end'=>$day_last,
+                'date_start'=>$day->format('Y-m-d'),
+                'date_end'=>$day_last->format('Y-m-d'),
                 'fingerprint'=>$fingerprint,
                 'req'=>$request,
                 'rekap_tamu'=>$rekap_tamu,

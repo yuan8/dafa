@@ -15,14 +15,17 @@
 
         @endcan
            <b>DATA TAMU HARI INI : <span><div class="btn-group">
-               <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
-               @can('is_admin')
-               <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
-                <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
-                 <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
-                 @endcan
-                 <input type="hidden" name="date" v-model="active_h">
+               <button class="btn btn-primary"  >@{{ h }}</button>
+               
+                <input type="hidden" name="date" v-model="active_h">
             </div>
+
+           @can('is_admin')
+             <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
+                <input type="date" name="start_date" class="form-control" v-model="start_date">
+                <input type="date" name="end_date" v-model="end_date" class="form-control">
+             </div>
+           @endcan
         </span></b>
         <b style="margin-left: 10px;">STATUS :
             <span>
@@ -251,6 +254,8 @@
             h_3:'{{ Carbon\Carbon::now()->addDays(-3)->format('d F Y') }}',
             active_h:'{{$active_h->format('d F Y')}}',
             status:'{{$status}}',
+            start_date:'{{$date_start}}',
+            end_date:'{{$date_end}}',
             rekap:<?=json_encode($rekap_tamu)?>,
 
         },
@@ -258,6 +263,12 @@
             change_env:function(d){
                 this.active_h=d;
                 $('#form_env').submit();
+            },
+            submit_form:function(){
+                 setTimeout(function(){
+                $('#form_env').submit();
+
+                },500);
             }
         },
         watch:{
@@ -266,7 +277,15 @@
                 $('#form_env').submit();
 
                 },500);
+            },
+            start_date:function(){
+                this.submit_form();
+            },
+            end_date:function(){
+                this.submit_form();
             }
+           
+
         }
 
     })
