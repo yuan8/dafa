@@ -89,9 +89,9 @@
         	<div class="col-md-6">
         		<label>JENIS TAMU : </label>
         		<div class="btn-group">
-        			 <button type="button" class="btn " v-on:click="jenis_tamu='ALL'"v-bind:class="jenis_tamu=='ALL'?'btn btn-primary':'btn-default'" >SEMUA @{{parseInt(rekap_inher.count_khusus)+parseInt(rekap_inher.count_non_khusus)}}</button>
-                    <button type="button" class="btn " v-on:click="jenis_tamu='KHUSUS'" v-bind:class="jenis_tamu=='KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus)}})</button>
-                   <button type="button" class="btn " v-on:click="jenis_tamu='TAMU'"v-bind:class="jenis_tamu=='TAMU'?'btn btn-primary':'btn-default'" >TAMU (@{{parseInt(parseInt(rekap_inher.count_non_khusus))}})</button>
+        			 <button type="button" class="btn " v-on:click="jenis_tamu='ALL'"v-bind:class="jenis_tamu=='ALL'?'btn btn-primary':'btn-default'" >SEMUA @{{parseInt(rekap_inher.count_khusus??0)+parseInt(rekap_inher.count_non_khusus??0)}}</button>
+                    <button type="button" class="btn " v-on:click="jenis_tamu='KHUSUS'" v-bind:class="jenis_tamu=='KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus??0)}})</button>
+                   <button type="button" class="btn " v-on:click="jenis_tamu='TAMU'"v-bind:class="jenis_tamu=='TAMU'?'btn btn-primary':'btn-default'" >TAMU (@{{parseInt(parseInt(rekap_inher.count_non_khusus??0))}})</button>
 
                     <input type="hidden" name="jenis_tamu" v-model=jenis_tamu>
 
