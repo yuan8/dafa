@@ -141,9 +141,9 @@
                     <th v-if="jenis_table=='LENGKAP'">INSTANSI </th>
                     <th>TUJUAN</th>
                     <th>KEPERLUAN</th>
-                    <th>JAM MASUK</th>
+                    <th>TANGGAL & JAM MASUK</th>
                     <th v-if="jenis_table=='LENGKAP'">USER HANDLE MASUK </th>
-                    <th>JAM KELUAR</th>
+                    <th>TANGGAL & JAM KELUAR</th>
                     <th v-if="jenis_table=='LENGKAP'">USER HANDLE KELUAR </th>
 
                 </tr>
