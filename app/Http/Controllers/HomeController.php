@@ -583,23 +583,29 @@ class HomeController extends Controller
         $day_last=Carbon::now()->endOfDay();
 
 
-        if($request->status=='REKAP' OR $request->status==NULL){
+        // if($request->status=='REKAP' OR $request->status==NULL){
+        //     $day=Carbon::parse($request->start_date)->startOfDay();
+        //     $day_last=Carbon::parse($request->end_date)->endOfDay();
+
+        // }else{
+
+        //     if($request->date){
+        //         $last_date=Carbon::now()->addDays(-3)->endOfDay();
+
+        //         $day=Carbon::parse($request->date)->startOfDay();
+
+        //          $day_last=Carbon::parse($request->date)->endOfDay();
+        //          if($last_date->gt($day_last)){
+        //             Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
+        //             return redirect()->route('g.index');
+        //          }
+        //     }
+        // }
+
+
+        if($request->start_date){
             $day=Carbon::parse($request->start_date)->startOfDay();
-            $day_last=Carbon::parse($request->end_date)->endOfDay();
-
-        }else{
-
-            if($request->date){
-                $last_date=Carbon::now()->addDays(-3)->endOfDay();
-
-                $day=Carbon::parse($request->date)->startOfDay();
-
-                 $day_last=Carbon::parse($request->date)->endOfDay();
-                 if($last_date->gt($day_last)){
-                    Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
-                    return redirect()->route('g.index');
-                 }
-            }
+            $day_last=Carbon::parse($request->end_date)->startOfDay();
         }
 
         $where=[];
