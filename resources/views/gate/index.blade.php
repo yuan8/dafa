@@ -15,11 +15,11 @@
 
         @endcan
            <b>DATA TAMU : </b>
-           {{--  <span><div class="btn-group">
+            <span><div class="btn-group">
                <button type="button"  class="btn btn-primary"  >@{{ h }}</button>
 
                 <input type="hidden" name="date" v-model="active_h">
-            </div> --}}
+            </div>
 
            @can('is_admin')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
@@ -44,10 +44,11 @@
         <hr>
         <div class="row">
             <div class="col-md-5">
-
+                @can('is_admin')
                 <div class="form-group">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{$req->q}}">
                 </div>
+                @endcan
             </div>
         </div>
        </form>
