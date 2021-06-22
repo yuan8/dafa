@@ -14,11 +14,12 @@
 
 
         @endcan
-           <b>DATA TAMU HARI INI : <span><div class="btn-group">
+           <b>DATA TAMU : </b>
+           {{--  <span><div class="btn-group">
                <button type="button"  class="btn btn-primary"  >@{{ h }}</button>
 
                 <input type="hidden" name="date" v-model="active_h">
-            </div>
+            </div> --}}
 
            @can('is_admin')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
@@ -26,7 +27,7 @@
                 <input type="date" name="end_date" v-model="end_date" class="form-control">
              </div>
            @endcan
-        </span></b>
+        {{-- </span></b> --}}
         <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">

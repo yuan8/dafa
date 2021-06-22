@@ -27,9 +27,9 @@
        <form id="form_env" method="get">
 
            <b>DATA TAMU  : <span>
-            <div class="btn-group">
+           {{--  <div class="btn-group">
             <button type="button" class="btn btn-primary" >@{{h}}</button>                
-            </div>
+            </div> --}}
 
             <div class="input-group" >
                 <input type="date" name="start_date" class="form-control" v-model="date_start">
