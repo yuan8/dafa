@@ -17,6 +17,22 @@ use Alert;
 class TamuCtrl extends Controller
 {
 
+    public function tambah(){
+        return view('tamu.add');
+    }
+
+    public function store(Request $request){
+        $valid=Validator::make($request->all(),[
+            'nomer_telpon'=>'string|required|unique:tamu,nomer_telpon',
+        ]);
+
+        if($valid->fails()){
+            Alert::error('Gagal',$valid->errors()->first());
+            return back()->withInput();
+        }
+
+    }
+
     public function view($id,$slug){
         $tamu=DB::table('tamu as t')->where('id',$id)->first();
 

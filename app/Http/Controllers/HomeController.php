@@ -582,6 +582,7 @@ class HomeController extends Controller
         $day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
 
+
         if($request->status=='REKAP' OR $request->status==NULL){
             $day=Carbon::parse($request->start_date)->startOfDay();
             $day_last=Carbon::parse($request->end_date)->endOfDay();
@@ -708,7 +709,6 @@ class HomeController extends Controller
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
 
         $date_2=Carbon::parse($request->start_date??date('Y-m-d'))->format('d F Y');
-
         $where=[];
         if($request->q){
                 $where[]="(v.nama like '%".$request->q."%')";

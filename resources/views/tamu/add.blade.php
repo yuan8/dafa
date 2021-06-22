@@ -40,13 +40,12 @@
     </div>
 </div>
 
-<H4><b>DATA TAMU </b></H4>
+<H4><b>TAMBAH DATA </b></H4>
 
 
 
-<form action="{{route('g.tamu.update',['id'=>$data->id])}}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
+<form action="{{route('g.tamu.store')}}" id="submit-form-provos" method="post"  enctype='multipart/form-data'>
     @csrf
-    @method('PUT')
     <div class="card" id="vinput">
         <div class="card-header bg-danger" v-if="izin_akses_masuk==false">
             TAMU TIDAK DI IZINKAN MASUK
@@ -94,7 +93,7 @@
                     </div>
                     <div  v-if="btn_check && tamu_khusus==false">
                                 <div class="btn-group" style="margin-top:10px; ">
-                                    <button type="button" @click="submit_form" class="btn btn-primary">UPDATE</button>
+                                    <button type="button" @click="submit_form" class="btn btn-primary">TAMBAH DATA</button>
                                 </div>
                                 <hr>
                             </div>
@@ -102,8 +101,7 @@
 
 
                     <div v-if="tamu_khusus==true">
-                        <label>ID TAMU KHUSUS</label>
-                        <p><span class="badge bg-warning">{{$data->string_id}}</span></p>
+                       
                         <div class="form-group" >
                         <label>JENIS TAMU KHUSUS</label>
                         <select class="form-control" name="jenis_tamu_khusus" v-model="jenis_tamu_khusus">
@@ -177,7 +175,7 @@
                             </div>
                              <div  v-if="btn_check && tamu_khusus==true">
                                 <div class="btn-group" style="margin-top:10px; ">
-                                    <button type="button" @click="submit_form" class="btn btn-primary">UPDATE</button>
+                                    <button type="button" @click="submit_form" class="btn btn-primary">TAMBAH DATA</button>
                                 </div>
                                 <hr>
                             </div>
@@ -186,28 +184,8 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="" v-if="tamu_khusus==true">
 
-                                <label>IDENTITY TAMU KHUSUS</label>
-                                <div class="row">
-                                    @php
-                                    $hs=(Hash::make('TAM'.$data->id.'SUS'));
-                                        $exp_list=['M|nor','Zz*&','Linq<>','uTes)','YarJ^U','hALLLall'];
-                                        $exp=$exp_list[array_rand($exp_list,1)];
-                                        $id_route=route('g.tamu.id_khusus',['id'=>$data->id,'hash_log'=>$hs.$exp.base64_decode(date('Ymd'))]);
-                                    @endphp
-                                     <iframe class="col-md-12" src="{{$id_route}}">
-
-                                    </iframe>
-                                    <div class="col-md-12">
-
-                                    <div class="btn-group text-left">
-                                        <a href="{{$id_route}}" download="" class="btn btn-xs btn-primary">DOWNLOAD ID</a>
-                                    </div>
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
+                                
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">
@@ -329,37 +307,37 @@
         el: '#vinput',
          data: {
             //
-            izin_akses_masuk:{{$data->izin_akses_masuk?1:0}},
-            keterangan_tolak_izin_akses:'{{preg_replace( "/\r|\n/", " ",$data->keterangan_tolak_izin_akses)}}',
-            jenis_tamu_khusus:'{{$data->jenis_tamu_khusus??'REKANAN'}}',
+            izin_akses_masuk:1,
+            keterangan_tolak_izin_akses:'{{preg_replace( "/\r|\n/", " ",old('keterangan_tolak_izin_akses'))}}',
+            jenis_tamu_khusus:'{{old('jenis_tamu_khusus')??'REKANAN'}}',
             list_jenis_tamu_khusus:<?=json_encode(config('web_config.jenis_tamu_khusus'))?>,
             jenis_identity: '',
             list_jenis_identity:<?=json_encode(config('web_config.identity_list')??[]) ?>,
             no_identity: '',
 
-            nama: '{{$data->nama}}',
-            foto:'{{($data->foto)?asset($data->foto):''}}',
+            nama: '{{old('nama')}}',
+            foto:'{{(old('foto'))?asset(old('foto')):''}}',
             foto_file:null,
             foto_file_cam:null,
-            tamu_khusus: {{$data->tamu_khusus?1:0}},
-            foto_def:'{{($data->foto)?asset($data->foto):''}}',
-            tempat_lahir: '{{$data->tempat_lahir}}',
-            golongan_darah:'{{$data->golongan_darah??'-'}}',
-            jenis_kelamin:{{$data->jenis_kelamin??1}},
-            tanggal_lahir: '{{$data->tanggal_lahir?Carbon\Carbon::parse($data->tanggal_lahir)->format('Y-m-d'):null}}',
-            alamat: "{{preg_replace( "/\r|\n/", " ",$data->alamat)}}",
-            nomer_telpon: "{{$data->nomer_telpon??'+62'}}",
-            pekerjaan: "{{$data->pekerjaan}}",
-            keperluan: "{{preg_replace( "/\r|\n/", " ",$data->def_keperluan)}}",
-            instansi: "{{$data->def_instansi}}",
-            kategori_tamu: "{{$data->def_kategori_tamu}}",
-            agama: "{{$data->agama}}",
+            tamu_khusus: {{old('tamu_khusus')?1:0}},
+            foto_def:'',
+            tempat_lahir: '{{old('tempat_lahir')}}',
+            golongan_darah:'{{old('golongan_darah')??'-'}}',
+            jenis_kelamin:{{old('jenis_kelamin')??1}},
+            tanggal_lahir: '{{old('tanggal_lahir')?Carbon\Carbon::parse(old('tanggal_lahir'))->format('Y-m-d'):null}}',
+            alamat: "{{preg_replace( "/\r|\n/", " ",old('alamat'))}}",
+            nomer_telpon: "{{old('nomer_telpon')??'+62'}}",
+            pekerjaan: "{{old('pekerjaan')}}",
+            keperluan: "{{preg_replace( "/\r|\n/", " ",old('def_keperluan'))}}",
+            instansi: "{{old('def_instansi')}}",
+            kategori_tamu: "{{old('def_kategori_tamu')}}",
+            agama: "{{old('agama')}}",
             berlaku_hingga: "",
             btn_check: false,
-            data_id:<?= json_encode($data_id??[])?>,
-            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode($data->def_tujuan??'[]')??[]))??[]?>,
+            data_id:<?=json_encode(old('identity')??'[]')?>,
+            tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode(old('def_tujuan')??'[]')??[]))??[]?>,
             options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
-            tujuan:<?=($data->def_tujuan)??'[]'?>,
+            tujuan:<?=(old('def_tujuan'))??'[]'?>,
             uuid_id:1,
             identity:{
                 "recorded":'',
@@ -392,7 +370,7 @@
                 this.uuid_id++;
                 this.data_id.push({
                     'id':'new-'+this.uuid_id,
-                    'tamu_id':{{$data->id}},
+                    'tamu_id':nul,
                     'jenis_identity':null,
                     'path_identity':null,
                     'path_rendered':null,
@@ -730,7 +708,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">KONFIRMASI UPDATE</h5>
+          <h5 class="modal-title">KONFIRMASI TAMBAH DATA</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
