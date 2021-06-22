@@ -27,16 +27,18 @@
        <form id="form_env" method="get">
 
            <b>DATA TAMU  : <span>
-            @can('is_admin')
+            <div class="btn-group">
+            <button type="button" class="btn btn-primary" >@{{h}}</button>                
+            </div>
+
             <div class="input-group" >
                 <input type="date" name="start_date" class="form-control" v-model="date_start">
                 <input type="date" name="end_date" v-model="date_end" class="form-control">
             </div>
-            @endcan
 
-            @can('provos_and_gate')
+           {{--  @can('provos_and_gate')
             <div class="btn-group">
-            	<button type="button" v-on:click="active_date=h" v-bind:class="active_date==h?'btn btn-primary':'btn btn-default'" >@{{h}}</button>
+            	
                 @can('is_admin')
             	<button type="button" v-on:click="active_date=h1" v-bind:class="active_date==h1?'btn btn-primary':'btn btn-default'" >@{{h1}}</button>
             	<button type="button" v-on:click="active_date=h2" v-bind:class="active_date==h2?'btn btn-primary':'btn btn-default'" >@{{h2}}</button>
@@ -47,7 +49,7 @@
 
             </div>
 
-            @endcan
+            @endcan --}}
 
         </span>
 
