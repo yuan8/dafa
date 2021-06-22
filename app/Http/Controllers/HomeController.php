@@ -1292,13 +1292,13 @@ class HomeController extends Controller
                 'JENIS IDENTITAS'=>2,
                 'NOMER IDENTITAS'=>3,
                 'NAMA'=>4,
-                'JENIS TAMU'=>5,
+                'KATEGORI & JENIS TAMU'=>5,
                 'INSTANSI'=>6,
                 'TUJUAN'=>7,
                 'KEPERLUAN'=>8,
-                'JAM MASUK'=>9,
+                'TANGGAL & JAM MASUK'=>9,
                 'USER HANDLE MASUK'=>10,
-                'JAM KELUAR'=>11,
+                'TANGGAL & JAM KELUAR'=>11,
                 'USER HANDLE KELUAR'=>12
             ];
 
@@ -1307,11 +1307,11 @@ class HomeController extends Controller
             $HEAD=[
                 'NO'=>1,
                 'NAMA'=>2,
-                'JENIS TAMU'=>3,
+                'KATEGORI & JENIS TAMU'=>3,
                 'TUJUAN'=>4,
                 'KEPERLUAN'=>5,
-                'JAM MASUK'=>6,
-                'JAM KELUAR'=>7,
+                'TANGGAL & JAM MASUK'=>6,
+                'TANGGAL & JAM KELUAR'=>7,
             ];
         }
 
@@ -1432,7 +1432,7 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama);
                         # code...
                         break;
-                    case 'JENIS TAMU':
+                    case 'KATEGORI & JENIS TAMU':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->tamu_khusus?''.($v->jenis_tamu_khusus):$v->kategori_tamu);
                         # code...
                         break;
@@ -1450,11 +1450,11 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->keperluan);
                         # code...
                         break;
-                    case 'JAM MASUK':
+                    case 'TANGGAL & JAM MASUK':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkin?Carbon::parse($v->gate_checkin)->format('Y-m-d H:i'):'-');
                         # code...
                         break;
-                    case 'JAM KELUAR':
+                    case 'TANGGAL & JAM KELUAR':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkout?Carbon::parse($v->gate_checkout)->format('Y-m-d H:i'):'-');
                         # code...
                         break;

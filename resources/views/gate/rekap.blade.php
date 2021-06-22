@@ -37,9 +37,11 @@
             @can('is_provos')
             <div class="btn-group">
             	<button type="button" v-on:click="active_date=h" v-bind:class="active_date==h?'btn btn-primary':'btn btn-default'" >@{{h}}</button>
+                @can('is_admin')
             	<button type="button" v-on:click="active_date=h1" v-bind:class="active_date==h1?'btn btn-primary':'btn btn-default'" >@{{h1}}</button>
             	<button type="button" v-on:click="active_date=h2" v-bind:class="active_date==h2?'btn btn-primary':'btn btn-default'" >@{{h2}}</button>
             	<button type="button" v-on:click="active_date=h3" v-bind:class="active_date==h3?'btn btn-primary':'btn btn-default'" >@{{h3}}</button>
+                @endcan
             	<input type="hidden" name="start_date" v-model="date_start">
             	<input type="hidden" name="end_date" v-model="date_start">
 
@@ -90,7 +92,7 @@
         		<label>JENIS TAMU : </label>
         		<div class="btn-group">
         			 <button type="button" class="btn " v-on:click="jenis_tamu='ALL'"v-bind:class="jenis_tamu=='ALL'?'btn btn-primary':'btn-default'" >SEMUA @{{parseInt(rekap_inher.count_khusus??0)+parseInt(rekap_inher.count_non_khusus??0)}}</button>
-                    <button type="button" class="btn " v-on:click="jenis_tamu='KHUSUS'" v-bind:class="jenis_tamu=='KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus??0)}})</button>
+                    <button type="button" class="btn " v-on:click="jenis_tamu='TAMU_KHUSUS'" v-bind:class="jenis_tamu=='KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus??0)}})</button>
                    <button type="button" class="btn " v-on:click="jenis_tamu='TAMU'"v-bind:class="jenis_tamu=='TAMU'?'btn btn-primary':'btn-default'" >TAMU (@{{parseInt(parseInt(rekap_inher.count_non_khusus??0))}})</button>
 
                     <input type="hidden" name="jenis_tamu" v-model=jenis_tamu>
@@ -137,14 +139,14 @@
                     <th v-if="jenis_table=='LENGKAP'">FOTO</th>
                     <th v-if="jenis_table=='LENGKAP'">NO IDENTITAS</th>
                     <th>NAMA</th>
-                    <th>JENIS TAMU</th>
+                    <th>KATEGORI & JENIS TAMU</th>
                     <th v-if="jenis_table=='LENGKAP'">INSTANSI </th>
                     <th>TUJUAN</th>
                     <th>KEPERLUAN</th>
                     <th>TANGGAL & JAM MASUK</th>
-                    <th v-if="jenis_table=='LENGKAP'">USER HANDLE MASUK </th>
+                    <th v-if="jenis_table=='LENGKAP'">OPERATOR MASUK </th>
                     <th>TANGGAL & JAM KELUAR</th>
-                    <th v-if="jenis_table=='LENGKAP'">USER HANDLE KELUAR </th>
+                    <th v-if="jenis_table=='LENGKAP'">OPERATOR KELUAR </th>
 
                 </tr>
             </thead>

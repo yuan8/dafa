@@ -25,7 +25,7 @@
         <b style="margin-left: 10px;">STATUS :
             <span>
                 <div class="btn-group">
-                   
+
                     <button class="btn " v-on:click="status='GATE_CHECKIN'" v-bind:class="status=='GATE_CHECKIN'?'btn btn-primary':'btn-default'">TAMU MASUK (@{{rekap.count_in}})</button>
                    <button class="btn " v-on:click="status='GATE_CHECKOUT'"v-bind:class="status=='GATE_CHECKOUT'?'btn btn-primary':'btn-default'" >TAMU KELUAR (@{{rekap.count_out}})</button>
 
@@ -59,10 +59,10 @@
                     <th>JENIS IDENTITAS</th>
                     <th>STATUS</th>
                     <th>JAM MASUK</th>
-                    <th>USER HANDEL MASUK</th>
+                    <th>OPERATOR MASUK</th>
 
                     <th>JAM KELUAR</th>
-                    <th>USER HANDEL KELUAR</th>
+                    <th>OPERATOR KELUAR</th>
 
 
 
@@ -136,7 +136,7 @@
                     </td>
                     <td>
                         {{ $v->gate_checkin?Carbon\Carbon::parse($v->gate_checkin)->format('d/m/Y h:i a'):'-' }}
-                      
+
                     </td>
                     <td>
                         {{$v->nama_gate_handle??'-'}}
@@ -146,7 +146,7 @@
                     </td>
                     <td>
                         {{$v->nama_gate_out_handle??'-'}}
-                        
+
                     </td>
                     <td>
                               <div class="btn-group-vertical">
@@ -164,7 +164,7 @@
                                     <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GATE</a>
                                 @endif
                                 @if($gate_ls=='CHECKOUT')
-                                   
+
                                 @endif
                             @endcan
                         </div>
@@ -177,7 +177,7 @@
 
 
                 </tr>
-                
+
                 @endforeach
             </tbody>
         </table>
