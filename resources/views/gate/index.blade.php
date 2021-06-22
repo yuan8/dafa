@@ -16,9 +16,11 @@
         @endcan
            <b>DATA TAMU HARI INI : <span><div class="btn-group">
                <button class="btn " v-on:click="change_env(h)" v-bind:class="h==active_h?'btn btn-primary':'btn-default'">@{{ h }}</button>
+               @can('is_admin')
                <button class="btn " v-on:click="change_env(h_1)" v-bind:class="h_1==active_h?'btn btn-primary':'btn-default'" >@{{ h_1 }}</button>
                 <button class="btn " v-on:click="change_env(h_2)" v-bind:class="h_2==active_h?'btn btn-primary':'btn-default'" >@{{ h_2 }}</button>
                  <button class="btn " v-on:click="change_env(h_3)" v-bind:class="h_3==active_h?'btn btn-primary':'btn-default'" >@{{ h_3 }}</button>
+                 @endcan
                  <input type="hidden" name="date" v-model="active_h">
             </div>
         </span></b>
@@ -58,10 +60,10 @@
                     <th>TUJUAN & KEPERLUAN</th>
                     <th>JENIS IDENTITAS</th>
                     <th>STATUS</th>
-                    <th>JAM MASUK</th>
+                    <th>TANGGAL & JAM MASUK</th>
                     <th>OPERATOR MASUK</th>
 
-                    <th>JAM KELUAR</th>
+                    <th>TANGGAL & JAM KELUAR</th>
                     <th>OPERATOR KELUAR</th>
 
 
@@ -161,7 +163,7 @@
                                     <a href="{{route('g.input',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-primary btn-sm">CHECKIN GATE</a>
                                 @endif
                                 @if($gate_ls=='CHECKIN')
-                                    <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GATE</a>
+                                    <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GEDUNG</a>
                                 @endif
                                 @if($gate_ls=='CHECKOUT')
 

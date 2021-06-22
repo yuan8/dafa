@@ -1290,27 +1290,27 @@ class HomeController extends Controller
                 'NO'=>1,
                 'JENIS IDENTITAS'=>2,
                 'NOMER IDENTITAS'=>3,
-                'NAMA'=>4, 
-                'JENIS TAMU'=>5, 
+                'NAMA'=>4,
+                'KATEGORI & JENIS TAMU'=>5,
                 'INSTANSI'=>6,
                 'TUJUAN'=>7,
                 'KEPERLUAN'=>8,
-                'JAM MASUK'=>9,
-                'USER HANDLE MASUK'=>10,
-                'JAM KELUAR'=>11,
-                'USER HANDLE KELUAR'=>12
+                'TANGGAL & JAM MASUK'=>9,
+                'OPERATOR MASUK'=>10,
+                'TANGGAL & JAM KELUAR'=>11,
+                'OEPRATOR KELUAR'=>12
             ];
 
         }else{
-            
+
             $HEAD=[
                 'NO'=>1,
-                'NAMA'=>2, 
-                'JENIS TAMU'=>3, 
+                'NAMA'=>2,
+                'KATEGORI & JENIS TAMU'=>3,
                 'TUJUAN'=>4,
                 'KEPERLUAN'=>5,
-                'JAM MASUK'=>6,
-                'JAM KELUAR'=>7,
+                'TANGGAL & JAM MASUK'=>6,
+                'TANGGAL & JAM KELUAR'=>7,
             ];
         }
 
@@ -1359,7 +1359,7 @@ class HomeController extends Controller
                 'center'=>true,
                 'horizontal'=>\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
             ],
-            
+
         ];
 
         $spreadsheet = new Spreadsheet();
@@ -1387,7 +1387,7 @@ class HomeController extends Controller
 
         $sheet->getStyle(static::nta(1).(1))->applyFromArray($TITLE);
         $sheet->setCellValue(static::nta(1).(2), implode(', ',$tujuan??[]));
-        $sheet->setCellValue(static::nta(1).(3), 'WAKTU EXPORT');
+        $sheet->setCellValue(static::nta(1).(3), 'TANGGAL EXPORT');
         $sheet->setCellValue(static::nta(2).(3), Carbon::now()->format('Y-m-d H:I'));
         $sheet->setCellValue(static::nta(1).(4), 'KUNJUNGAN');
         $sheet->setCellValue(static::nta(2).(4), $this_day->format('Y-m-d'));
@@ -1433,7 +1433,7 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama);
                         # code...
                         break;
-                    case 'JENIS TAMU':
+                    case 'KATEGORI & JENIS TAMU':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->tamu_khusus?''.($v->jenis_tamu_khusus):$v->kategori_tamu);
                         # code...
                         break;
@@ -1451,23 +1451,23 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->keperluan);
                         # code...
                         break;
-                    case 'JAM MASUK':
+                    case 'TANGGAL & JAM MASUK':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkin?Carbon::parse($v->gate_checkin)->format('Y-m-d H:i'):'-');
                         # code...
                         break;
-                    case 'JAM KELUAR':
+                    case 'TANGGAL & JAM KELUAR':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkout?Carbon::parse($v->gate_checkout)->format('Y-m-d H:i'):'-');
                         # code...
                         break;
-                     case 'USER HANDLE MASUK':
+                     case 'OPERATOR MASUK':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama_gate_handle??'-');
                         # code...
                         break;
-                     case 'USER HANDLE KELUAR':
+                     case 'OPERATOR KELUAR':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nama_gate_out_handle??'-');
                         # code...
                         break;
-                    
+
                     default:
                         # code...
                         break;
@@ -1481,7 +1481,7 @@ class HomeController extends Controller
 
         $sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(count($HEAD)).($key_last));
 
-       
+
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

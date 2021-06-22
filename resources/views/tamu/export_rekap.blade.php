@@ -22,7 +22,7 @@
 <p class="text-center">Kunjungan {{$d1==$d2?$d1:$d1.' - '.$d2}}</p>
 <hr>
 	<table class="table-bordered table tdata" >
-		
+
 		<thead>
                 <tr>
                     <th>NO</th>
@@ -41,14 +41,14 @@
 
                     <th>TUJUAN</th>
                     <th>KEPERLUAN</th>
-                    <th>JAM MASUK</th>
+                    <th>TANGGAL & JAM MASUK</th>
                    @if($req->jenis_table=='LENGKAP')
-                    <th >USER HANDLE MASUK </th>
+                    <th >OPERATOR MASUK </th>
                     @endif
 
-                    <th>JAM KELUAR</th>
+                    <th>TANGGAL & JAM KELUAR</th>
                    @if($req->jenis_table=='LENGKAP')
-                    <th >USER HANDLE KELUAR </th>
+                    <th >OPERATOR KELUAR </th>
                     @endif
 
                 </tr>

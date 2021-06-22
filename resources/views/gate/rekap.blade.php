@@ -130,7 +130,7 @@
     		<button type="button" v-on:click="jenis_table='LENGKAP'" v-bind:class="(jenis_table=='LENGKAP')?'btn btn-primary':'btn btn-default'">LENGKAP</button>
     	</div>
 
-    	<p>TOTAL DATA : {{number_format(count($data))}} KUNJUNGAN</p>
+    	<p>TOTAL DATA : {{number_format(count($data))}} KUNJUNGAN <b>-</b> <a href="{{route('g.index')}}"><b style="color: #ff0000">TAMU DI DALAM GEDUNG (@{{rekap.count_in.count_data??0}})</b></a></p>
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
