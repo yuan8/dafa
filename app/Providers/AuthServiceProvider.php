@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('provos_and_gate', function ($user) {
-            return in_array($user->role, [2,3]);
+            return in_array($user->role, [1,2,3]);
         });
 
         Gate::define('is_gate', function ($user) {
