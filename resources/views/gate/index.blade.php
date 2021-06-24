@@ -21,7 +21,7 @@
                 <input type="hidden" name="date" v-model="active_h">
             </div>
 
-           @can('is_admin')
+           @can('provos_and_gate')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
                 <input type="date" name="start_date" class="form-control" v-model="start_date">
                 <input type="date" name="end_date" v-model="end_date" class="form-control">

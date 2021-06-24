@@ -605,7 +605,7 @@ class HomeController extends Controller
 
         if($request->start_date){
             $day=Carbon::parse($request->start_date)->startOfDay();
-            $day_last=Carbon::parse($request->end_date)->startOfDay();
+            $day_last=Carbon::parse($request->end_date)->endOfDay();
         }
 
         $where=[];
