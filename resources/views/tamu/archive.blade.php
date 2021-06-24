@@ -15,7 +15,6 @@
     			<thead>
     				<tr class="text-center">
     					<th>NO.</th>
-    					<th>NO. ID GATE.</th>
     					<th>FOTO</th>
                         <th>CATATAN</th>
                         <th>JENIS TAMU</th>
@@ -34,7 +33,6 @@
     				@foreach ($data as $key=>$d)
 
     				<tr>
-                        <td>{{$key+1}}</td>
                         <td>{{$key+1}}</td>
     					<td>
     						<img onclick="show_pic.show('{{url($d->foto??'tamu-def.png')}}')" src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
