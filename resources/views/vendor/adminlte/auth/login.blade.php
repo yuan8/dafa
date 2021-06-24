@@ -21,10 +21,12 @@
 @section('auth_header', __('adminlte::adminlte.login_message'))
 
 @section('auth_body')
+
     <form action="{{ $login_url }}" method="post">
         {{ csrf_field() }}
 
         {{-- Email field --}}
+
         <div class="input-group mb-3">
             <input type="text" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
                    value="{{ old('email') }}" placeholder="Email/Username" autofocus>

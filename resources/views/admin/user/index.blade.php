@@ -22,12 +22,11 @@
 		<div class="table-responsive">
 			<table class="table-bordered table">
 			<thead>
-				<tr>
+				<tr class="text-center">
+					<th>NO.</th>
 					<th>NAMA</th>
 					<th>USERNAME</th>
-
 					<th>PANGKAT</th>
-
 					<th>EMAIL</th>
 					<th>ROLE</th>
 					<th>JABATAN</th>
@@ -36,8 +35,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach ($data as $d)
-				<tr>
+				@foreach ($data as $key => $d)
+				<tr class="text-center">
+                    <td>{{$key+1}}</td>
 					<td>{{$d->name}}</td>
 					<td>{{$d->username}}</td>
 
@@ -46,7 +46,7 @@
 					<td>{{isset($role[$d->role])?$role[$d->role]:''}}</td>
 					<td>{{$d->jabatan}}</td>
 					<td>
-						
+
 						<div class="btn-group">
 							<a href="{{route('a.u.ubah',['id'=>$d->id,'slug'=>Str::slug($d->username)])}}" class="btn btn-sm btn-primary">Ubah</a>
 							{{-- <a href="javascript::void(0)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}

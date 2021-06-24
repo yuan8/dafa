@@ -13,13 +13,14 @@
     	<div class="table-responsive">
     		<table class="table table-bordered">
     			<thead>
-    				<tr>
+    				<tr class="text-center">
+    					<th>NO.</th>
     					<th>FOTO</th>
-                        <th>IZIN AKSES MASUK</th>
+                        <th>CATATAN</th>
                         <th>JENIS TAMU</th>
     					<th>IDENTITAS</th>
     					<th>NAMA</th>
-    					<th>NOMER TELEPON</th>
+    					<th>NOMOR TELEPON</th>
     					<th>PEKERJAAN</th>
     					<th>GOL DARAH</th>
     					<th>JENIS KELAMIN</th>
@@ -32,6 +33,7 @@
     				@foreach ($data as $key=>$d)
 
     				<tr>
+                        <td>{{$key+1}}</td>
     					<td>
     						<img onclick="show_pic.show('{{url($d->foto??'tamu-def.png')}}')" src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
     					</td>

@@ -38,27 +38,29 @@
 
 <div class="card">
     <div class="card-header with-border">
-        
+
     </div>
     <div class="card-body">
         <div class="table-responsive col-md-12">
             <table class="table table-bordered" id="v-kategori">
                 <thead>
-                    <tr>
-                        <th style="width:100px;">AKSI</th>
+                    <tr class="text-center">
+                        <th>NO.</th>
                         <th>TAG</th>
                         <th>NAMA</th>
+                        <th style="width:100px;">AKSI</th>
                     </tr>
                 </thead>
                 <tbody >
-                    @foreach($data as $d)
-                    <tr>
+                    @foreach($data as $key => $d)
+                    <tr class="text-center">
+                        <td>{{$key+1}}</td>
+                        <td>{{$d['tag']}}</td>
+                        <td>{{$d['name']}}</td>
                         <td>
                             <button onclick="window.modalDelete.build('{{$d['name']}}','{{route('a.b.delete',['id'=>$d['tag'],'slug'=>Str::slug($d['name'])])}}')" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                             <a href="{{route('a.b.ubah',['id'=>$d['tag'],'slug'=>Str::slug($d['name'])])}}" class="btn btn-primary"><i class="fa fa-eye"></i></a>
                         </td>
-                        <td>{{$d['tag']}}</td>
-                        <td>{{$d['name']}}</td>
                     </tr>
                     @endforeach
                 </tbody>

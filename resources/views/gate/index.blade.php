@@ -21,7 +21,7 @@
                 <input type="hidden" name="date" v-model="active_h">
             </div>
 
-           @can('is_admin')
+           @can('provos_and_gate')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
                 <input type="date" name="start_date" class="form-control" v-model="start_date">
                 <input type="date" name="end_date" v-model="end_date" class="form-control">
@@ -58,12 +58,14 @@
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
-                <tr>
-                    <th>FOTO</th>
+                <tr class="text-center">
+                    <th>NO.</th>
+                    <th>ID GATE</th>
+                    {{-- <th>FOTO</th> --}}
                     <th>NAMA</th>
                     <th>NO. TELEPON</th>
                     <th>TUJUAN & KEPERLUAN</th>
-                    <th>JENIS IDENTITAS</th>
+                    {{-- <th>JENIS IDENTITAS</th> --}}
                     <th>STATUS</th>
                     <th>TANGGAL & JAM MASUK</th>
                     <th>OPERATOR MASUK</th>
@@ -77,15 +79,17 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($data_visitor as $v)
+                @foreach($data_visitor as $key=> $v)
                  @php
                     $gate_ls=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':($v->rekap?'REKAP':'')));
                 @endphp
 
                 <tr class="vis_">
-                    <td class="text-center">
+                    <td class="text-center">{{$key+1}}</td>
+                    <td class="text-center">{{$key+1}}</td>
+                    {{-- <td class="text-center">
                         <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
-                    </td>
+                    </td> --}}
                     <td>
                         <p>
                         <b>
@@ -111,13 +115,13 @@
 
                         <p >{{ $v->keperluan }}</p>
                     </td>
-                    <td><b>{{ $v->jenis_id }}</b>
+                    {{-- <td><b>{{ $v->jenis_id }}</b>
                         <br>
                         <span class="badge badge-warning"><div style="font-size:14;">{{ $v->identity_number }}</div></span>
                        <div style="margin-top: 10px;">
                             <img onclick="show_pic.show('{{asset($v->path_identity)}}')" src="{{asset($v->path_identity)}}" class="img-thumbnail" style="max-width: 100px;">
                        </div>
-                    </td>
+                    </td> --}}
                     <td>
                             @switch($gate_ls)
                                 @case('PROVOS')
@@ -168,7 +172,7 @@
                                     <a href="{{route('g.input',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-primary btn-sm">CHECKIN GATE</a>
                                 @endif
                                 @if($gate_ls=='CHECKIN')
-                                    <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-warning btn-sm">CHECKOUT GEDUNG</a>
+                                    <a href="{{route('g.checkout',['id'=>$v->id_log,'slug'=>Str::slug($v->nama),'fingerprint'=>$fingerprint])}}" class="btn btn-danger btn-sm">CHECKOUT GEDUNG</a>
                                 @endif
                                 @if($gate_ls=='CHECKOUT')
 

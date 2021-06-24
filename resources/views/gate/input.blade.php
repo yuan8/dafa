@@ -4,7 +4,7 @@
 @php
 dd('ss');
 @endphp
-    
+
 @php
 @endphp
 <script type="application/javascript" src="{{asset('tparty/bower_components/webcamjs/webcam.js') }}"></script>
@@ -20,24 +20,24 @@ dd('ss');
                 <div class="col-md-12">
                      <h5><span><button @click="closePicInput" class="btn btn-sm btn-circle btn-primary"><i class="fa fa-times"></i></button></span></h5>
                  </div>
-                
+
                 <div class="col-md-12" style="margin-bottom: 10px;">
                     <div id="cam-record" style="max-width: 100%; min-width: 320px; min-height: 240px; overflow: hidden; border-radius: 10px;"></div>
 
                 </div>
-               
+
             </div>
-       
+
           <div class="box-footer">
-               
+
                 <div class="btn-group">
                     <button v-if="!url_filled" class="btn btn-primary" @click="takePic">Snap</button>
                     <button v-if="url_filled" class="btn btn-primary" @click="displayingStat">Resnap</button>
-                   
+
                     <button v-if="url_filled"  class="btn btn-primary" @click="save">Save Data</button>
 
                 </div>
-          
+
            </div>
        </div>
     </div>
@@ -78,8 +78,8 @@ dd('ss');
                             </span>
                         </div>
                     </div>
-                  
-                 
+
+
                     <input type="hidden" name="foto" v-model="foto">
                     <div  v-if="btn_check">
                         <div class="btn-group" style="margin-top:10px; ">
@@ -94,7 +94,7 @@ dd('ss');
                         <label>Kategori Tamu*</label>
                         <select class="form-control" name="kategori_tamu" v-model="kategori_tamu">
                             @foreach (config('web_config.kategori_tamu') as $k)
-                                
+
                             <option {{$k['tag']}} {{old('kategori_tamu')==$k['tag']?'selected':""}} >{{$k['name']}}</option>
                             @endforeach
                         </select>
@@ -106,14 +106,18 @@ dd('ss');
                     <div class="form-group">
                          <label>Tujuan*</label>
                         <input type="hidden" name="tujuan" required="" v-model="JSON.stringify(tujuan_json)">
-                        <v-select class="vue-select2" multiple="" 
+                        <v-select class="vue-select2" multiple=""
                             :options="options_tujuan" v-model="tujuan_json"
                             :searchable="true" language="en-US">
-                        </v-select>  
+                        </v-select>
                     </div>
                      <div class="form-group">
                         <label>Keterangan Keperluan*</label>
                         <textarea name="keperluan" class="form-control" v-model="keperluan"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>No. ID Gate</label>
+                        <textarea name="idgate" class="form-control" v-model="idgate"></textarea>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -160,7 +164,7 @@ dd('ss');
                             <div class="form-group">
                                 <label for="">@{{jenis_identity}} Berlaku Hingga</label>
                                 <input  name="berlaku_hingga" type="date" v-model="berlaku_hingga" class="form-control">
-                            
+
                             </div>
                         </div>
 
@@ -168,29 +172,29 @@ dd('ss');
                             <div class="form-group">
                                 <label for="">Nomer Telpon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Tempat Lahir</label>
                                 <input name="tempat_lahir" type="text" v-model="tempat_lahir" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Pekerjaan</label>
                                 <input  name="pekerjaan" type="text" v-model="pekerjaan" class="form-control">
-                            
+
                             </div>
                             <div class="form-group">
                                 <label for="">Alamat</label>
                             <textarea name="alamat"  v-model="alamat" class="form-control" id="" cols="30" rows="4"></textarea>
                             </div>
                         </div>
-                       
+
                     </div>
 
                      <div class="row">
@@ -204,15 +208,15 @@ dd('ss');
                                 <label>CAPTURE @{{jenis_identity}}</label>
                                 <div >
                                 <img src="" :src="identity.rendered" id="file-identity" class="img-thumbnail">
-                                    
+
                                 </div>
                             </div>
                         </div>
-                   
-                
+
+
                 </div>
             </div>
-            
+
         </div>
     </div>
 </form>
@@ -327,7 +331,7 @@ dd('ss');
                                 if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
                                     if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
                                         vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
+
                                     }
                                 }
                             }
@@ -336,7 +340,7 @@ dd('ss');
                                 if((res.data.tamu_nomer_telpon!=undefined) && !isEmpty(res.data.tamu_nomer_telpon)){
                                     if(vinput.nomer_telpon!=res.data.tamu_nomer_telpon){
                                         vinput.nomer_telpon=res.data.tamu_nomer_telpon;
-                                        
+
                                     }
                                 }
                             }
@@ -346,7 +350,7 @@ dd('ss');
                                 if((res.data.identity_number!=undefined) && !isEmpty(res.data.identity_number)){
                                     if(vinput.no_identity!=res.data.identity_number){
                                         vinput.no_identity=res.data.identity_number;
-                                        
+
                                     }
                                 }
                             }
@@ -356,7 +360,7 @@ dd('ss');
                                 if((res.data.jenis_identity!=undefined) && !isEmpty(res.data.jenis_identity)){
                                     if(vinput.jenis_identity!=res.data.jenis_identity){
                                         vinput.jenis_identity=res.data.jenis_identity;
-                                        
+
                                     }
                                 }
                             }
@@ -364,34 +368,34 @@ dd('ss');
                             if((res.data.tamu_tempat_lahir!=undefined) && !isEmpty(res.data.tamu_tempat_lahir)){
                                 if(vinput.tempat_lahir!=res.data.tamu_tempat_lahir){
                                     vinput.tempat_lahir=res.data.tempat_lahir;
-                                    
+
                                 }
                             }
                             if((res.data.tamu_tanggal_lahir!=undefined) && !isEmpty(res.data.tamu_tanggal_lahir)){
                                 if(vinput.tanggal_lahir!=res.data.tamu_tanggal_lahir){
                                     vinput.tanggal_lahir=res.data.tamu_tanggal_lahir;
-                                    
+
                                 }
                             }
 
                             if((res.data.tamu_pekerjaan!=undefined) && !isEmpty(res.data.tamu_pekerjaan)){
                                 if(vinput.pekerjaan!=res.data.tamu_pekerjaan){
                                     vinput.pekerjaan=res.data.tamu_pekerjaan;
-                                    
+
                                 }
                             }
 
                             if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
                                 if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
                                     vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
+
                                 }
                             }
 
                              if((res.data.tamu_gologan_darah!=undefined) && !isEmpty(res.data.tamu_gologan_darah)){
                                 if(vinput.golongan_darah!=res.data.tamu_gologan_darah){
                                     vinput.golongan_darah=res.data.tamu_gologan_darah;
-                                    
+
                                 }
                             }
 
@@ -399,7 +403,7 @@ dd('ss');
                              if((res.data.tamu_jenis_kelamin!=undefined) && !isEmpty(res.data.tamu_jenis_kelamin)){
                                 if(vinput.jenis_kelamin!=res.data.tamu_jenis_kelamin){
                                     vinput.jenis_kelamin=res.data.tamu_jenis_kelamin;
-                                    
+
                                 }
                             }
 
@@ -416,16 +420,16 @@ dd('ss');
                                 }
                             }
 
-                             
+
 
                             $('#input-file-id').val(null);
                             $('#input-file-id').trigger('change');
-                            
 
-                            
-                            
 
-                        
+
+
+
+
                     }
                 });
             },
@@ -434,7 +438,7 @@ dd('ss');
                         console.log(expt);
                         console.log(res);
                        if(res.code==200){
-                           
+
                         }else{
 
                         }
@@ -453,7 +457,7 @@ dd('ss');
                 }
             },
 
-            
+
             numberIdentity:function(val='',oldvAL){
                 if(val!=oldvAL){
 
@@ -499,9 +503,9 @@ dd('ss');
                                 if( !isNaN(parseInt(arr_val[i])) || (arr_val[i]=='-')){
                                     char_phone+=arr_val[i];
                                 }
-                                
+
                             }
-                            
+
 
                         }
                         if(window.them_phone!=char_phone){
@@ -549,7 +553,7 @@ dd('ss');
         },
 
         watch:{
-           
+
             nomer_telpon:'phoneNumber',
             no_identity:'numberIdentity',
             nama:'namaTamu',
@@ -566,7 +570,7 @@ dd('ss');
                     this.bc();
 
                 }
-               
+
 
 
             },
@@ -632,14 +636,14 @@ dd('ss');
             url_filled:false,
         },
         methods:{
-            
+
             save:function(){
                 $('#file-foto').val(null);
                 $('#file-foto').trigger('change');
 
                 vinput.foto_file_cam=this.pic_data;
                 vinput.foto=this.foto=this.pic_data;
-                
+
 
             },
             closePicInput:function(){
@@ -659,7 +663,7 @@ dd('ss');
                         alert("getUserMedia() is not supported by your browser");
                     }
                 }
-                
+
             },
             attacthCam:function(){
                 this.pic_data=null;
@@ -667,13 +671,13 @@ dd('ss');
                     window.Webcam.set({
                       width: 320,
                     height: 240,
-                    
+
                     dest_width: 320,
                     dest_height: 240,
-                    
+
                     crop_width: 320,
                     crop_height: 240,
-                    
+
                     image_format: 'png',
                     jpeg_quality: 100,
                     enable_flash: true,
@@ -681,7 +685,7 @@ dd('ss');
                     fps: 15,
                     facingMode: "environment"
                     });
-                    
+
                     window.Webcam.attach('#cam-record')
                 },300);
 
@@ -765,7 +769,7 @@ dd('ss');
           },
           methods:{
               submit:function(){
-                  
+
                   $('#submit-form-provos').submit();
               }
           },

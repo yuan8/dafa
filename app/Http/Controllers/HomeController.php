@@ -253,7 +253,7 @@ class HomeController extends Controller
                                 }
                        }
                }else{
-                 Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
+                 Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
                  return back()->withInput();
 
                }
@@ -549,7 +549,7 @@ class HomeController extends Controller
                         }
                }
            }else{
-             Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
+             Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
              return back()->withInput();
 
            }
@@ -582,23 +582,30 @@ class HomeController extends Controller
         $day=Carbon::now()->startOfDay();
         $day_last=Carbon::now()->endOfDay();
 
-        if($request->status=='REKAP' OR $request->status==NULL){
+
+        // if($request->status=='REKAP' OR $request->status==NULL){
+        //     $day=Carbon::parse($request->start_date)->startOfDay();
+        //     $day_last=Carbon::parse($request->end_date)->endOfDay();
+
+        // }else{
+
+        //     if($request->date){
+        //         $last_date=Carbon::now()->addDays(-3)->endOfDay();
+
+        //         $day=Carbon::parse($request->date)->startOfDay();
+
+        //          $day_last=Carbon::parse($request->date)->endOfDay();
+        //          if($last_date->gt($day_last)){
+        //             Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
+        //             return redirect()->route('g.index');
+        //          }
+        //     }
+        // }
+
+
+        if($request->start_date){
             $day=Carbon::parse($request->start_date)->startOfDay();
-            $day_last=Carbon::parse($request->end_date)->endOfDay();
-
-        }else{
-
-            if($request->date){
-                $last_date=Carbon::now()->addDays(-3)->endOfDay();
-
-                $day=Carbon::parse($request->date)->startOfDay();
-
-                 $day_last=Carbon::parse($request->date)->endOfDay();
-                 if($last_date->gt($day_last)){
-                    Alert::error('','Anda tidak dapat melihat data melebihi '.$last_date->format('d F Y'));
-                    return redirect()->route('g.index');
-                 }
-            }
+            $day_last=Carbon::parse($request->end_date)->startOfDay();
         }
 
         $where=[];
@@ -686,8 +693,8 @@ class HomeController extends Controller
 
             return view('gate.index')->with([
                 'data_visitor'=>$log_tamu,
-                'date_start'=>$day,
-                'date_end'=>$day_last,
+                'date_start'=>$day->format('Y-m-d'),
+                'date_end'=>$day_last->format('Y-m-d'),
                 'fingerprint'=>$fingerprint,
                 'req'=>$request,
                 'rekap_tamu'=>$rekap_tamu,
@@ -706,9 +713,7 @@ class HomeController extends Controller
 
         $day=Carbon::parse($request->start_date??date('Y-m-d'))->startOfDay();
         $day_last=Carbon::parse($request->end_date??date('Y-m-d'))->endOfDay();
-
         $date_2=Carbon::parse($request->start_date??date('Y-m-d'))->format('d F Y');
-
         $where=[];
         if($request->q){
                 $where[]="(v.nama like '%".$request->q."%')";
@@ -739,6 +744,8 @@ class HomeController extends Controller
        $where_def_rekap_out=[
             "log.gate_checkout >= '".$day."'" ,
             "log.gate_checkout <= '".$day_last."'" ,
+            "log.gate_checkout is not null" ,
+
         ];
 
        $where_def_rekap_in=[
@@ -773,7 +780,7 @@ class HomeController extends Controller
         }
 
 
-
+        $order='log.gate_checkin';
             if($checkin!='ALL'){
                 switch ($checkin) {
                     case 'GATE_CHECKIN':
@@ -783,6 +790,8 @@ class HomeController extends Controller
                          ];
 
                         $where_def[]="log.gate_checkout is null ";
+                        $order='log.gate_checkin';
+
 
                         break;
                     case 'GATE_CHECKOUT':
@@ -790,6 +799,10 @@ class HomeController extends Controller
                             "log.gate_checkout >= '".$day."'" ,
                             "log.gate_checkout <= '".$day_last."'" ,
                          ];
+                        $where_def[]="log.gate_checkout is not null ";
+                         $order='log.gate_checkout';
+
+
 
 
 
@@ -892,7 +905,7 @@ class HomeController extends Controller
                 (case when (log.gate_checkout is not null) then 1 else 0 end) as status_out
                 ")
             ->whereRaw(implode(' or ', $whereRaw))
-            ->orderBy('log.gate_checkin','desc')
+            ->orderBy($order,'desc')
             ->groupBy('v.id','log.id')
             ->get();
 
@@ -902,7 +915,6 @@ class HomeController extends Controller
             ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
               ->whereRaw(implode(' and ', $where_def_rekap))
             ->orderBy('log.gate_checkin','desc')
-            ->groupBy('v.id','log.id')
             ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_in).') then 1 else 0 end ) as count_data,sum(case when  (v.tamu_khusus=true and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_khusus,
                 sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_in).')) then 1 else 0 end) as count_non_khusus
                 ')
@@ -924,14 +936,13 @@ class HomeController extends Controller
             ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
             ->whereRaw(implode(' and ', $where_def_rekap))
             ->orderBy('log.gate_checkin','desc')
-            ->groupBy('log.id')
-            ->selectRaw('sum(case when ('.implode(' or ', $whereRaw_rekap_out).') then 1 else 0 end ) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
+            ->selectRaw('sum(case when (('.implode(') or (', $whereRaw_rekap_out).')) then 1 else 0 end) as count_data,count(distinct(case when (v.tamu_khusus=true and  ('.implode(' or ', $whereRaw_rekap_out).')) then log.id else null end)) as count_khusus,
                 sum(case when (v.tamu_khusus=false and ('.implode(' or ', $whereRaw_rekap_out).')) then 1 else 0 end) as count_non_khusus
 
-                ')
+           ')
             ->first();
 
-            dd($whereRaw_rekap_out,$where_def_rekap);
+
 
              if(!$log_rekap_out){
                 $log_rekap_out=[
@@ -946,6 +957,16 @@ class HomeController extends Controller
 
 
             if($request->v_export=='EXCEL'){
+                return static::rekap_export_excel([
+                    'data'=>$log_tamu,
+                    'status'=>$checkin,
+                    'day'=>$day,
+                    'day_last'=>$day_last,
+                    'req'=>$request,
+                    'tujuan_json'=>is_array($request->tujuan_json)?$request->tujuan_json:json_decode($request->tujuan_json??'[]'),
+                    'tujuan'=>$request->tujuan??[]
+
+                ]);
 
             }elseif($request->v_export=='PDF'){
 
@@ -1159,7 +1180,7 @@ class HomeController extends Controller
                                 }
                        }
                }else{
-                 Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
+                 Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
                  return back()->withInput();
 
                }
@@ -1264,6 +1285,221 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+
+    static public function rekap_export_excel($dt){
+
+        ini_set('memory_limit',-1);
+        ini_set('max_execution_time', -1);
+        if($dt['req']->jenis_table=='LENGKAP'){
+            $HEAD=[
+                'NO'=>1,
+                'JENIS IDENTITAS'=>2,
+                'NOMER IDENTITAS'=>3,
+                'NAMA'=>4,
+                'KATEGORI & JENIS TAMU'=>5,
+                'INSTANSI'=>6,
+                'TUJUAN'=>7,
+                'KEPERLUAN'=>8,
+                'TANGGAL & JAM MASUK'=>9,
+                'OPERATOR MASUK'=>10,
+                'TANGGAL & JAM KELUAR'=>11,
+                'OPERATOR KELUAR'=>12
+            ];
+
+        }else{
+
+            $HEAD=[
+                'NO'=>1,
+                'NAMA'=>2,
+                'KATEGORI & JENIS TAMU'=>3,
+                'TUJUAN'=>4,
+                'KEPERLUAN'=>5,
+                'TANGGAL & JAM MASUK'=>6,
+                'TANGGAL & JAM KELUAR'=>7,
+            ];
+        }
+
+        $DATASTYLE=[
+            'font' => [
+                'bold' => true,
+
+            ],
+            'alignment'=>[
+                'wrapText'=>true,
+
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+
+        ];
+
+        $KT=[
+
+            'font' => [
+                'bold' => true,
+
+
+            ],
+            'alignment'=>[
+                'center'=>true,
+                'wrapText'=>true,
+
+            ],
+
+
+        ];
+
+
+        $TITLE=[
+            'font' => [
+                'bold' => true,
+                'size'=>18,
+
+
+            ],
+            'alignment'=>[
+                'center'=>true,
+                'horizontal'=>\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+            ],
+
+        ];
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $start=7;
+        $this_day=$dt['day'];
+        $title='REKAP '.
+
+
+        (($dt['req']->jenis_tamu=='KHUSUS')
+            ?'TAMU KHUSUS ':
+            ($dt['req']->jenis_tamu=='ALL'?
+                'TAMU ':
+                'TAMU NON KHUSUS ')).
+        (($dt['status']=='GATE_CHECKIN')?
+            'MASUK ':
+            (($dt['status']==='GATE_CHECKOUT')?'KELUAR ':'')
+        );
+
+        $d1=$this_day->format('Y-m-d');
+        $d2=$dt['day_last']->format('Y-m-d');
+
+        $sheet->setCellValue(static::nta(1).(1),$title);
+        $tujuan=collect($dt['tujuan_json']??[])->pluck('label')->toArray();
+
+        $sheet->getStyle(static::nta(1).(1))->applyFromArray($TITLE);
+        $sheet->setCellValue(static::nta(1).(2), implode(', ',$tujuan??[]));
+        $sheet->setCellValue(static::nta(1).(3), 'TANGGAL EXPORT');
+        $sheet->setCellValue(static::nta(2).(3), Carbon::now()->format('Y-m-d H:I'));
+        $sheet->setCellValue(static::nta(1).(4), 'KUNJUNGAN');
+        $sheet->setCellValue(static::nta(2).(4), $this_day->format('Y-m-d'));
+        $sheet->setCellValue(static::nta(3).(4), '-');
+        $sheet->setCellValue(static::nta(4).(4), $dt['day_last']->format('Y-m-d'));
+        $sheet->mergeCells((static::nta(1).(1)).':'.static::nta(count($HEAD)).(1));
+        $sheet->mergeCells((static::nta(1).(2)).':'.static::nta(count($HEAD)).(2));
+
+
+        foreach (array_keys($HEAD) as $key => $value) {
+            # code...
+            $sheet->setCellValue(static::nta($key+1).(5),$value);
+            $sheet->setCellValue(static::nta($key+1).(6),$key+1);
+            if($key==0){
+                $sheet->getColumnDimension(static::nta($key+1))->setWidth(8);
+
+            }else{
+                $sheet->getColumnDimension(static::nta($key+1))->setWidth(13);
+            }
+
+        }
+        $sheet->getStyle(static::nta(1).(2).':'.static::nta(count($HEAD)).(6))->applyFromArray($KT);
+        $sheet->getStyle(static::nta(1).(5).':'.static::nta(count($HEAD)).(6))->applyFromArray($DATASTYLE);
+
+        $key_last=$start;
+
+        foreach ($dt['data'] as $key => $v) {
+            foreach ($HEAD as $h => $c) {
+                switch ($h) {
+                    case 'NO':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$key+1);
+                        # code...
+                        break;
+                    case 'JENIS IDENTITAS':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->jenis_identity);
+                        # code...
+                        break;
+                    case 'NOMER IDENTITAS':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->identity_number);
+                        # code...
+                        break;
+                    case 'NAMA':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->nama);
+                        # code...
+                        break;
+                    case 'KATEGORI & JENIS TAMU':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->tamu_khusus?''.($v->jenis_tamu_khusus):$v->kategori_tamu);
+                        # code...
+                        break;
+                     case 'TUJUAN':
+                            $tujuan=collect((CV::build_from_array('tujuan_tamu',json_decode($v->tujuan??'[]'))))->pluck('label')->toArray();
+
+                         $sheet->setCellValue(static::nta($c).($key+$start),implode(', ',$tujuan??[]));
+                        # code...
+                        break;
+                    case 'INSTANSI':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->instansi);
+                        # code...
+                        break;
+                    case 'KEPERLUAN':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->keperluan);
+                        # code...
+                        break;
+                    case 'TANGGAL & JAM MASUK':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkin?Carbon::parse($v->gate_checkin)->format('Y-m-d H:i'):'-');
+                        # code...
+                        break;
+                    case 'TANGGAL & JAM KELUAR':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->gate_checkout?Carbon::parse($v->gate_checkout)->format('Y-m-d H:i'):'-');
+                        # code...
+                        break;
+                     case 'OPERATOR MASUK':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->nama_gate_handle??'-');
+                        # code...
+                        break;
+                     case 'OPERATOR KELUAR':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->nama_gate_out_handle??'-');
+                        # code...
+                        break;
+
+                    default:
+                        # code...
+                        break;
+                }
+
+            }
+            $key_last=(($key)+$start);
+        }
+
+         $sheet->getStyle(static::nta(1).($start).':'.static::nta(count($HEAD)).($key_last))->applyFromArray($DATASTYLE);
+
+        $sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(count($HEAD)).($key_last));
+
+
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode($title).'_'.($d1==$d2?$d1:$d1.'-'.$d2).'.xlsx"');
+        return $writer->save('php://output');
+
+
+
+    }
+
+
+
     public function index(Request $request)
     {
 
@@ -1271,3 +1507,18 @@ class HomeController extends Controller
         $fingerprint=$request->fingerprint();
         return view('home')->with(['fingerprint'=>$fingerprint]);
     }
+
+    static  public function nta($number) {
+        $number = intval($number);
+        if ($number <= 0) {
+            return '';
+        }
+        $alphabet = '';
+        while($number != 0) {
+            $p = ($number - 1) % 26;
+            $number = intval(($number - $p) / 26);
+            $alphabet = chr(65 + $p) . $alphabet;
+        }
+        return $alphabet;
+    }
+}
