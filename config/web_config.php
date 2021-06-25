@@ -3,12 +3,13 @@
 		return array (
   'name' => 'Aplikasi Buku Tamu',
   'broadcast_network' => false,
-  'jenis_tamu_khusus'=>[
-    'REKANAN'=>"KTP",
-    'ANGGOTA-TNI'=>"KTA-TNI",
-    'ANGGOTA-POLRI'=>"KTA-POLRI",
-    'PNS'=>"KTP",
-  ],
+  'jenis_tamu_khusus' => 
+  array (
+    'REKANAN' => 'KTP',
+    'ANGGOTA-TNI' => 'KTA-TNI',
+    'ANGGOTA-POLRI' => 'KTA-POLRI',
+    'PNS' => 'KTP',
+  ),
   'tujuan_tamu' => 
   array (
     0 => 
@@ -78,33 +79,53 @@
     ),
     13 => 
     array (
+      'tag' => 'INSPEKTORAT',
+      'name' => 'INSPEKTORAT',
+    ),
+    14 => 
+    array (
       'tag' => 'KABAIS',
       'name' => 'KABAIS',
     ),
-    14 => 
+    15 => 
+    array (
+      'tag' => 'MINTU',
+      'name' => 'MINTU',
+    ),
+    16 => 
     array (
       'tag' => 'PSIKOLOGI',
       'name' => 'PSIKOLOGI',
     ),
-    15 => 
+    17 => 
+    array (
+      'tag' => 'SAHLI',
+      'name' => 'SAHLI',
+    ),
+    18 => 
     array (
       'tag' => 'SATINDUK',
       'name' => 'SATINDUK',
     ),
-    16 => 
+    19 => 
     array (
       'tag' => 'SATINTELTEK',
       'name' => 'SATINTELTEK',
     ),
-    17 => 
+    20 => 
     array (
       'tag' => 'SATINTEL',
       'name' => 'SATINTEL',
     ),
-    18 => 
+    21 => 
     array (
-      'tag' => 'SEKRETARIAT',
-      'name' => 'SEKRETARIAT',
+      'tag' => 'SES-BAIS',
+      'name' => 'SES BAIS',
+    ),
+    22 => 
+    array (
+      'tag' => 'SMIN-KAWAKA',
+      'name' => 'SMIN KA/WAKA',
     ),
   ),
   'kategori_tamu' => 
@@ -139,7 +160,7 @@
       'tag' => 'WNA',
       'name' => 'WNA',
     ),
-     6 => 
+    6 => 
     array (
       'tag' => 'TAMU-KHUSUS',
       'name' => 'TAMU KHUSUS',
@@ -213,13 +234,13 @@
       'name' => 'ID MAHASISWA',
       'taxonomy' => 'LAINYA',
     ),
-     11 => 
+    11 => 
     array (
       'tag' => 'KTA-TNI',
       'name' => 'KTA UNTUK TNI',
       'taxonomy' => 'LAINYA',
     ),
-     12 => 
+    12 => 
     array (
       'tag' => 'KTA-POLRI',
       'name' => 'KTA UNTUK POLRI',
@@ -232,5 +253,4 @@
       'taxonomy' => 'LAINYA',
     ),
   ),
- 
 );

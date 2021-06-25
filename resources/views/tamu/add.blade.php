@@ -101,7 +101,7 @@
 
 
                     <div v-if="tamu_khusus==true">
-                       
+
                         <div class="form-group" >
                         <label>JENIS TAMU KHUSUS</label>
                         <select class="form-control" name="jenis_tamu_khusus" v-model="jenis_tamu_khusus">
@@ -185,7 +185,7 @@
 
                         <div class="col-md-6">
 
-                                
+
                             <div class="form-group">
                                 <label for="">Tanggal Lahir</label>
                                 <input  name="tanggal_lahir" type="date" v-model="tanggal_lahir" class="form-control">

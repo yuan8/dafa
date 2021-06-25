@@ -115,13 +115,9 @@ dd('ss');
                         <label>Keterangan Keperluan*</label>
                         <textarea name="keperluan" class="form-control" v-model="keperluan"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label>No. ID Gate</label>
-                        <textarea name="idgate" class="form-control" v-model="idgate"></textarea>
-                    </div>
                 </div>
                 <div class="col-md-9">
-                     <p><b>IDENTITAS TAMU</b></p>
+                     <p><b>IDENTITASS TAMU</b></p>
                      <hr>
 
                     <div class="row">

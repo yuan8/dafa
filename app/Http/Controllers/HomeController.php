@@ -1223,6 +1223,7 @@ class HomeController extends Controller
             ind.path_identity,
             ind.berlaku_hingga,
             v.id as id_tamu,
+            v.id_gate,
             v.nama,
             v.alamat,
             v.foto,

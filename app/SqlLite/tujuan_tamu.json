@@ -52,12 +52,24 @@
         "name": "INFODATA"
     },
     {
+        "tag": "INSPEKTORAT",
+        "name": "INSPEKTORAT"
+    },
+    {
         "tag": "KABAIS",
         "name": "KABAIS"
     },
     {
+        "tag": "MINTU",
+        "name": "MINTU"
+    },
+    {
         "tag": "PSIKOLOGI",
         "name": "PSIKOLOGI"
+    },
+    {
+        "tag": "SAHLI",
+        "name": "SAHLI"
     },
     {
         "tag": "SATINDUK",
@@ -72,7 +84,11 @@
         "name": "SATINTEL"
     },
     {
-        "tag": "SEKRETARIAT",
-        "name": "SEKRETARIAT"
+        "tag": "SES-BAIS",
+        "name": "SES BAIS"
+    },
+    {
+        "tag": "SMIN-KAWAKA",
+        "name": "SMIN KA\/WAKA"
     }
 ]
