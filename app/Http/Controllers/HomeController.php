@@ -356,6 +356,8 @@ class HomeController extends Controller
         $old_foto=null;
         $data=[];
 
+
+
         $U=Auth::User();
         $day_start=Carbon::now()->startOfDay();
 
@@ -454,10 +456,12 @@ class HomeController extends Controller
         }
 
 
+
         if($next_proccess){
 
         }else{
             $data['old_foto']=$old_foto;
+            $data['nomer_kartu']=$request->nomer_kartu;
             $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
             Alert::error('Gagal',$valid->errors()->first());
             $mergeInput=array_merge($data,$data_log);
@@ -480,6 +484,7 @@ class HomeController extends Controller
         if($check_identity){
             if($check_identity->nomer_telpon!=$data['nomer_telpon']){
                 $data['old_foto']=$old_foto;
+                $data['nomer_kartu']=$request->nomer_kartu;
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 Alert::error('Gagal','Identitas Tamu telah digunakan untuk tamu '.$check_identity->nama);
                 $mergeInput=array_merge($data,$data_log);
@@ -499,6 +504,7 @@ class HomeController extends Controller
                 Alert::error('Gagal','Nomer Telpon digunakan untuk tamu '.$check_tamu->nama.' , Jika tamu ini sama silahkan melakukan editing terlebih dahulu pada menu master data tamu untuk Nomer Telpon / Nama');
 
                 $data['old_foto']=$old_foto;
+                $data['nomer_kartu']=$request->nomer_kartu;
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 $mergeInput=array_merge($data,$data_log);
                 return back()->withInput($mergeInput);
@@ -507,6 +513,7 @@ class HomeController extends Controller
             if(!$check_tamu->izin_akses_masuk){
                  Alert::error('Tamu Tidak Diperbolehkan Masuk',$check_tamu->keterangan_tolak_izin_akses);
                 $data['old_foto']=$old_foto;
+                $data['nomer_kartu']=$request->nomer_kartu;
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 $mergeInput=array_merge($data,$data_log);
                 return back()->withInput($mergeInput);
@@ -521,6 +528,7 @@ class HomeController extends Controller
                         Alert::error('Gagal','Nomer Pada Jenis Identitas '.$data_log['jenis_identity'].' tamu '.$check_tamu->nama.'  Tidak Sesuai, Mohon melakukan editing pada menu master data tamu jika memang ada perubahan nomer identitas');
 
                         $data['old_foto']=$old_foto;
+                        $data['nomer_kartu']=$request->nomer_kartu;
                         $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                         $mergeInput=array_merge($data,$data_log);
                         return back()->withInput($mergeInput);
@@ -542,6 +550,7 @@ class HomeController extends Controller
             if($check_log){
                  Alert::error('Gagal',$check_tamu->nama.' Belum meyesaikan kunjungan pada '.$check_log->gate_checkin);
                 $data['old_foto']=$old_foto;
+                $data['nomer_kartu']=$request->nomer_kartu;
 
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 $mergeInput=array_merge($data,$data_log);
@@ -591,6 +600,7 @@ class HomeController extends Controller
 
                 Alert::error('Gagal',$check_tamu->nama.' File Identitas Tidak tersedia');
                 $data['old_foto']=$old_foto;
+                $data['nomer_kartu']=$request->nomer_kartu;
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 $mergeInput=array_merge($data,$data_log);
                 return back()->withInput($mergeInput);
@@ -607,11 +617,26 @@ class HomeController extends Controller
 
         ])->update($id_in);
 
+
+        $chek_nomer_kartu=DB::table('log_tamu')->where('gate_checkout',null)
+        ->where('nomer_kartu',$request->nomer_kartu)->first();
+
+        if($chek_nomer_kartu){
+             $data['old_foto']=$old_foto;
+            $data['nomer_kartu']=$request->nomer_kartu;
+            $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+            Alert::error('Gagal','Nomer Kartu '.$request->nomer_kartu.' Terlah Digunakan Sebelumnya');
+            $mergeInput=array_merge($data,$data_log);
+            return back()->withInput($mergeInput);
+
+        }
+
          $insert_log= DB::table('log_tamu')->insert([
             'gate_checkin'=>$day_start,
             'jenis_id'=>$request->jenis_identity,
             'gate_handle'=>$U->id,
             'gate_checkin'=>$day_start,
+            'nomer_kartu'=>$request->nomer_kartu,
             'tamu_id'=>$check_tamu->id,
             'keperluan'=>$request->keperluan,
             'instansi'=>$request->instansi,

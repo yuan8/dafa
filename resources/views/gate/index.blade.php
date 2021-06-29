@@ -60,7 +60,7 @@
             <thead>
                 <tr class="text-center">
                     <th>NO.</th>
-                    <th>ID GATE</th>
+                    <th>NOMER KARTU</th>
                     {{-- <th>FOTO</th> --}}
                     <th>NAMA</th>
                     <th>NO. TELEPON</th>
@@ -86,7 +86,8 @@
 
                 <tr class="vis_">
                     <td class="text-center">{{$key+1}}</td>
-                    <td class="text-center"></td>
+                    <td>{{$v->nomer_kartu}}</td>
+                    {{-- <td class="text-center"></td> --}}
                     {{-- <td class="text-center">
                         <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td> --}}
