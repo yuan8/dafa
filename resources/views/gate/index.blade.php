@@ -44,7 +44,7 @@
         <hr>
         <div class="row">
             <div class="col-md-5">
-                @can('is_admin')
+                @can('provos_and_gate')
                 <div class="form-group">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{$req->q}}">
                 </div>
