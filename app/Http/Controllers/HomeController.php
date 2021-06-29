@@ -393,12 +393,12 @@ class HomeController extends Controller
 
         $valid=Validator::make($request->all(),[
             'no_identity'=>'required',
-            'jenis_kelamin'=>'required|numeric',
+            // 'jenis_kelamin'=>'required|numeric',
             'nama'=>'required',
-            'instansi'=>'required|string',
+            // 'instansi'=>'required|string',
             'nomer_telpon'=>'required|min:10',
-            'kategori_tamu'=>'required|string',
-            'keperluan'=>'required|string',
+            // 'kategori_tamu'=>'required|string',
+            // 'keperluan'=>'required|string',
             'tujuan'=>'required|array',
             'jenis_identity'=>'required|in:'.implode(',', $jenis_identity->toArray()),
         ]);
@@ -502,7 +502,7 @@ class HomeController extends Controller
 
         if($check_tamu){
             if(strtoupper(trim($check_tamu->nama))!=strtoupper(trim($data['nama']))){
-                Alert::error('Gagal','Nomer Telpon digunakan untuk tamu '.$check_tamu->nama.' , Jika tamu ini sama silahkan melakukan editing terlebih dahulu pada menu master data tamu untuk Nomer Telpon / Nama');
+                Alert::error('Gagal','Nomor Telpon digunakan untuk tamu '.$check_tamu->nama.' , Jika tamu ini sama silahkan melakukan editing terlebih dahulu pada menu master data tamu untuk Nomor Telepon / Nama');
 
                 $data['old_foto']=$old_foto;
                 $data['nomer_kartu']=$request->nomer_kartu;
@@ -526,7 +526,7 @@ class HomeController extends Controller
                 $chek_jenis_id_tamu=DB::table('identity_tamu as idt')->where('tamu_id',$check_tamu->id)->where('jenis_identity',$data_log['jenis_identity'])->first();
                 if($chek_jenis_id_tamu){
                     if($chek_jenis_id_tamu->identity_number!=$data_log['no_identity']){
-                        Alert::error('Gagal','Nomer Pada Jenis Identitas '.$data_log['jenis_identity'].' tamu '.$check_tamu->nama.'  Tidak Sesuai, Mohon melakukan editing pada menu master data tamu jika memang ada perubahan nomer identitas');
+                        Alert::error('Gagal','Nomor Pada Jenis Identitas '.$data_log['jenis_identity'].' tamu '.$check_tamu->nama.'  Tidak Sesuai, Mohon melakukan editing pada menu master data tamu jika memang ada perubahan nomor identitas');
 
                         $data['old_foto']=$old_foto;
                         $data['nomer_kartu']=$request->nomer_kartu;

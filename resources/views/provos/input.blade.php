@@ -169,7 +169,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class=form-group>
-                                <label>NOMER KARTU</label>
+                                <label>NOMOR KARTU</label>
                                 <input type="number" class="form-control" name="nomer_kartu" v-model="nomer_kartu">
                             </div>
                             <div class="form-group">
@@ -526,7 +526,7 @@
                 window.bc_provos.postMessage(vinput.$data);
 
 
-                if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.kategori_tamu!=null)){
+                if((this.nomer_telpon.length>11) && (this.no_identity.length>3) && (this.nama.length>3) ){
                     this.btn_check=true;
 
                 }else{

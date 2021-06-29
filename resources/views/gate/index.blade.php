@@ -86,7 +86,7 @@
 
                 <tr class="vis_">
                     <td class="text-center">{{$key+1}}</td>
-                    <td>{{$v->nomer_kartu}}</td>
+                    <td class="text-center">{{$v->nomer_kartu}}</td>
                     {{-- <td class="text-center"></td> --}}
                     {{-- <td class="text-center">
                         <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">

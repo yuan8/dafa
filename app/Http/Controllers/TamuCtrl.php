@@ -111,7 +111,7 @@ class TamuCtrl extends Controller
                 ])->first();
 
                 if($no){
-                    Alert::error('Gagal','Nomer telepon Telah Digunakan sebelumnya');
+                    Alert::error('Gagal','Nomor telepon Telah Digunakan sebelumnya');
                     return back();
                 }
 
