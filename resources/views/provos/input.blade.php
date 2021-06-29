@@ -159,10 +159,6 @@
                         <label>Keterangan Keperluan*</label>
                         <textarea name="keperluan"  class="form-control" v-model="keperluan"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="">ID Gate</label>
-                        <input name="id_gate" value="" required type="text" v-model="id_gate" class="form-control">
-                    </div>
                 </div>
                 <div class="col-md-9">
                      <p><b>IDENTITAS TAMU</b></p>
@@ -237,7 +233,6 @@
                                 <label for="">Alamat</label>
                             <textarea name="alamat"  v-model="alamat" class="form-control" id="" cols="30" rows="4"></textarea>
                             </div>
-
                         </div>
 
                     </div>

@@ -117,7 +117,7 @@ dd('ss');
                     </div>
                 </div>
                 <div class="col-md-9">
-                     <p><b>IDENTITASS TAMU</b></p>
+                     <p><b>IDENTITAS TAMU</b></p>
                      <hr>
 
                     <div class="row">

@@ -21,7 +21,7 @@
                 <input type="hidden" name="date" v-model="active_h">
             </div>
 
-           @can('provos_and_gate')
+           @can('is_admin')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
                 <input type="date" name="start_date" class="form-control" v-model="start_date">
                 <input type="date" name="end_date" v-model="end_date" class="form-control">
@@ -86,7 +86,7 @@
 
                 <tr class="vis_">
                     <td class="text-center">{{$key+1}}</td>
-                    <td class="text-center"></td>
+                    <td class="text-center">{{$key+1}}</td>
                     {{-- <td class="text-center">
                         <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td> --}}

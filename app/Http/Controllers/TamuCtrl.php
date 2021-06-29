@@ -96,8 +96,8 @@ class TamuCtrl extends Controller
                     'keperluan'=>'required|string',
                     'instansi'=>'required|string',
                     'tujuan'=>'required|array',
-                    'req_id_def'=>'required|string',
-                    'id_gate' => 'required|string'
+                    'req_id_def'=>'required|string'
+
                 ]);
 
                 if($valid->fails()){
@@ -111,20 +111,9 @@ class TamuCtrl extends Controller
                 ])->first();
 
                 if($no){
-                    Alert::error('Gagal','Nomor telepon Telah Digunakan sebelumnya');
+                    Alert::error('Gagal','Nomer telepon Telah Digunakan sebelumnya');
                     return back();
                 }
-
-                $no=DB::table('tamu')->where([
-                    ['id','!=',$tamu->id],
-                    ['id_gate','=',$request->id_gate],
-                ])->first();
-
-                if($no){
-                    Alert::error('Gagal','Nomer ID Gate Telah Digunakan sebelumnya');
-                    return back();
-                }
-
 
                 $data['def_keperluan']=$request->keperluan;
                 $data['def_tujuan']=$request->tujuan;
