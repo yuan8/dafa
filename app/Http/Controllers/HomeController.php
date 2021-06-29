@@ -556,12 +556,12 @@ class HomeController extends Controller
             $data['def_tujuan']=$data_log['tujuan'];
 
             $id_tamu=DB::table('tamu')->insertGetId($data);
-            $check_tamu=(object)['id'=>$id_tamu];
+            $check_tamu=(object)['id'=>$id_tamu,'nama'=>$data['nama']];
         }
 
 
         if($path_foto){
-            if(strpos($path_foto, '/foto-cache/')!==true){
+            if(strpos($path_foto, '/foto-cache/')===true){
                 $path_foto=str_replace('/storage', '/',$path_foto);
                 $path_save='identity/id-'.$check_tamu->id.'/foto/def-cam-profile.png';
                 Storage::move('public/'.$path_foto,'public/'.$path_save);
@@ -611,7 +611,7 @@ class HomeController extends Controller
             'gate_checkin'=>$day_start,
             'jenis_id'=>$request->jenis_identity,
             'gate_handle'=>$U->id,
-            'gate_checkin'=>$date_start,
+            'gate_checkin'=>$day_start,
             'tamu_id'=>$check_tamu->id,
             'keperluan'=>$request->keperluan,
             'instansi'=>$request->instansi,
@@ -620,7 +620,7 @@ class HomeController extends Controller
         ]);
 
          if($insert_log){
-            Alert::success('Berhasil','Tamu '.$check_tamu->tamu.' berhasil diinput');
+            Alert::success('Berhasil','Tamu '.$check_tamu->nama.' berhasil diinput');
             return back();
          }
 
@@ -1771,13 +1771,10 @@ class HomeController extends Controller
 
         $sheet->setAutoFilter(static::nta(1).($start-1).':'.static::nta(count($HEAD)).($key_last));
 
-
-
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="'. urlencode($title).'_'.($d1==$d2?$d1:$d1.'-'.$d2).'.xlsx"');
         return $writer->save('php://output');
-
 
 
     }
