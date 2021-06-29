@@ -21,7 +21,7 @@
                 <input type="hidden" name="date" v-model="active_h">
             </div>
 
-           @can('is_admin')
+           @can('provos_and_gate')
              <div class="input-group" style="margin-bottom: 10px; margin-top: 10px" >
                 <input type="date" name="start_date" class="form-control" v-model="start_date">
                 <input type="date" name="end_date" v-model="end_date" class="form-control">
@@ -60,8 +60,7 @@
             <thead>
                 <tr class="text-center">
                     <th>NO.</th>
-                    <th>ID GATE</th>
-                    {{--                     <th>NOMER KARTU</th>
+                    <th>NOMER KARTU</th>
                     {{-- <th>FOTO</th> --}}
                     <th>NAMA</th>
                     <th>NO. TELEPON</th>
@@ -89,7 +88,8 @@
                     <td class="text-center">{{$key+1}}</td>
                     <td>{{$v->nomer_kartu}}</td>
                     {{-- <td class="text-center"></td> --}}
-how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
+                    {{-- <td class="text-center">
+                        <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;">
                     </td> --}}
                     <td>
                         <p>
@@ -211,11 +211,9 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
     var count=1;
     var element='<tr class="vis_ animate__animated  animate__flash"><td class="text-center"> <img src="http://localhost/daftar/storage/VISITOR/1/foto.jpg" alt="" style="max-width:80px;"></td><td>NGABALIN</td><td>+62877-7107-9782</td><td>ANU</td><td>KTP</td><td>3522-2627-0495-0001</td><td></td></tr>'
     +'<tr class="vis_ animate__animated animate__flash"><td colspan="7"><div class="cd-horizontal-timeline loaded"><div class="timeline"><div class="events-wrapper"><div class="events" style="width: 1800px;"><ol><li><a href="#0" data-date="16/01/2017" class="older-event" style="left: 120px;">Provos 16 Jan 2019 12:03 am</a></li><li><a href="#0" data-date="28/02/2017" style="left: 400px;" class="older-event">Gate 16 Jan 2019 12:03 am</a></li><li><a href="#0" data-date="20/04/2017" style="left: 800px;" class="selected">20 Mar</a></li></ol> <span class="filling-line" aria-hidden="true" style="transform: scaleX(0.281506);"></span></div></div></div></div></td></tr>';
-
     function add(){
         var dom=element.replace('NGABALIN','NGABALIN '+count);
         $('#list-visitor tbody').prepend(dom);
-
     }
     var state='{{$req->check??'PROVOS'}}';
     @if(config('web_config.broadcast_network'))
@@ -223,35 +221,23 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
         window.Echo.channel('dh_provos-channel')
         .listen('.new-check-in', (e) => {
             window.add();
-
         });
     }
-
     @endif
-
-
     function phone_call(name,phone){
         $.post('{{route('generate.qr.phone_call')}}',{nama:name,nomer_telpon:phone},function(res){
             $('#modal-id-phone-call').html(res);
             $('#modal-id-phone-call').modal();
         });
     }
-
     function batalkan(id){
         $.get('{{route('batalkan.kunjungan')}}/'+id,{},function(res){
             $('#modal-t-danger').html(res);
             $('#modal-t-danger').modal();
-
         });
     }
-
-
 </script>
 <script type="text/javascript">
-
-
-
-
     var venv=new Vue({
         el:'#venv',
         data:{
@@ -264,7 +250,6 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
             start_date:'{{$date_start}}',
             end_date:'{{$date_end}}',
             rekap:<?=json_encode($rekap_tamu)?>,
-
         },
         methods:{
             change_env:function(d){
@@ -274,7 +259,6 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
             submit_form:function(){
                  setTimeout(function(){
                 $('#form_env').submit();
-
                 },500);
             }
         },
@@ -282,7 +266,6 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
             status:function(v,old){
                 setTimeout(function(){
                 $('#form_env').submit();
-
                 },500);
             },
             start_date:function(){
@@ -291,11 +274,7 @@ how_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" one
             end_date:function(){
                 this.submit_form();
             }
-
-
         }
-
     })
-
 </script>
 @stop
