@@ -23,6 +23,8 @@ Route::post('extact-data-indentity',[App\Http\Controllers\API\IdentityExtractCtr
 
 Route::post('get-identity',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'get_identity'])->name('api.get.identity');
 
+Route::post('cari-tamu-recorded',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'cari_tamu'])->name('api.get.cari_tamu');
+
 
 
 Route::post('match-data-indentity',[App\Http\Controllers\API\IdentityExtractCtrl::class, 'extract'])->name('api.identity.match');

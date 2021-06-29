@@ -10,11 +10,11 @@ dd('ss');
 <script type="application/javascript" src="{{asset('tparty/bower_components/webcamjs/webcam.js') }}"></script>
    <script type="application/javascript">
         function errFoto(d){
-            d.src='{{asset('tamu-def.png') }}'
+            d.src='{{asset('tamu-def.png')}}'
         }
     </script>
 <div  id="picIdInput">
-    <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;  " >
+    <div  v-if="display" class="col-md-12" style="padding:10px; background:#ddd; z-index: 9999; margin-top: 30px;  position: fixed; max-width:340px; right:0; top:0; border-radius: 10px;" >
        <div class="box">
            <div class="box-body">
                 <div class="col-md-12">
@@ -666,9 +666,9 @@ dd('ss');
                 setTimeout(function(){
                     window.Webcam.set({
                       width: 320,
-                    height: 240,
+                        height: 240,
 
-                    dest_width: 320,
+                        dest_width: 320,
                     dest_height: 240,
 
                     crop_width: 320,
@@ -784,4 +784,3 @@ dd('ss');
       })
   </script>
 @stop
-

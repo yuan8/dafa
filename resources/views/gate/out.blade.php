@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<H4><b>TAMBAH DATA TAMU</b></H4>
+<H4><b>TAMU KELUAR</b> Nomer Kartu : {{$data->nomer_kartu}}</H4>
 <div class="btn-group" id="action_input">
     <a href="{{ route('g.receiver',['fingerprint'=>$fingerprint ])}}" onclick="setTimeout(function(){vinput.bc; console.log('bc_run')},3000)" target="_blank" class="btn btn-primary">HALAMAN LAYAR TAMU</a>
   {{--   <button v-if="env=='KTP'" @click="ktp" class="btn btn-primary bg-info">EXTRASI DATA KTP</button>

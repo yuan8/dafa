@@ -14,6 +14,53 @@ class IdentityExtractCtrl extends Controller
 {
     //
 
+    public function cari_tamu(Request $request){
+        $where=[
+            't.nama',
+            't.nomer_telpon',
+            't.alamat',
+            't.pekerjaan',
+            't.golongan_darah',
+            'idt.identity_number',
+            'idt.jenis_identity',
+            't.def_instansi',
+            't.def_keperluan',
+            't.def_kategori_tamu',
+
+        ];
+
+        $whereRaw='1=1';
+        if($request->q){
+            foreach ($where as $key => $w) {
+                if($w=='t.nomer_telpon'){
+                    $where[$key]="replace(replace(".$w.",'+',''),'-','')"." like '%".str_replace(['+','-'], '',$request->q)."%'";
+
+                }else if($w=='idt.identity_number'){
+                    $where[$key]="replace(replace(".$w.",'+',''),'-','')"." like '%".str_replace(['+','-'], '',$request->q)."%'";
+                }else{
+                 $where[$key]=$w." like '%".$request->q."%'";
+
+                }
+
+            }
+        }
+
+        $now=Carbon::now()->endOfDay();
+        $data=DB::table('tamu as t')
+        ->leftJoin('identity_tamu as idt','t.id','=','idt.tamu_id')
+        ->leftJoin('log_tamu as log',[
+            ['log.tamu_id','=','t.id'],
+            ['log.gate_checkout','!=',DB::raw('null')],
+            ['log.gate_checkin','<=',DB::raw("'".$now."'")],
+        ])
+        ->whereRaw($request->q?'('.implode(') or (', $where).')':'1=1')
+        ->groupBy('t.id')
+        ->orderBy('log.gate_checkin','desc')
+        ->selectRaw('t.*,log.id as id_log_in')->get();
+
+        return $data??[];
+    }
+
     public function get_identity(Request $request){
         // $valid=Validator::make($request->all(),[
         //     'nomer_telpon'=>'required|string|min:8',

@@ -168,10 +168,6 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class=form-group>
-                                <label>NOMER KARTU</label>
-                                <input type="number" class="form-control" name="nomer_kartu" v-model="nomer_kartu">
-                            </div>
                             <div class="form-group">
                                 <label for="">Jenis Identitas*</label>
                                 <select name="jenis_identity" required id="" v-model="jenis_identity"  class="form-control">
@@ -321,7 +317,6 @@
             nama: '{{old('nama')}}',
             foto:'{{old('old_foto')??url('tamu-def.png')}}',
             foto_file:null,
-            nomer_kartu:{{old('nomer_kartu')??1}},
             foto_file_cam:false,
             foto_def:null,
             tempat_lahir: '{{old('tempat_lahir')}}',

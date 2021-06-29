@@ -36,7 +36,6 @@
 				'SIM B',
 				'LAINYA'
 			]
-
 		},
 		method:{
 				
