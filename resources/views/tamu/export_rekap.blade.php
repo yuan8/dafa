@@ -17,14 +17,14 @@
 (
 	($status=='GATE_CHECKOUT')?
 	'KELUAR':'')}} <span><p>{{implode(', ',$tujuan)}}</p></span> </h3>
-	<p class="text-center">Waktu Export : {{Carbon\Carbon::now()->format('d/m/Y h:i a')}}</p>
+	<p class="text-center">TANGGAL CETAK : {{Carbon\Carbon::now()->format('d/m/Y h:i a')}}</p>
 
-<p class="text-center">Kunjungan {{$d1==$d2?$d1:$d1.' - '.$d2}}</p>
+<p class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KUNJUNGAN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{$d1==$d2?$d1:$d1.' - '.$d2}}</p>
 <hr>
 	<table class="table-bordered table tdata" >
 
 		<thead>
-                <tr>
+                <tr class="text-center">
                     <th>NO</th>
                    @if($req->jenis_table=='LENGKAP')
                     <th >FOTO</th>
@@ -58,7 +58,7 @@
             		$foto_def=json_encode(file_get_contents('tamu-def.png'));
             	@endphp
                 @foreach($data as  $key=>$v)
-                 <tr class="{{$v->status_out?'bg-warning':'bg-success'}}">
+                 <tr class="{{$v->status_out?'bg-warning':'bg-success'}} text-center">
                  	<td>{{$key+1}}</td>
                  	@php
                  		$foto='';

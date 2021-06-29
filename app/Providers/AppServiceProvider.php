@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $event->menu->add([
-                'text' => 'Form Checkout Data Tamu',
+                'text' => 'Checkout Data Tamu',
                 'url' => route('g.index'),
                 'can'=>'is_provos',
                 'icon'=>'fas fa-list-alt'

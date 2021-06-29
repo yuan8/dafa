@@ -259,7 +259,7 @@ class HomeController extends Controller
                                 }
                        }
                }else{
-                 Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
+                 Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
                  return back()->withInput();
 
                }
@@ -409,7 +409,7 @@ class HomeController extends Controller
         }
 
 
-        
+
 
         $data_log=[
             'gate_checkin'=>$day_start,
@@ -425,7 +425,7 @@ class HomeController extends Controller
             'tujuan'=>json_encode($request->tujuan??[]),
         ];
 
-        
+
 
         $data['nama']=$request->nama;
         if($request->alamat){
@@ -468,7 +468,7 @@ class HomeController extends Controller
         $check_tamu=DB::table('tamu as ind')
             ->where('nomer_telpon','like',"%".$request->nomer_telpon.'%')
             ->first();
-        
+
 
         $check_identity=DB::table('identity_tamu as idt')
         ->leftJoin('tamu as t','t.nomer_telpon','=',DB::raw("'".$data['nomer_telpon']."'"))
@@ -486,7 +486,7 @@ class HomeController extends Controller
                 return back()->withInput($mergeInput);
             }
 
-           
+
 
         }else{
 
@@ -497,7 +497,7 @@ class HomeController extends Controller
         if($check_tamu){
             if(strtoupper(trim($check_tamu->nama))!=strtoupper(trim($data['nama']))){
                 Alert::error('Gagal','Nomer Telpon digunakan untuk tamu '.$check_tamu->nama.' , Jika tamu ini sama silahkan melakukan editing terlebih dahulu pada menu master data tamu untuk Nomer Telpon / Nama');
-                
+
                 $data['old_foto']=$old_foto;
                 $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
                 $mergeInput=array_merge($data,$data_log);
@@ -528,7 +528,7 @@ class HomeController extends Controller
 
                     }
                 }else{
-                    $insert_identity=true;   
+                    $insert_identity=true;
                 }
             }
 
@@ -887,7 +887,7 @@ class HomeController extends Controller
 
         if($request->start_date){
             $day=Carbon::parse($request->start_date)->startOfDay();
-            $day_last=Carbon::parse($request->end_date)->startOfDay();
+            $day_last=Carbon::parse($request->end_date)->endOfDay();
         }
 
         $where=[];
@@ -1464,7 +1464,7 @@ class HomeController extends Controller
                                 }
                        }
                }else{
-                 Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
+                 Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
                  return back()->withInput();
 
                }

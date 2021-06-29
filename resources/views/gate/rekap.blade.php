@@ -28,7 +28,7 @@
 
            <b>DATA TAMU  : <span>
            {{--  <div class="btn-group">
-            <button type="button" class="btn btn-primary" >@{{h}}</button>                
+            <button type="button" class="btn btn-primary" >@{{h}}</button>
             </div> --}}
 
             <div class="input-group" >
@@ -38,7 +38,7 @@
 
            {{--  @can('provos_and_gate')
             <div class="btn-group">
-            	
+
                 @can('is_admin')
             	<button type="button" v-on:click="active_date=h1" v-bind:class="active_date==h1?'btn btn-primary':'btn btn-default'" >@{{h1}}</button>
             	<button type="button" v-on:click="active_date=h2" v-bind:class="active_date==h2?'btn btn-primary':'btn btn-default'" >@{{h2}}</button>
@@ -136,7 +136,7 @@
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
-                <tr>
+                <tr class="text-center">
                     <th>NO</th>
                     <th v-if="jenis_table=='LENGKAP'">FOTO</th>
                     <th v-if="jenis_table=='LENGKAP'">NO IDENTITAS</th>
@@ -153,9 +153,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($data as  $key=>$v)
-                 <tr class="{{$v->status_out?'bg-warning':'bg-success'}}">
-                 	<td>{{$key+1}}</td>
+                @foreach($data as $key=>$v)
+                 <tr class="{{$v->status_out?'bg-warning':'bg-success'}} text-center">
+                 	<td class="text-center">{{$key+1}}</td>
                  	<td  v-if="jenis_table=='LENGKAP'">  <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;"></td>
                  	<td  v-if="jenis_table=='LENGKAP'">{{$v->identity_number}} </td>
 
