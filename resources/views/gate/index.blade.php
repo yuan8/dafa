@@ -60,7 +60,7 @@
             <thead>
                 <tr class="text-center">
                     <th>NO.</th>
-                    <th>NOMER KARTU</th>
+                    <th>NOMOR KARTU</th>
                     {{-- <th>FOTO</th> --}}
                     <th>NAMA</th>
                     <th>NO. TELEPON</th>
