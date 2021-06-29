@@ -318,7 +318,8 @@ class HomeController extends Controller
             log.keperluan,
             log.tujuan,
             log.kategori_tamu,
-            log.instansi
+            log.instansi,
+            log.nomer_kartu
 
 
         ")
