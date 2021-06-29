@@ -13,6 +13,7 @@ use CV;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Dompdf\Dompdf;
+
 class HomeController extends Controller
 {
     /**
@@ -149,10 +150,14 @@ class HomeController extends Controller
                     $data['golongan_darah']=$request->golongan_darah;
                 }
 
+
                 $path_foto=null;
                  if($request->foto_file){
                     $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
+
                     $path_foto=Storage::url($path_foto);
+                    $old_foto='/^data:image\/(\w+);base64,/'.base64_decode($request->foto_file);
+
                 }else if($request->file_foto_cam){
 
                     if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
@@ -165,6 +170,7 @@ class HomeController extends Controller
                         $path_foto='/storage/indentity/id-'.
                             ($tamu?$tamu->tamu_id:'cache').'/foto/def-cam-profile.png';
 
+                        $old_foto='/^data:image\/(\w+);base64,/'.base64_decode($request->file_foto_cam);
 
                     }
                 }
@@ -285,7 +291,7 @@ class HomeController extends Controller
         $day=Carbon::now()->addDays(-3)->startOfDay();
         $data_record=DB::table('log_tamu as log')
         ->join('tamu as v','v.id','=','log.tamu_id')
-        ->join('identity_tamu as ind',
+        ->leftJoin('identity_tamu as ind',
         [
             ['ind.tamu_id','=','log.tamu_id'],
             ['ind.jenis_identity','=','log.jenis_id']
@@ -343,12 +349,293 @@ class HomeController extends Controller
 
 
 
+
     public function provos_submit(Request $request){
+        $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
+        $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+        $old_foto=null;
+        $data=[];
+
+        $U=Auth::User();
+        $day_start=Carbon::now()->startOfDay();
+
+        $next_proccess=false;
+
+        $path_foto=null;
+        if($request->foto_file){
+                $path_foto=Storage::put('public/foto-cache/'.Carbon::now()->format('d-m-y'),$request->foto_file);
+                $path_foto=Storage::url($path_foto);
+                $old_foto=asset($path_foto);
+
+        }else if($request->file_foto_cam!='false'){
+            if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                    $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+                    $data_foto =base64_decode($data_foto);
+                    $path_con='foto-cache/'.Carbon::now()->format('d-m-y').'/'.Carbon::now()->format('d-m-y-h-i-s-a').'_'.$U->id.'_'.rand(0,1000).'.png';
+
+                    $path_foto=Storage::put('public/'.$path_con,$data_foto);
+                    $path_foto='/storage/'.$path_con;
+                    $old_foto=asset($path_foto);
+            }
+
+        }else if($request->foto){
+                $path_foto=str_replace(url('storage'), '/storage', $request->foto);
+                $old_foto=asset($path_foto);
+        }
+
+        $insert_identity=false;
+
+
+
+
+        $valid=Validator::make($request->all(),[
+            'no_identity'=>'required',
+            'jenis_kelamin'=>'required|numeric',
+            'nama'=>'required',
+            'instansi'=>'required|string',
+            'nomer_telpon'=>'required|min:10',
+            'kategori_tamu'=>'required|string',
+            'keperluan'=>'required|string',
+            'tujuan'=>'required|array',
+            'jenis_identity'=>'required|in:'.implode(',', $jenis_identity->toArray()),
+        ]);
+
+
+        if($valid->fails()){
+            $next_proccess=false;
+
+        }else{
+            $next_proccess=true;
+        }
+
+
+        
+
+        $data_log=[
+            'gate_checkin'=>$day_start,
+            'jenis_id'=>$request->jenis_identity,
+            'jenis_identity'=>$request->jenis_identity,
+
+            'no_identity'=>$request->no_identity,
+            'gate_handle'=>$U->id,
+            'tamu_id'=>null,
+            'keperluan'=>$request->keperluan,
+            'instansi'=>$request->instansi,
+            'kategori_tamu'=>$request->kategori_tamu,
+            'tujuan'=>json_encode($request->tujuan??[]),
+        ];
+
+        
+
+        $data['nama']=$request->nama;
+        if($request->alamat){
+            $data['alamat']=$request->alamat;
+        }
+        if($request->nomer_telpon){
+            $data['nomer_telpon']=$request->nomer_telpon;
+        }
+        if($request->jenis_kelamin){
+            $data['jenis_kelamin']=$request->jenis_kelamin;
+        }
+        if($request->tempat_lahir){
+            $data['tempat_lahir']=$request->tempat_lahir;
+        }
+        if($request->tanggal_lahir){
+            $data['tanggal_lahir']=$request->tanggal_lahir;
+        }
+        if($request->agama){
+            $data['agama']=$request->agama;
+        }
+        if($request->pekerjaan){
+            $data['pekerjaan']=$request->pekerjaan;
+        }
+        if($request->golongan_darah){
+            $data['golongan_darah']=$request->golongan_darah;
+        }
+
+
+        if($next_proccess){
+
+        }else{
+            $data['old_foto']=$old_foto;
+            $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+            Alert::error('Gagal',$valid->errors()->first());
+            $mergeInput=array_merge($data,$data_log);
+            return back()->withInput($mergeInput);
+        }
+
+
+        $check_tamu=DB::table('tamu as ind')
+            ->where('nomer_telpon','like',"%".$request->nomer_telpon.'%')
+            ->first();
+        
+
+        $check_identity=DB::table('identity_tamu as idt')
+        ->leftJoin('tamu as t','t.nomer_telpon','=',DB::raw("'".$data['nomer_telpon']."'"))
+            ->where([
+                ['idt.jenis_identity','=',$data_log['jenis_id']],
+                ['idt.identity_number','=',$data_log['no_identity']]
+        ])->selectRaw('t.*,idt.jenis_identity,idt.identity_number')->first();
+
+        if($check_identity){
+            if($check_identity->nomer_telpon!=$data['nomer_telpon']){
+                $data['old_foto']=$old_foto;
+                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                Alert::error('Gagal','Identitas Tamu telah digunakan untuk tamu '.$check_identity->nama);
+                $mergeInput=array_merge($data,$data_log);
+                return back()->withInput($mergeInput);
+            }
+
+           
+
+        }else{
+
+
+            $insert_identity=true;
+        }
+
+        if($check_tamu){
+            if(strtoupper(trim($check_tamu->nama))!=strtoupper(trim($data['nama']))){
+                Alert::error('Gagal','Nomer Telpon digunakan untuk tamu '.$check_tamu->nama.' , Jika tamu ini sama silahkan melakukan editing terlebih dahulu pada menu master data tamu untuk Nomer Telpon / Nama');
+                
+                $data['old_foto']=$old_foto;
+                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                $mergeInput=array_merge($data,$data_log);
+                return back()->withInput($mergeInput);
+            }
+
+            if(!$check_tamu->izin_akses_masuk){
+                 Alert::error('Tamu Tidak Diperbolehkan Masuk',$check_tamu->keterangan_tolak_izin_akses);
+                $data['old_foto']=$old_foto;
+                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                $mergeInput=array_merge($data,$data_log);
+                return back()->withInput($mergeInput);
+
+
+            }
+
+            if(!$check_identity){
+                $chek_jenis_id_tamu=DB::table('identity_tamu as idt')->where('tamu_id',$check_tamu->id)->where('jenis_identity',$data_log['jenis_identity'])->first();
+                if($chek_jenis_id_tamu){
+                    if($chek_jenis_id_tamu->identity_number!=$data_log['no_identity']){
+                        Alert::error('Gagal','Nomer Pada Jenis Identitas '.$data_log['jenis_identity'].' tamu '.$check_tamu->nama.'  Tidak Sesuai, Mohon melakukan editing pada menu master data tamu jika memang ada perubahan nomer identitas');
+
+                        $data['old_foto']=$old_foto;
+                        $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                        $mergeInput=array_merge($data,$data_log);
+                        return back()->withInput($mergeInput);
+
+
+                    }
+                }else{
+                    $insert_identity=true;   
+                }
+            }
+
+
+            $check_log=DB::table('log_tamu')
+            ->where('tamu_id',$check_tamu->id)
+            ->where('gate_checkout',null)
+            ->where('gate_checkin','<=',$day_start->endOfDay())
+            ->first();
+
+            if($check_log){
+                 Alert::error('Gagal',$check_tamu->nama.' Belum meyesaikan kunjungan pada '.$check_log->gate_checkin);
+                $data['old_foto']=$old_foto;
+
+                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                $mergeInput=array_merge($data,$data_log);
+                return back()->withInput($mergeInput);
+            }
+
+        }
+
+        if(!$check_tamu){
+            $data['def_keperluan']=$data_log['keperluan'];
+            $data['def_instansi']=$data_log['instansi'];
+            $data['def_tujuan']=$data_log['tujuan'];
+
+            $id_tamu=DB::table('tamu')->insertGetId($data);
+            $check_tamu=(object)['id'=>$id_tamu];
+        }
+
+
+        if($path_foto){
+            if(strpos($path_foto, '/foto-cache/')!==true){
+                $path_foto=str_replace('/storage', '/',$path_foto);
+                $path_save='identity/id-'.$check_tamu->id.'/foto/def-cam-profile.png';
+                Storage::move('public/'.$path_foto,'public/'.$path_save);
+                $path_foto='/storage/'.$path_save;
+            }
+
+            $data['foto']=$path_foto;
+            DB::table('tamu')->where('id',$check_tamu->id)->update($data);
+        }
+
+        $id_in=[
+            'tamu_id'=>$check_tamu->id,
+            'jenis_identity'=>$request->jenis_identity,
+            'identity_number'=>$data_log['no_identity'],
+        ];
+        if($request->berlaku_hingga){
+            $id_in['berlaku_hingga']=$request->berlaku_hingga;
+        }
+
+        if($request->file){
+            $path_identity=Storage::put('public/indentity/id-'.($check_tamu?$check_tamu->id:'cache').'/'.$request->jenis_identity,$request->file);
+            $path_identity=Storage::url($path_identity);
+            $id_in['path_identity']=$path_identity;
+        }else{
+            $check_list_id=DB::table('identity_tamu')->where('tamu_id',$check_tamu->id)->count();
+            if(!$check_list_id){
+
+                Alert::error('Gagal',$check_tamu->nama.' File Identitas Tidak tersedia');
+                $data['old_foto']=$old_foto;
+                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+                $mergeInput=array_merge($data,$data_log);
+                return back()->withInput($mergeInput);
+            }
+        }
+
+        if($insert_identity){
+            DB::table('identity_tamu')->insert($id_in);
+        }
+
+        DB::table('identity_tamu')->where([
+            ['tamu_id','=',$check_tamu->id],
+            ['jenis_identity','=',$request->jenis_identity],
+
+        ])->update($id_in);
+
+         $insert_log= DB::table('log_tamu')->insert([
+            'gate_checkin'=>$day_start,
+            'jenis_id'=>$request->jenis_identity,
+            'gate_handle'=>$U->id,
+            'gate_checkin'=>$date_start,
+            'tamu_id'=>$check_tamu->id,
+            'keperluan'=>$request->keperluan,
+            'instansi'=>$request->instansi,
+            'kategori_tamu'=>$request->kategori_tamu,
+            'tujuan'=>json_encode($request->tujuan??[]),
+        ]);
+
+         if($insert_log){
+            Alert::success('Berhasil','Tamu '.$check_tamu->tamu.' berhasil diinput');
+            return back();
+         }
+
+
+
+    }
+
+
+
+    public function provos_submit_a(Request $request){
         $jenis_identity=collect(config('web_config.identity_list'))->pluck('tag');
 
         $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
 
-
+        $old_foto=null;
 
         $valid=Validator::make($request->all(),[
             'no_identity'=>'required',
@@ -362,11 +649,7 @@ class HomeController extends Controller
 
         ]);
 
-
-
-
         if($valid->fails()){
-
             Alert::error('Error',$valid->errors()->first());
             return back()->withInput();
         }
@@ -419,6 +702,8 @@ class HomeController extends Controller
                 return back();
             }
 
+            $old_foto=url(($check_tamu->foto));
+
             DB::table('tamu')->where('id',$check_tamu->id)->update($data);
             $check_tamu=
                 DB::table('tamu as ind')
@@ -426,40 +711,37 @@ class HomeController extends Controller
                 ->first();
         }
 
-
-
-        if(!$check_tamu){
-            // JSKJSKJSK
-            $token=static::generate_id('T');
-            $data['string_id']=$token;
-
-
-            $id_tamu=DB::table('tamu')->insertGetId($data);
-            $check_tamu=
-                DB::table('tamu as ind')
-                ->where('id',$id_tamu)
-                ->first();
-
-        }
-
           $path_foto=null;
          if($request->foto_file){
-            $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
+            $path_foto=Storage::put('public/foto-cache/'.Carbon::now()->format('d-m-y'),$request->foto_file);
+            // $path_foto=Storage::put('public/indentity/id-'.($tamu?$tamu->tamu_id:'cache').'/foto',$request->foto_file);
+
             $path_foto=Storage::url($path_foto);
-            }else if($request->file_foto_cam){
+            $old_foto=asset($path_foto);
+
+        }else if($request->file_foto_cam){
 
             if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
                 $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
 
-                $data_foto = base64_decode($data_foto);
-                $path_foto=Storage::put('public/indentity/id-'.
-                    ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
+                $data_foto =base64_decode($data_foto);
+                $path_foto=Storage::put('public/foto-cache/'.Carbon::now()->format('d-m-y').'/'.
+                    Carbon::now()->format('d-m-y-h-i-s-a').'.png',$data_foto);
 
-                $path_foto='/storage/indentity/id-'.
-                    ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png';
+                 $path_foto=Storage::url($path_foto);
+                $old_foto=asset($path_foto);
 
+
+                // $path_foto=Storage::put('public/indentity/id-'.
+                //     ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png',$data_foto);
+
+                // $path_foto='/storage/indentity/id-'.
+                //     ($check_tamu?$check_tamu->id:'cache').'/foto/def-cam-profile.png';
+
+                // $old_foto='/^data:image\/(\w+);base64,/'.base64_decode($request->file_foto_cam);
 
             }
+
         }
 
         if($path_foto){
@@ -479,11 +761,10 @@ class HomeController extends Controller
 
         if($check_id){
 
-
             if($check_id->tamu_id!=$check_tamu->id){
                 $check_id=null;
                 Alert::error('Gagal','Data Identitas Tamu Yang Telah Terekam Sebelumya Tidak dapat Digunakan Kembali untuk Tamu Berbeda');
-                return back()->withInput();
+                return back()->withInput(['old_foto'=>$old_foto]);
             }else{
                 $path_identity=$check_id->path_identity;
             }
@@ -523,9 +804,8 @@ class HomeController extends Controller
             'tamu_id'=>$check_tamu->id,
            ])
            ->whereNull('gate_checkout')
-           ->where('gate_checkin','<=',$day)
+           ->where('gate_checkin','<=',$day->endOfDay())
            ->first();
-
 
            if(!$log_tamu){
                     $log_tamu=DB::table('log_tamu')->insertGetId([
@@ -550,7 +830,9 @@ class HomeController extends Controller
                }
            }else{
              Alert::error('Gagal','Tamu Telah Berkunjung Hari Ini dan Belum Menyelesaikan Kunjunganya');
-             return back()->withInput();
+             $old=$request->all();
+             $old['old_foto']=$old_foto;
+             return back()->withInput($old);
 
            }
 
@@ -631,13 +913,13 @@ class HomeController extends Controller
             case 'GATE_CHECKIN':
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
 
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
-                ->where('log.gate_checkin','>=',$day)
+                 ->where('log.gate_checkin','>=',$day)
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','=',null)
                 ->orderBy('log.gate_checkin','desc')
@@ -646,7 +928,7 @@ class HomeController extends Controller
             case 'GATE_CHECKOUT':
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
 
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
@@ -662,7 +944,7 @@ class HomeController extends Controller
             case 'REKAP':
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
-                ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
+                ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
                 ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
 
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
@@ -679,10 +961,12 @@ class HomeController extends Controller
 
         if($log_tamu){
             if(count($where)){
-                $log_tamu=$log_tamu->whereRaw('('.implode(" OR ",$where).")");
+                $log_tamu=$log_tamu->whereRaw($where?'('.implode(" OR ",$where).")":'(1=1)');
             }
 
+
             $log_tamu=$log_tamu->get();
+
 
             $fingerprint=$request->fingerprint();
 
