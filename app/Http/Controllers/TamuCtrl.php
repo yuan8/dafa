@@ -14,6 +14,7 @@ use Validator;
 use CV;
 use Storage;
 use Alert;
+use Str;
 class TamuCtrl extends Controller
 {
 
@@ -22,10 +23,40 @@ class TamuCtrl extends Controller
         return view('tamu.add');
     }
 
+
+    static function generate_id($pre='T'){
+        do {
+            $token=uniqid($pre);
+            $token=strtoupper($token);
+            $tamu=DB::table('tamu')->where('string_id',$token)->first();
+            # code...
+        } while ($tamu!=null);
+
+        return $token;
+
+    }
+
     public function store(Request $request){
        $U=Auth::User();
 
+         
         $data['nama']=$request->nama;
+
+        if($request->tujuan){
+            $data['tujuan']=$request->tujuan;
+        }
+
+        $request['tujuan']=CV::build_from_options(json_decode($request->tujuan??'[]'));
+
+
+
+
+        if($request->tujuan){
+            $data['def_tujuan']=json_encode($request->tujuan);
+        }
+
+
+
         if($request->alamat){
             $data['alamat']=$request->alamat;
         }
@@ -63,8 +94,24 @@ class TamuCtrl extends Controller
             $data['def_instansi']=$request->instansi;
         }
 
-         if($request->tujuan){
-            $data['def_tujuan']=$request->tujuan;
+          if($request->tamu_khusus!=null){
+            $data['tamu_khusus']=(int)$request->tamu_khusus;
+        }
+
+         if($request->kategori_tamu!=null){
+            $data['def_kategori_tamu']=$request->kategori_tamu;
+        }
+
+         if($request->jenis_tamu_khusus){
+            $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
+        }
+
+        
+
+        
+
+        if($request->keperluan){
+            $data['def_keperluan']=$request->keperluan;
         }
 
        
@@ -104,10 +151,106 @@ class TamuCtrl extends Controller
             'nomer_telpon'=>'string|required|unique:tamu,nomer_telpon',
         ]);
 
+
+
         if($valid->fails()){
             Alert::error('Gagal',$valid->errors()->first());
             return back()->withInput($data);
         }
+
+        $valid=Validator::make($request->all(),[
+            'jenis_kelamin'=>'required|numeric|in:0,1',
+            'nama'=>'required|string|min:3',
+            'nomer_telpon'=>'required|min:10',
+            'kategori_tamu'=>'required|string',
+
+        ]);
+
+        if($valid->fails()){
+            Alert::error('Gagal',$valid->errors()->first());
+            return back()->withInput($data);
+        }
+
+          
+
+        $now=Carbon::now();
+
+
+        $id_tamu=DB::table('tamu')->insertGetId([
+            'nama'=>isset($data['nama'])?$data['nama']:null,
+            'jenis_kelamin'=>isset($data['jenis_kelamin'])?$data['jenis_kelamin']:null,
+            'alamat'=>isset($data['alamat'])?$data['alamat']:null,
+            'nomer_telpon'=>isset($data['nomer_telpon'])?$data['nomer_telpon']:null,
+            'golongan_darah'=>isset($data['golongan_darah'])?$data['golongan_darah']:null,
+            'tanggal_lahir'=>isset($data['tanggal_lahir'])?$data['tanggal_lahir']:null,
+            'tempat_lahir'=>isset($data['tempat_lahir'])?$data['tempat_lahir']:null,
+            'tamu_khusus'=>isset($data['tamu_khusus'])?$data['tamu_khusus']:null,
+            'string_id'=>static::generate_id(),
+            'pekerjaan'=>isset($data['pekerjaan'])?$data['pekerjaan']:null,
+            'def_instansi'=>isset($data['def_instansi'])?$data['def_instansi']:null,
+            'jenis_tamu_khusus'=>isset($data['jenis_tamu_khusus'])?$data['jenis_tamu_khusus']:null,
+            'tamu_khusus'=>isset($data['tamu_khusus'])?$data['tamu_khusus']:null,
+            'def_tujuan'=>isset($data['def_tujuan'])?$data['def_tujuan']:null,
+            'def_keperluan'=>isset($data['def_keperluan'])?$data['def_keperluan']:null,
+            'def_kategori_tamu'=>isset($data['def_kategori_tamu'])?$data['def_kategori_tamu']:null,
+            'izin_akses_masuk'=>isset($data['izin_akses_masuk'])?$data['izin_akses_masuk']:null,
+            'keterangan_tolak_izin_akses'=>isset($data['keterangan_tolak_izin_akses'])?$data['keterangan_tolak_izin_akses']:null,
+            'foto'=>!empty($path_foto)?$path_foto:null,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now(),
+
+        ]);
+
+        if($id_tamu){
+
+            if(strpos($path_foto, '/foto-cache/')===true){
+                $path_foto=str_replace('/storage', '/',$path_foto);
+                $path_save='identity/id-'.$id_tamu.'/foto/def-cam-profile.png';
+                Storage::move('public/'.$path_foto,'public/'.$path_save);
+                DB::table('tamu')->where('id',$id_tamu)->update([
+                    'foto'=>$path_foto
+                ]);  
+            }
+            Alert::error('Berhasil','Berhasil menambahkan master tamu');
+            $new_id=[];
+            foreach ($request->identity??[] as $key => $n) {
+                    if(strpos($n['id'], 'new-')!==false){
+                        if($n['jenis_identity'] and $n['identity_number']){
+                            $new_id[]=$n;
+                        }
+                    }
+            }
+
+            foreach ($new_id as $key => $n) {
+                    $check=DB::table('identity_tamu')->where([
+                        ['jenis_identity','=',$n['jenis_identity']],
+                        ['tamu_id','!=',$id_tamu],
+
+                    ])->first();
+
+                    if(!$check){
+                        DB::table('identity_tamu')->insertOrIgnore([
+                            'tamu_id'=>$id_tamu,
+                            'jenis_identity'=>$n['jenis_identity'],
+                            'identity_number'=>$n['identity_number'],
+                            'berlaku_hingga'=>$n['berlaku_hingga'],
+                            'path_identity'=>isset($n['path_file_src'])?Storage::url(Storage::put('public/indentity/id-'.($id_tamu).'/'.$n['jenis_identity'],$n['path_file_src'])):null,
+                            'created_at'=>$now,
+                            'updated_at'=>$now,
+                        ]);
+                    }
+
+                }
+
+
+            return redirect()->route('g.tamu.edit',['id'=>$id_tamu,'slug'=>Str::slug($data['nama'])]);
+        }
+
+
+
+        
+        Alert::error('Gagal');
+        return back()->withInput($data);
 
 
         
@@ -362,7 +505,7 @@ class TamuCtrl extends Controller
                 foreach ($new_id as $key => $n) {
                     $check=DB::table('identity_tamu')->where([
                         ['jenis_identity','=',$n['jenis_identity']],
-                        ['tamu_id','=',$tamu->id],
+                        ['tamu_id','!=',$tamu->id],
 
                     ])->first();
 

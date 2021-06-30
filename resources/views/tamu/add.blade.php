@@ -749,9 +749,8 @@
                         this.no_identity=window.vinput.no_identity;
                         this.nomer_telpon=window.vinput.nomer_telpon;
 
-                          $('#modal-submit').show();
-                          $('#modal-submit').modal({ keyboard: false })   // initialized with no keyboard
-                            $('#modal-submit').modal('show')                // initializes and invokes show immediately
+                          $('#modal-submit').modal();
+                          this.isActive=false;
                      }
               }
           }
