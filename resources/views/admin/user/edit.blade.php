@@ -55,7 +55,7 @@
 					<div class="form-group">
 						<label>STATUS USER</label>
 						<select class="form-control" name="deleted_at" required="">
-							<option value="{{Carbon\Carbon::now()}}" {{null!=$data->deleted_at?'selected':''}}>USER TIDAK AKTIF</option>
+							<option value="{{Carbon\Carbon::now()}}" {{null!=$data->deleted_at?'selected':''}} >USER TIDAK AKTIF</option>
 							<option value="NULL_VALUE" {{null==$data->deleted_at?'selected':''}}>ACTIVE</option>
 						</select>
 					</div>
