@@ -567,7 +567,7 @@ class HomeController extends Controller
             $new=$data;
             $new['string_id']=static::generate_id();
 
-            $id_tamu=DB::table('tamu')->insertGetId($data);
+            $id_tamu=DB::table('tamu')->insertGetId($new);
             $check_tamu=(object)['id'=>$id_tamu,'nama'=>$data['nama']];
         }
 
