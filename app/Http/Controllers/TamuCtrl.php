@@ -63,6 +63,10 @@ class TamuCtrl extends Controller
             $data['def_instansi']=$request->instansi;
         }
 
+         if($request->tujuan){
+            $data['def_tujuan']=$request->tujuan;
+        }
+
        
 
 
@@ -106,10 +110,8 @@ class TamuCtrl extends Controller
         }
 
 
-            Alert::warning('Gagal','Tets');
-
-
-        return back()->withInput($data);
+        
+           
 
 
 
