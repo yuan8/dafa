@@ -288,7 +288,9 @@ class TamuCtrl extends Controller
             if(Auth::User()->can('is_admin')){
                 return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
             }else{
-                 return view('tamu.view')->with(['data'=>$tamu,'data_id'=>$identity]);
+                return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
+                
+                 // return view('tamu.view')->with(['data'=>$tamu,'data_id'=>$identity]);
             }
         }
     }
