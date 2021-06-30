@@ -192,7 +192,7 @@ class UserCtrl extends Controller
 			'nrp'=>$request->nrp,
 			'pangkat'=>$request->pangkat,
 			'jabatan'=>$request->jabatan,
-			'password'=>Hash::make($request->nrp),
+			'password'=>Hash::make($request->password),
 			'api_token'=>Hash::make($request->email),
 
 		]);
