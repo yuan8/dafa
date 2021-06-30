@@ -25,7 +25,8 @@ class User extends Authenticatable
         'nrp',
         'jabatan',
         'pangkat',
-        'role'
+        'role',
+        'is_active'
     ];
 
 
