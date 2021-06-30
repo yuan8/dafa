@@ -68,9 +68,15 @@ class LoginController extends Controller
         if($agent){
             if($agent->deleted_at==null){
                  if(Hash::check($request->password,$agent->password)){
-                    Auth::login($agent);
+                    if($agent->is_active){
+                        Auth::login($agent);
+                        return $this->sendLoginResponse($request);
+
+                    }else{
+                        Alert::error('','User Tidak Diaktivasi');
+
+                    }
                    
-                    return $this->sendLoginResponse($request);
 
                 }else{
                 Alert::error('','Password Salah');
