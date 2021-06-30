@@ -132,8 +132,8 @@ class UserCtrl extends Controller
 
 
 
-			if($request->status){
-				if($request->status=='NULL_VALUE'){
+			if($request->deleted_at){
+				if($request->deleted_at=='NULL_VALUE'){
 					$data_up['deleted_at']=null;
 					$data_up['is_active']=true;
 
