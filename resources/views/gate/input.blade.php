@@ -776,8 +776,6 @@ dd('ss');
                         this.jenis_identity=window.vinput.jenis_identity;
                         this.no_identity=window.vinput.no_identity;
                           $('#modal-submit').show();
-                          $('#modal-submit').modal({ keyboard: false })   // initialized with no keyboard
-                            $('#modal-submit').modal('show')                // initializes and invokes show immediately
                      }
               }
           }
