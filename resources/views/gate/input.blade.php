@@ -293,9 +293,7 @@ dd('ss');
                 "rendered_def":'{{$data->path_identity?url($data->path_identity):''}}',
                 "rendered":'{{$data->path_identity?url($data->path_identity):''}}'
             },
-            // identity_record:[
-
-            // ]
+           
         },
         methods:{
 

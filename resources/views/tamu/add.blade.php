@@ -307,7 +307,7 @@
         el: '#vinput',
          data: {
             //
-            izin_akses_masuk:1,
+            izin_akses_masuk:{{old('izin_akses_masuk')??1}},
             keterangan_tolak_izin_akses:'{{preg_replace( "/\r|\n/", " ",old('keterangan_tolak_izin_akses'))}}',
             jenis_tamu_khusus:'{{old('jenis_tamu_khusus')??'REKANAN'}}',
             list_jenis_tamu_khusus:<?=json_encode(config('web_config.jenis_tamu_khusus'))?>,
@@ -334,7 +334,7 @@
             agama: "{{old('agama')}}",
             berlaku_hingga: "",
             btn_check: false,
-            data_id:<?=json_encode(old('identity')??'[]')?>,
+            data_id:<?=json_encode(old('identity')??[])?>,
             tujuan_json:<?=json_encode(CV::build_from_array('tujuan_tamu',json_decode(old('def_tujuan')??'[]')??[]))??[]?>,
             options_tujuan:<?= json_encode(CV::build_options('tujuan_tamu')) ?>,
             tujuan:<?=(old('def_tujuan'))??'[]'?>,
@@ -370,7 +370,7 @@
                 this.uuid_id++;
                 this.data_id.push({
                     'id':'new-'+this.uuid_id,
-                    'tamu_id':nul,
+                    'tamu_id':null,
                     'jenis_identity':null,
                     'path_identity':null,
                     'path_rendered':null,
@@ -468,7 +468,7 @@
                 window.bc_provos.postMessage(vinput.$data);
                if(this.tamu_khusus==true){
 
-                    if((this.nomer_telpon.length>11)  && (this.nama.length>3) && (this.jenis_kelamin!=null) && (this.tujuan_json.length!=0) && (this.keperluan!="") && (this.kategori_tamu!="") && (this.instansi!="")  ){
+                    if((this.nomer_telpon.length>11)  && (this.nama.length>3) && (this.jenis_kelamin!=null) &&(this.kategori_tamu!="") && (this.instansi!="")  ){
                         this.btn_check=true;
 
                     }else{
@@ -476,7 +476,6 @@
                     }
 
                }else{
-                console.log('NO KGUSUS');
                  if((this.nomer_telpon.length>11)  && (this.nama.length>3) && (this.jenis_kelamin!=null) ){
                         this.btn_check=true;
 

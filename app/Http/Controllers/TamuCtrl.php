@@ -18,18 +18,103 @@ class TamuCtrl extends Controller
 {
 
     public function tambah(){
+
         return view('tamu.add');
     }
 
     public function store(Request $request){
+       $U=Auth::User();
+
+        $data['nama']=$request->nama;
+        if($request->alamat){
+            $data['alamat']=$request->alamat;
+        }
+        if($request->nomer_telpon){
+            $data['nomer_telpon']=$request->nomer_telpon;
+        }
+        if($request->jenis_kelamin){
+            $data['jenis_kelamin']=$request->jenis_kelamin;
+        }
+        if($request->tempat_lahir){
+            $data['tempat_lahir']=$request->tempat_lahir;
+        }
+        if($request->tanggal_lahir){
+            $data['tanggal_lahir']=$request->tanggal_lahir;
+        }
+        if($request->agama){
+            $data['agama']=$request->agama;
+        }
+        if($request->pekerjaan){
+            $data['pekerjaan']=$request->pekerjaan;
+        }
+        if($request->golongan_darah){
+            $data['golongan_darah']=$request->golongan_darah;
+        }
+
+         if($request->izin_akses_masuk!=null){
+            $data['izin_akses_masuk']=(int)$request->izin_akses_masuk;
+        }
+
+         if($request->keterangan_tolak_izin_akses){
+            $data['keterangan_tolak_izin_akses']=$request->keterangan_tolak_izin_akses;
+        }
+
+        if($request->instansi){
+            $data['def_instansi']=$request->instansi;
+        }
+
+       
+
+
+
+
+
+          $path_foto=null;
+        if($request->foto_file){
+                $path_foto=Storage::put('public/foto-cache/'.Carbon::now()->format('d-m-y'),$request->foto_file);
+                $path_foto=Storage::url($path_foto);
+                $old_foto=asset($path_foto);
+                $data['foto']=$old_foto;
+
+        }else if($request->file_foto_cam!='false'){
+            if (preg_match('/^data:image\/(\w+);base64,/', $request->file_foto_cam)) {
+                    $data_foto = substr($request->file_foto_cam, strpos($request->file_foto_cam, ',') + 1);
+                    $data_foto =base64_decode($data_foto);
+                    $path_con='foto-cache/'.Carbon::now()->format('d-m-y').'/'.Carbon::now()->format('d-m-y-h-i-s-a').'_'.$U->id.'_'.rand(0,1000).'.png';
+
+                    $path_foto=Storage::put('public/'.$path_con,$data_foto);
+                    $path_foto='/storage/'.$path_con;
+                    $old_foto=asset($path_foto);
+                $data['foto']=$old_foto;
+
+            }
+
+        }else if($request->foto){
+                $path_foto=str_replace(url('storage'), '/storage', $request->foto);
+                $old_foto=asset($path_foto);
+                $data['foto']=$old_foto;
+
+        }
+
         $valid=Validator::make($request->all(),[
             'nomer_telpon'=>'string|required|unique:tamu,nomer_telpon',
         ]);
 
         if($valid->fails()){
             Alert::error('Gagal',$valid->errors()->first());
-            return back()->withInput();
+            return back()->withInput($data);
         }
+
+
+            Alert::warning('Gagal','Tets');
+
+
+        return back()->withInput($data);
+
+
+
+
+        
 
     }
 

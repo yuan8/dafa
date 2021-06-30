@@ -2,7 +2,9 @@
 
 @section('content')
 <H4><b>MASTER DATA TAMU</b></H4>
-
+<div class="btn-group" style="margin-top: 10px; margin-bottom: 10px;">
+    <a href="{{route('g.tamu.tambah')}}" class="btn btn-primary"><i class="fa fa-plus"></i> Tambah Master Tamu</a>
+</div>
 <div class="card">
     <div class="card-header with-border">
         <form action="{{url()->full()}}" method="get">

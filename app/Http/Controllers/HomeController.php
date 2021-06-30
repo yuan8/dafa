@@ -564,6 +564,8 @@ class HomeController extends Controller
             $data['def_keperluan']=$data_log['keperluan'];
             $data['def_instansi']=$data_log['instansi'];
             $data['def_tujuan']=$data_log['tujuan'];
+            $new=$data;
+            $new['string_id']=static::generate_id();
 
             $id_tamu=DB::table('tamu')->insertGetId($data);
             $check_tamu=(object)['id'=>$id_tamu,'nama'=>$data['nama']];
