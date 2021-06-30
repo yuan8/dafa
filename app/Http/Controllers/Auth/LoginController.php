@@ -10,7 +10,9 @@ use Alert;
 use Illuminate\Http\Request;
 use Auth;
 use Hash;
+use DB;
 use App\Models\User;
+
 class LoginController extends Controller
 {
     /*
@@ -65,9 +67,14 @@ class LoginController extends Controller
 
         $agent=User::where('email',$request->email)->orWhere('username',$request->email)->first();
 
+        $agent=DB::table('users')->first();
+
+        dd($agent);
+
         if($agent){
             if($agent->deleted_at==null){
                  if(Hash::check($request->password,$agent->password)){
+                    dd($agent);
                     if($agent->is_active){
                         Auth::login($agent);
                         return $this->sendLoginResponse($request);

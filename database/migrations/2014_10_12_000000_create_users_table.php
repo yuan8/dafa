@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('api_token')->nullable();
             $table->integer('role')->default(2);
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
@@ -42,6 +43,7 @@ class CreateUsersTable extends Migration
             'jabatan'=>'Admin',
             'pangkat'=>'-',
             'nrp'=>'100000000',
+            'is_active'=>1
         ]);
     }
 
