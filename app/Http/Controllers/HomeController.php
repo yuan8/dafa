@@ -597,15 +597,14 @@ class HomeController extends Controller
             $id_in['path_identity']=$path_identity;
         }else{
             $check_list_id=DB::table('identity_tamu')->where('tamu_id',$check_tamu->id)->count();
-            if(!$check_list_id){
-
-                Alert::error('Gagal',$check_tamu->nama.' File Identitas Tidak tersedia');
-                $data['old_foto']=$old_foto;
-                $data['nomer_kartu']=$request->nomer_kartu;
-                $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
-                $mergeInput=array_merge($data,$data_log);
-                return back()->withInput($mergeInput);
-            }
+            // if(!$check_list_id){
+            //     Alert::error('Gagal',$check_tamu->nama.' File Identitas Tidak tersedia');
+            //     $data['old_foto']=$old_foto;
+            //     $data['nomer_kartu']=$request->nomer_kartu;
+            //     $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
+            //     $mergeInput=array_merge($data,$data_log);
+            //     return back()->withInput($mergeInput);
+            // }
         }
 
         if($insert_identity){
