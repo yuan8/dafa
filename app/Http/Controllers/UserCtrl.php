@@ -135,11 +135,12 @@ class UserCtrl extends Controller
 			if($request->status){
 				if($request->status=='NULL_VALUE'){
 					$data_up['deleted_at']=null;
-					$data_up['is_active']=false;
+					$data_up['is_active']=true;
+
 					
 				}else{
 					$data_up['deleted_at']=Carbon::now();
-					$data_up['is_active']=true;
+					$data_up['is_active']=false;
 				}
 			}
 
