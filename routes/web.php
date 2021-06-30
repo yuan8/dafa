@@ -20,15 +20,15 @@ Route::get('/', function () {
 Route::prefix('tamu')->middleware('auth:web')->group(function(){
     Route::get('/daftar-tamu',[App\Http\Controllers\TamuCtrl::class, 'daftarTamuList'])->name('g.daftar_tamu');
 
-    Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit')->middleware('can:is_admin');
+    Route::get('/edit-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'edit'])->name('g.tamu.edit')->middleware('can:is_provos');
 
-     Route::get('/tambah',[App\Http\Controllers\TamuCtrl::class, 'tambah'])->name('g.tamu.tambah')->middleware('can:is_admin');
+     Route::get('/tambah',[App\Http\Controllers\TamuCtrl::class, 'tambah'])->name('g.tamu.tambah')->middleware('can:is_gate');
 
-     Route::post('/store',[App\Http\Controllers\TamuCtrl::class, 'store'])->name('g.tamu.store')->middleware('can:is_admin');
+     Route::post('/store',[App\Http\Controllers\TamuCtrl::class, 'store'])->name('g.tamu.store')->middleware('can:is_gate');
 
      Route::get('/view-tamu/{id}/{slug}',[App\Http\Controllers\TamuCtrl::class, 'view'])->name('g.tamu.view')->middleware('can:is_gate');
 
-    Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update')->middleware('can:is_admin');
+    Route::put('/edit-tamu/{id}',[App\Http\Controllers\TamuCtrl::class, 'simpan_data_tamu'])->name('g.tamu.update')->middleware('can:is_provos');
 
     Route::get('/identity-tamu-khusus/{id}/id-generate.pdf',[App\Http\Controllers\TamuCtrl::class, 'identity_tamu_khusus'])->name('g.tamu.id_khusus');
 
