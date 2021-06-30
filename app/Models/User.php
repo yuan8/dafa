@@ -26,8 +26,9 @@ class User extends Authenticatable
         'jabatan',
         'pangkat',
         'role',
-        'is_active'
-        
+        'is_active',
+        'deleted_at'
+
     ];
 
 
