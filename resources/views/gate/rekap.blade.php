@@ -94,7 +94,7 @@
         		<label>JENIS TAMU : </label>
         		<div class="btn-group">
         			 <button type="button" class="btn " v-on:click="jenis_tamu='ALL'"v-bind:class="jenis_tamu=='ALL'?'btn btn-primary':'btn-default'" >SEMUA @{{parseInt(rekap_inher.count_khusus??0)+parseInt(rekap_inher.count_non_khusus??0)}}</button>
-                    <button type="button" class="btn " v-on:click="jenis_tamu='TAMU_KHUSUS'" v-bind:class="jenis_tamu=='KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus??0)}})</button>
+                    <button type="button" class="btn " v-on:click="jenis_tamu='TAMU_KHUSUS'" v-bind:class="jenis_tamu=='TAMU_KHUSUS'?'btn btn-primary':'btn-default'">TAMU KHUSUS (@{{parseInt(rekap_inher.count_khusus??0)}})</button>
                    <button type="button" class="btn " v-on:click="jenis_tamu='TAMU'"v-bind:class="jenis_tamu=='TAMU'?'btn btn-primary':'btn-default'" >TAMU (@{{parseInt(parseInt(rekap_inher.count_non_khusus??0))}})</button>
 
                     <input type="hidden" name="jenis_tamu" v-model=jenis_tamu>
@@ -132,7 +132,7 @@
     		<button type="button" v-on:click="jenis_table='LENGKAP'" v-bind:class="(jenis_table=='LENGKAP')?'btn btn-primary':'btn btn-default'">LENGKAP</button>
     	</div>
 
-    	<p>TOTAL DATA : {{number_format(count($data))}} KUNJUNGAN <b>-</b> <a href="{{route('g.index')}}"><b style="color: #ff0000">TAMU DI DALAM GEDUNG HARI INI <b style="color: #292cff">(@{{rekap.count_in.count_data??0}})</b> TANGGAL</b><b style="color: #1e22f5"> (@{{h}})</b></a></p>
+    	<p>TOTAL DATA : {{number_format(count($data))}} KUNJUNGAN <b>-</b> <a href="{{route('g.index')}}"><b style="color: #ff0000">TAMU DI DALAM GEDUNG  <b style="color: #292cff">(@{{rekap.count_in.count_data??0}})</b> TANGGAL</b><b style="color: #1e22f5"> (@{{date_start==date_end?date_start:date_start+' - '+date_end}})</b></a></p>
        <div class="table-responsive">
         <table class="table-bordered table " id="list-visitor">
             <thead>
