@@ -658,12 +658,12 @@ class HomeController extends Controller
             return back()->withInput($mergeInput);
 
         }
+      
 
          $insert_log= DB::table('log_tamu')->insert([
             'gate_checkin'=>Carbon::now(),
             'jenis_id'=>$request->jenis_identity,
             'gate_handle'=>$U->id,
-            'gate_checkin'=>$day_start,
             'nomer_kartu'=>$request->nomer_kartu,
             'tamu_id'=>$check_tamu->id,
             'keperluan'=>$request->keperluan,
@@ -671,6 +671,8 @@ class HomeController extends Controller
             'kategori_tamu'=>$request->kategori_tamu,
             'tujuan'=>json_encode($request->tujuan??[]),
         ]);
+
+
 
          if($insert_log){
             Alert::success('Berhasil','Tamu '.$check_tamu->nama.' berhasil diinput');
