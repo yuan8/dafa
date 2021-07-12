@@ -660,7 +660,7 @@ class HomeController extends Controller
         }
 
          $insert_log= DB::table('log_tamu')->insert([
-            'gate_checkin'=>$day_start,
+            'gate_checkin'=>Carbon::now(),
             'jenis_id'=>$request->jenis_identity,
             'gate_handle'=>$U->id,
             'gate_checkin'=>$day_start,
@@ -1528,12 +1528,14 @@ class HomeController extends Controller
                 $day=Carbon::now()->addDays(-3)->startOfDay();
 
 
-                $log_tamu_record=DB::table('log_tamu as log')->where([
+                $log_tamu_record=DB::table('log_tamu as log')
+                ->where([
                     'tamu_id'=>$tamu->id,
                     ])
                    ->whereNull('gate_checkin')
                    ->where('id',$id_log)
-                   ->where('provos_checkin','>',$day)->first();
+                   // ->where('provos_checkin','>',$day)
+                   ->first();
                    $log_tamu=null;
 
                 if($log_tamu_record){
