@@ -692,9 +692,16 @@ class TamuCtrl extends Controller
 
 		$data=$data
 
-        ->orderBy(DB::raw("(".'('.implode(') + (', $where).')'.")"),'DESC')
+        // ->orderBy(DB::raw("(".'('.implode(') + (', $where).')'.")"),'DESC')
+        ->orderBy("t.updated_at",'DESC')
+
         ->groupBy('t.id')
         ->paginate(10);
+
+        if($req->q){
+            $data->appends(['q'=>$req->q]);
+
+        }
 
         return view('tamu.archive')->with(['data'=>$data,'req'=>$req]);
 
