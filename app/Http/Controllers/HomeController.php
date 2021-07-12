@@ -300,7 +300,16 @@ class HomeController extends Controller
 
     public function gate_out($id_log,$slug,Request $request){
         $fingerprint=$request->fingerprint;
-        $day=Carbon::now()->addDays(-3)->startOfDay();
+       if(Auth::User()->can('is_admin')){
+         $day=Carbon::now();
+         $tanda='<=';
+
+
+       }else{
+         $day=Carbon::now()->addDays(-3)->startOfDay();
+         $tanda='>=';
+       }
+
         $data_record=DB::table('log_tamu as log')
         ->join('tamu as v','v.id','=','log.tamu_id')
         ->leftJoin('identity_tamu as ind',
@@ -335,7 +344,7 @@ class HomeController extends Controller
 
 
         ")
-        ->where('log.gate_checkin','>=',$day)
+        ->where('log.gate_checkin',$tanda,$day)
         ->where('log.id','=',$id_log)
         ->where('log.gate_checkout','=',null)
         ->orderBy('log.gate_checkin','desc')
