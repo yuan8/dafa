@@ -85,7 +85,9 @@
                 @endphp
 
                 <tr class="vis_">
-                    <td class="text-center">{{($paging?((($req->page??1)-1)*$paging)+($key+1)):$key+1)}}</td>
+                    <td class="text-center">{{($paging?
+
+                        ((($req->page??1)-1)*$paging)+($key+1):$key+1)}}</td>
                     <td class="text-center">{{$v->nomer_kartu}}</td>
                     {{-- <td class="text-center"></td> --}}
                     {{-- <td class="text-center">
