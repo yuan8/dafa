@@ -1017,8 +1017,15 @@ class HomeController extends Controller
                 $log_tamu=$log_tamu->whereRaw($where?'('.implode(" OR ",$where).")":'(1=1)');
             }
 
+            if($checkin!='REKAP'){
+                $log_tamu=$log_tamu->get();
+                $paging=false;
 
-            $log_tamu=$log_tamu->get();
+            }else{
+                $log_tamu=$log_tamu->paginate(15);
+                $paging=true;
+
+            }
 
 
             $fingerprint=$request->fingerprint();
@@ -1036,7 +1043,8 @@ class HomeController extends Controller
                 'req'=>$request,
                 'rekap_tamu'=>$rekap_tamu,
                 'active_h'=>$day_last,
-                'status'=>$checkin
+                'status'=>$checkin,
+                'paging'=>$paging
             ]);
 
 

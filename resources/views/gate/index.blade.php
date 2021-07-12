@@ -194,6 +194,13 @@
             </tbody>
         </table>
        </div>
+       @php
+       @endphp
+       @if($paging)
+       {{$data_visitor->links()}}
+       @endif
+
+
     </div>
 </div>
 
