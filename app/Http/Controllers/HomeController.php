@@ -1048,9 +1048,10 @@ class HomeController extends Controller
             }
 
             if($checkin!='REKAP'){
-             
-                 $log_tamu=$log_tamu->paginate(15);
-                $paging=true;
+                $paging=15;
+                
+                $log_tamu=$log_tamu->paginate($paging);
+                $log_tamu->appends($request->all());
 
             }else{
                   $log_tamu=$log_tamu->get();
