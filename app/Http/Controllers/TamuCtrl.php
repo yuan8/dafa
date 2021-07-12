@@ -705,7 +705,6 @@ class TamuCtrl extends Controller
 
 	public function report(Request $request){
 		$dateNow=Carbon::now()->format('Y-m-d');
-
 		$start=$dateNow;
 		$end=$dateNow;
 
@@ -813,7 +812,7 @@ class TamuCtrl extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->join('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
+                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at
 
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle")
@@ -844,7 +843,6 @@ class TamuCtrl extends Controller
 
             break;
         }
-
 
 
 

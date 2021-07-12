@@ -138,6 +138,8 @@
             <thead>
                 <tr class="text-center">
                     <th>NO</th>
+                    <th>NOMER KARTU</th>
+
                     <th v-if="jenis_table=='LENGKAP'">FOTO</th>
                     <th v-if="jenis_table=='LENGKAP'">NO IDENTITAS</th>
                     <th>NAMA</th>
@@ -154,8 +156,11 @@
             </thead>
             <tbody>
                 @foreach($data as $key=>$v)
+              
                  <tr class="{{$v->status_out?'bg-warning':'bg-success'}} text-center">
                  	<td class="text-center">{{$key+1}}</td>
+                    <td class="text-center">{{$v->nomer_kartu}}</td>
+
                  	<td  v-if="jenis_table=='LENGKAP'">  <img onclick="show_pic.show('{{url($v->foto??'tamu-def.png')}}')" src="{{asset($v->foto)}}" onerror="errFoto(this)" alt="" style="max-width:80px;"></td>
                  	<td  v-if="jenis_table=='LENGKAP'">{{$v->identity_number}} </td>
 

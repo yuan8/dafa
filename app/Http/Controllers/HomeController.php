@@ -225,7 +225,7 @@ class HomeController extends Controller
                 }
 
                 if(!Auth::User()->can('is_admin')){
-                    $day=Carbon::now()->addDays(-3)->startOfDay();
+                    $day=Carbon::now()->addDays(-3)->endOfDay();
                      $log_tamu_record=DB::table('log_tamu as log')->where([
                     'tamu_id'=>$tamu->id,
                     ])
@@ -233,7 +233,7 @@ class HomeController extends Controller
                        ->where('id',$id_log)
                        ->where('gate_checkin','>',$day)->first();
                 }else{
-                    $day=Carbon::now();
+                    $day=Carbon::now()->endOfDay();
 
                     $log_tamu_record=DB::table('log_tamu as log')->where([
                     'tamu_id'=>$tamu->id,
@@ -301,14 +301,15 @@ class HomeController extends Controller
     public function gate_out($id_log,$slug,Request $request){
         $fingerprint=$request->fingerprint;
        if(Auth::User()->can('is_admin')){
-         $day=Carbon::now();
+         $day=Carbon::now()->endOfDay();
          $tanda='<=';
 
 
        }else{
-         $day=Carbon::now()->addDays(-3)->startOfDay();
+         $day=Carbon::now()->addDays(-3)->endOfDay();
          $tanda='>=';
        }
+
 
         $data_record=DB::table('log_tamu as log')
         ->join('tamu as v','v.id','=','log.tamu_id')
@@ -340,7 +341,9 @@ class HomeController extends Controller
             log.tujuan,
             log.kategori_tamu,
             log.instansi,
-            log.nomer_kartu
+            log.nomer_kartu,
+            log.gate_checkin,
+            log.gate_checkout
 
 
         ")
@@ -349,6 +352,8 @@ class HomeController extends Controller
         ->where('log.gate_checkout','=',null)
         ->orderBy('log.gate_checkin','desc')
         ->first();
+
+        // dd($data_record,$day,$tanda);
 
 
 
@@ -1229,7 +1234,7 @@ class HomeController extends Controller
                 log.tujuan as tujuan,
                 log.kategori_tamu,
                 log.instansi as instansi,
-
+                log.nomer_kartu,
                 log.gate_checkin as gate_checkin,
                 log.gate_checkout as gate_checkout,
                 (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
@@ -1626,29 +1631,32 @@ class HomeController extends Controller
         if($dt['req']->jenis_table=='LENGKAP'){
             $HEAD=[
                 'NO'=>1,
-                'JENIS IDENTITAS'=>2,
-                'NOMER IDENTITAS'=>3,
-                'NAMA'=>4,
-                'KATEGORI & JENIS TAMU'=>5,
-                'INSTANSI'=>6,
-                'TUJUAN'=>7,
-                'KEPERLUAN'=>8,
-                'TANGGAL & JAM MASUK'=>9,
-                'OPERATOR MASUK'=>10,
-                'TANGGAL & JAM KELUAR'=>11,
-                'OPERATOR KELUAR'=>12
+                'NOMER KARTU'=>2,
+                'JENIS IDENTITAS'=>3,
+                'NOMER IDENTITAS'=>4,
+                'NAMA'=>5,
+                'KATEGORI & JENIS TAMU'=>6,
+                'INSTANSI'=>7,
+                'TUJUAN'=>8,
+                'KEPERLUAN'=>9,
+                'TANGGAL & JAM MASUK'=>10,
+                'OPERATOR MASUK'=>11,
+                'TANGGAL & JAM KELUAR'=>12,
+                'OPERATOR KELUAR'=>13
             ];
 
         }else{
 
             $HEAD=[
                 'NO'=>1,
-                'NAMA'=>2,
-                'KATEGORI & JENIS TAMU'=>3,
-                'TUJUAN'=>4,
-                'KEPERLUAN'=>5,
-                'TANGGAL & JAM MASUK'=>6,
-                'TANGGAL & JAM KELUAR'=>7,
+                'NOMER KARTU'=>2,
+
+                'NAMA'=>3,
+                'KATEGORI & JENIS TAMU'=>4,
+                'TUJUAN'=>5,
+                'KEPERLUAN'=>6,
+                'TANGGAL & JAM MASUK'=>7,
+                'TANGGAL & JAM KELUAR'=>8,
             ];
         }
 
@@ -1757,6 +1765,10 @@ class HomeController extends Controller
                 switch ($h) {
                     case 'NO':
                          $sheet->setCellValue(static::nta($c).($key+$start),$key+1);
+                        # code...
+                        break;
+                    case 'NOMER KARTU':
+                         $sheet->setCellValue(static::nta($c).($key+$start),$v->nomer_kartu);
                         # code...
                         break;
                     case 'JENIS IDENTITAS':

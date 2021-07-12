@@ -26,6 +26,8 @@
 		<thead>
                 <tr class="text-center">
                     <th>NO</th>
+                    <th>NOMER KARTU</th>
+
                    @if($req->jenis_table=='LENGKAP')
                     <th >FOTO</th>
                     @endif
@@ -60,6 +62,8 @@
                 @foreach($data as  $key=>$v)
                  <tr class="{{$v->status_out?'bg-warning':'bg-success'}} text-center">
                  	<td>{{$key+1}}</td>
+                    <td>{{$v->nomer_kartu}}</td>
+
                  	@php
                  		$foto='';
                  		if($v->foto){
