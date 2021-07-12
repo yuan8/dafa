@@ -224,15 +224,27 @@ class HomeController extends Controller
 
                 }
 
-                $day=Carbon::now()->addDays(-3)->startOfDay();
+                if(!Auth::User()->can('is_admin')){
+                    $day=Carbon::now()->addDays(-3)->startOfDay();
+                     $log_tamu_record=DB::table('log_tamu as log')->where([
+                    'tamu_id'=>$tamu->id,
+                    ])
+                       ->whereNull('gate_checkout')
+                       ->where('id',$id_log)
+                       ->where('gate_checkin','>',$day)->first();
+                }else{
+                    $day=Carbon::now();
 
-
-                $log_tamu_record=DB::table('log_tamu as log')->where([
+                    $log_tamu_record=DB::table('log_tamu as log')->where([
                     'tamu_id'=>$tamu->id,
                     ])
                    ->whereNull('gate_checkout')
                    ->where('id',$id_log)
-                   ->where('gate_checkin','>',$day)->first();
+                   ->where('gate_checkin','<=',$day)->first();
+
+                }
+
+               
                    $log_tamu=null;
 
                 if($log_tamu_record){
@@ -259,7 +271,7 @@ class HomeController extends Controller
                                 }
                        }
                }else{
-                 Alert::error('Gagal','Tamu Masih Di Dalam Gedung dan Belum Menyelesaikan Kunjunganya');
+                 Alert::error('Gagal','Data Tidak Ditemukan');
                  return back()->withInput();
 
                }
