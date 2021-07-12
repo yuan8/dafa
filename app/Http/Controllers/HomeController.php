@@ -967,8 +967,25 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-
+                ->selectRaw("
+                    log.tamu_id,
+                    log.jenis_id,
+                    log.foto_checkin,
+                    log.tujuan,
+                    log.keperluan,
+                    log.kategori_tamu,
+                    log.instansi,
+                    log.gate_checkin,
+                    log.gate_handle,
+                    log.gate_checkout,
+                    log.gate_out_handle,
+                    log.checkout_from_gate,
+                    log.gate_checkout_handle,
+                    log.nomer_kartu,
+                    
+                    v.*,
+                    ind.*,
+                    log.id as id_log,log.created_at as log_created_at,
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
@@ -982,11 +999,29 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-
+                ->selectRaw("
+                    log.tamu_id,
+                    log.jenis_id,
+                    log.foto_checkin,
+                    log.tujuan,
+                    log.keperluan,
+                    log.kategori_tamu,
+                    log.instansi,
+                    log.gate_checkin,
+                    log.gate_handle,
+                    log.gate_checkout,
+                    log.gate_out_handle,
+                    log.checkout_from_gate,
+                    log.gate_checkout_handle,
+                    log.nomer_kartu,
+                    
+                    v.*,
+                    ind.*,
+                    log.id as id_log,log.created_at as log_created_at,
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
-                    ")
+                    "
+                )
                 ->where('log.gate_checkin','>=',$day)
                 ->where('log.gate_checkin','<=',$day_last)
                 ->where('log.gate_checkout','!=',null)
@@ -998,8 +1033,22 @@ class HomeController extends Controller
                 $log_tamu=DB::table('log_tamu as log')
                 ->join('tamu as v','v.id','log.tamu_id')
                 ->leftJoin('identity_tamu as ind',[['ind.tamu_id','=','log.tamu_id'],['ind.jenis_identity','log.jenis_id']])
-                ->selectRaw("log.*,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
-
+                ->selectRaw("
+                     log.tamu_id,
+                    log.jenis_id,
+                    log.foto_checkin,
+                    log.tujuan,
+                    log.keperluan,
+                    log.kategori_tamu,
+                    log.instansi,
+                    log.gate_checkin,
+                    log.gate_handle,
+                    log.gate_checkout,
+                    log.gate_out_handle,
+                    log.checkout_from_gate,
+                    log.gate_checkout_handle,
+                    log.nomer_kartu,
+                    ,v.*,ind.*,log.id as id_log,log.created_at as log_created_at,
                     (select ucin.name from users as ucin where ucin.id=log.gate_handle) as nama_gate_handle,
                     (select ucout.name from users as ucout where ucout.id=log.gate_out_handle) as nama_gate_out_handle
                     ")
@@ -1017,16 +1066,18 @@ class HomeController extends Controller
                 $log_tamu=$log_tamu->whereRaw($where?'('.implode(" OR ",$where).")":'(1=1)');
             }
 
-            if($checkin!='REKAP'){
+            // if($checkin!='REKAP'){
              
-                 $log_tamu=$log_tamu->paginate(15);
-                $paging=true;
+            //      $log_tamu=$log_tamu->paginate(15);
+            //     $paging=true;
 
-            }else{
+            // }else{
                   $log_tamu=$log_tamu->get();
                 $paging=false;
 
-            }
+            // }
+                // dd(array_keys((array)$log_tamu[0]));
+                // dd(implode(',log.',(array)array_keys((array)$log_tamu[0]) ) );
 
 
             $fingerprint=$request->fingerprint();
