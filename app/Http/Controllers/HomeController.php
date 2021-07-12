@@ -1066,16 +1066,16 @@ class HomeController extends Controller
                 $log_tamu=$log_tamu->whereRaw($where?'('.implode(" OR ",$where).")":'(1=1)');
             }
 
-            // if($checkin!='REKAP'){
+            if($checkin!='REKAP'){
              
-            //      $log_tamu=$log_tamu->paginate(15);
-            //     $paging=true;
+                 $log_tamu=$log_tamu->paginate(15);
+                $paging=true;
 
-            // }else{
+            }else{
                   $log_tamu=$log_tamu->get();
                 $paging=false;
 
-            // }
+            }
                 // dd(array_keys((array)$log_tamu[0]));
                 // dd(implode(',log.',(array)array_keys((array)$log_tamu[0]) ) );
 
