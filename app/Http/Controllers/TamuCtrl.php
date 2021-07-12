@@ -39,7 +39,7 @@ class TamuCtrl extends Controller
     public function store(Request $request){
        $U=Auth::User();
 
-         
+
         $data['nama']=$request->nama;
 
         if($request->tujuan){
@@ -106,15 +106,15 @@ class TamuCtrl extends Controller
             $data['jenis_tamu_khusus']=$request->jenis_tamu_khusus;
         }
 
-        
 
-        
+
+
 
         if($request->keperluan){
             $data['def_keperluan']=$request->keperluan;
         }
 
-       
+
 
 
 
@@ -171,7 +171,7 @@ class TamuCtrl extends Controller
             return back()->withInput($data);
         }
 
-          
+
 
         $now=Carbon::now();
 
@@ -209,7 +209,7 @@ class TamuCtrl extends Controller
                 Storage::move('public/'.$path_foto,'public/'.$path_save);
                 DB::table('tamu')->where('id',$id_tamu)->update([
                     'foto'=>$path_foto
-                ]);  
+                ]);
             }
             Alert::error('Berhasil','Berhasil menambahkan master tamu');
             $new_id=[];
@@ -248,18 +248,18 @@ class TamuCtrl extends Controller
 
 
 
-        
+
         Alert::error('Gagal');
         return back()->withInput($data);
 
 
-        
-           
 
 
 
 
-        
+
+
+
 
     }
 
@@ -289,7 +289,7 @@ class TamuCtrl extends Controller
                 return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
             }else{
                 return view('tamu.edit')->with(['data'=>$tamu,'data_id'=>$identity]);
-                
+
                  // return view('tamu.view')->with(['data'=>$tamu,'data_id'=>$identity]);
             }
         }
