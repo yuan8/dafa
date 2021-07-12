@@ -509,7 +509,9 @@ class TamuCtrl extends Controller
                 foreach ($new_id as $key => $n) {
                     $check=DB::table('identity_tamu')->where([
                         ['jenis_identity','=',$n['jenis_identity']],
+
                         ['tamu_id','=',$tamu->id],
+
 
                     ])->first();
 
