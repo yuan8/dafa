@@ -35,7 +35,7 @@
     				@foreach ($data as $key=>$d)
 
     				<tr>
-                        <td>{{$key+1}}</td>
+                        <td>{{(($req->page?$req->page-1:0)*10)+($key+1)}}</td>
     					<td>
     						<img onclick="show_pic.show('{{url($d->foto??'tamu-def.png')}}')" src="{{url($d->foto??'tamu-def.png')}}" style="max-width:100px;">
     					</td>
