@@ -509,7 +509,7 @@ class TamuCtrl extends Controller
                 foreach ($new_id as $key => $n) {
                     $check=DB::table('identity_tamu')->where([
                         ['jenis_identity','=',$n['jenis_identity']],
-                        ['tamu_id','!=',$tamu->id],
+                        ['tamu_id','=',$tamu->id],
 
                     ])->first();
 
@@ -666,7 +666,7 @@ class TamuCtrl extends Controller
     }
 	public function daftarTamuList(Request $req){
 		$where=[];
-        // dd(explode('|',$req->q));
+
 		foreach (explode('|',$req->q) as $key => $value) {
             $value=(trim($value));
             $where[]="replace(t.nomer_telpon,'-','') like '%".trim(str_replace('-', '', $value))."%'";
@@ -928,7 +928,7 @@ class TamuCtrl extends Controller
 	static function export_excel($data,$start_date,$end_date,$status){
 	   ini_set('memory_limit',-1);
         ini_set('max_execution_time', -1);
-		// dd(public_path('them/export-tamu.xlsx'));
+
 
 
 		$DATASTYLE=[
@@ -959,7 +959,7 @@ class TamuCtrl extends Controller
 
 
 		foreach ($data as $key => $v) {
-			// dd($v);
+
 			$v->status=($v->gate_checkout?'CHECKOUT':($v->gate_checkin?'CHECKIN':($v->provos_checkin?'PROVOS':'')));
 			switch($v->status){
                 case 'PROVOS':
