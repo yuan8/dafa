@@ -211,8 +211,10 @@ class TamuCtrl extends Controller
                     'foto'=>$path_foto
                 ]);  
             }
-            Alert::error('Berhasil','Berhasil menambahkan master tamu');
+            Alert::success('Berhasil','Berhasil menambahkan master tamu');
+
             $new_id=[];
+
             foreach ($request->identity??[] as $key => $n) {
                     if(strpos($n['id'], 'new-')!==false){
                         if($n['jenis_identity'] and $n['identity_number']){
