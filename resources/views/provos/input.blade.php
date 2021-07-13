@@ -55,9 +55,9 @@
                 <th>JENIS TAMU</th>
 
                 <th>NAMA</th>
-                <th>NOMER TELPON</th>
+                <th>NOMOR TELEPON</th>
                 <th>JENIS ID</th>
-                <th>NOMER ID</th>
+                <th>NOMOR ID</th>
                 <th>ALAMAT</th>
             </tr>
         </thead>
@@ -182,7 +182,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="">Nomer Identitas*</label>
+                                <label for="">Nomor Identitas*</label>
                                 <input name="no_identity" value="" required type="text" v-model="no_identity" class="form-control">
                             </div>
                             <div class="form-group">
@@ -216,7 +216,7 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">Nomer Telpon*</label>
+                                <label for="">Nomor Telepon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
 
                             </div>

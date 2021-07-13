@@ -161,7 +161,7 @@
                             </div>
 
                              <div class="form-group">
-                                <label for="">Nomer Telpon*</label>
+                                <label for="">Nomor Telepon*</label>
                                 <input name="nomer_telpon" required type="text"   @change="phoneNumber" v-model="nomer_telpon" class="form-control">
 
                             </div>
@@ -231,7 +231,7 @@
                                            <th>AKSI</th>
                                            <th></th>
                                            <th>JENIS IDENTITAS</th>
-                                           <th>NOMER IDENTITAS</th>
+                                           <th>NOMOR IDENTITAS</th>
                                            <th>BERKALU HINGGA</th>
 
 

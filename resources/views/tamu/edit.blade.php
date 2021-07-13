@@ -253,8 +253,8 @@
                                            <th>AKSI</th>
                                            <th></th>
                                            <th>JENIS IDENTITAS</th>
-                                           <th>NOMER IDENTITAS</th>
-                                           <th>BERKALU HINGGA</th>
+                                           <th>NOMOR IDENTITAS</th>
+                                           <th>BERLAKU HINGGA</th>
 
 
                                        </tr>

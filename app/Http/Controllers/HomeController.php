@@ -224,7 +224,7 @@ class HomeController extends Controller
 
                 }
 
-                if(!Auth::User()->can('is_admin')){
+                if(!Auth::User()->can('provos_and_gate')){
                     $day=Carbon::now()->addDays(-3)->endOfDay();
                      $log_tamu_record=DB::table('log_tamu as log')->where([
                     'tamu_id'=>$tamu->id,
@@ -244,7 +244,7 @@ class HomeController extends Controller
 
                 }
 
-               
+
                    $log_tamu=null;
 
                 if($log_tamu_record){
@@ -300,7 +300,7 @@ class HomeController extends Controller
 
     public function gate_out($id_log,$slug,Request $request){
         $fingerprint=$request->fingerprint;
-       if(Auth::User()->can('is_admin')){
+       if(Auth::User()->can('provos_and_gate')){
          $day=Carbon::now()->endOfDay();
          $tanda='<=';
 
@@ -653,12 +653,12 @@ class HomeController extends Controller
              $data['old_foto']=$old_foto;
             $data['nomer_kartu']=$request->nomer_kartu;
             $data_log['tujuan']=json_decode($data_log['tujuan']??'[]');
-            Alert::error('Gagal','Nomer Kartu '.$request->nomer_kartu.' Terlah Digunakan Sebelumnya');
+            Alert::error('Gagal','Nomor Kartu '.$request->nomer_kartu.' Telah Digunakan, Gunakan Nomor Kartu Lain !');
             $mergeInput=array_merge($data,$data_log);
             return back()->withInput($mergeInput);
 
         }
-      
+
 
          $insert_log= DB::table('log_tamu')->insert([
             'gate_checkin'=>Carbon::now(),
@@ -1051,7 +1051,7 @@ class HomeController extends Controller
 
             if($checkin!='REKAP'){
                 $paging=15;
-                
+
                 $log_tamu=$log_tamu->paginate($paging);
                 $log_tamu->appends($request->all());
 
@@ -1677,9 +1677,9 @@ class HomeController extends Controller
         if($dt['req']->jenis_table=='LENGKAP'){
             $HEAD=[
                 'NO'=>1,
-                'NOMER KARTU'=>2,
+                'NOMOR KARTU'=>2,
                 'JENIS IDENTITAS'=>3,
-                'NOMER IDENTITAS'=>4,
+                'NOMOR IDENTITAS'=>4,
                 'NAMA'=>5,
                 'KATEGORI & JENIS TAMU'=>6,
                 'INSTANSI'=>7,
@@ -1695,8 +1695,7 @@ class HomeController extends Controller
 
             $HEAD=[
                 'NO'=>1,
-                'NOMER KARTU'=>2,
-
+                'NOMOR KARTU'=>2,
                 'NAMA'=>3,
                 'KATEGORI & JENIS TAMU'=>4,
                 'TUJUAN'=>5,
@@ -1813,7 +1812,7 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$key+1);
                         # code...
                         break;
-                    case 'NOMER KARTU':
+                    case 'NOMOR KARTU':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->nomer_kartu);
                         # code...
                         break;
@@ -1821,7 +1820,7 @@ class HomeController extends Controller
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->jenis_identity);
                         # code...
                         break;
-                    case 'NOMER IDENTITAS':
+                    case 'NOMOR IDENTITAS':
                          $sheet->setCellValue(static::nta($c).($key+$start),$v->identity_number);
                         # code...
                         break;

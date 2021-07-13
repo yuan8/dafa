@@ -22,7 +22,7 @@
                         <th>JENIS TAMU</th>
     					<th>IDENTITAS</th>
     					<th>NAMA</th>
-    					<th>NOMOR TELEPON</th>
+    					<th>NO. TELEPON</th>
     					<th>PEKERJAAN</th>
     					<th>GOL DARAH</th>
     					<th>JENIS KELAMIN</th>
