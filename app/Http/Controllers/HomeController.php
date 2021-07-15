@@ -575,7 +575,7 @@ class HomeController extends Controller
             ->first();
 
             if($check_log){
-                 Alert::error('Gagal',$check_tamu->nama.' Belum meyesaikan kunjungan pada '.$check_log->gate_checkin);
+                 Alert::error('Gagal',$check_tamu->nama.' Belum menyelesaikan kunjungan pada '.$check_log->gate_checkin);
                 $data['old_foto']=$old_foto;
                 $data['nomer_kartu']=$request->nomer_kartu;
 
@@ -661,7 +661,7 @@ class HomeController extends Controller
 
 
          $insert_log= DB::table('log_tamu')->insert([
-            'gate_checkin'=>Carbon::now(),
+            'gate_checkin'=>date('Y-m-d H:i:s'),
             'jenis_id'=>$request->jenis_identity,
             'gate_handle'=>$U->id,
             'nomer_kartu'=>$request->nomer_kartu,
@@ -675,7 +675,7 @@ class HomeController extends Controller
 
 
          if($insert_log){
-            Alert::success('Berhasil','Tamu '.$check_tamu->nama.' berhasil diinput');
+            Alert::success('Berhasil','Tamu '.$check_tamu->nama.' berhasil di input');
             return back();
          }
 
